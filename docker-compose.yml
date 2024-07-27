@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:13
+    environment:
+      POSTGRES_DB: springsecurityN
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123456
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  spring-boot-app:
+    build: ./spring-boot-app
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/springsecurityN
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: 123456
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+
+  angular-app:
+    build: ./angular-app
+    ports:
+      - "80:80"
+
+volumes:
+  postgres_data:
