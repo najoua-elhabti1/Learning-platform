@@ -89,8 +89,13 @@ public class AdminController {
 
                 emailService.sendEmail(
                         student.getEmail(),
-                        "Account Registration",
-                        "Your account has been created.\nUsername: " + student.getEmail() + "\nPassword: " + password
+                        "Application Learning by doing Account Registration",
+                        "Bonjour Mme/Mr. "+student.getLastName()+ student.getFirstName()+"," +
+                                "\n\nMerci de trouver ci-joint votre login et mot de passe pour accéder à la plateforme learning by doing."+
+                                "\n\nlogin: " + student.getEmail() + "\nMot de passe: " + password+
+                                "\nLien : " + "\n\nNB: Merci de réinitialiser votre mot de passe\n" +
+                                "\n" +
+                                "bien cordialement,"
                 );
             }
 

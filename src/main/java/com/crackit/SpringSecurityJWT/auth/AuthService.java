@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -41,29 +42,27 @@ public class AuthService {
     }
 
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
-        //FirstStep
-            //We need to validate our request (validate whether password & username is correct)
-            //Verify whether user present in the database
-            //Which AuthenticationProvider -> DaoAuthenticationProvider (Inject)
-            //We need to authenticate using authenticationManager injecting this authenticationProvider
-        //SecondStep
-            //Verify whether userName and password is correct => UserNamePasswordAuthenticationToken
-            //Verify whether user present in db
-            //generateToken
-            //Return the token
+        // Validate credentials
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getEmail(),
                         request.getPassword()
                 )
         );
+
+        // Fetch user details
         var user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow();
-        String jwtToken = jwtService.generateToken(user);
-        return AuthenticationResponse.builder().accessToken(jwtToken)
-                .role(Role.valueOf(user.getRole().toString()))
-                .build();
 
+        // Generate JWT token
+        String jwtToken = jwtService.generateToken(user);
+
+        // Return response with needsPasswordChange flag
+        return AuthenticationResponse.builder()
+                .accessToken(jwtToken)
+                .role(Role.valueOf(user.getRole().toString()))
+                .needsPasswordChange(user.isNeedsPasswordChange())
+                .build();
     }
 
     public String requestPasswordReset(String email, String resetUrl) {
@@ -72,9 +71,10 @@ public class AuthService {
         System.out.println(user);
         if (user != null) {
             String resetToken = UUID.randomUUID().toString();
-            LocalDateTime tokenExpiry = LocalDateTime.now().plusHours(24); // Example: Token expires after 24 hours
+            LocalDateTime tokenExpiry = LocalDateTime.now().plusHours(1);
             user.get().setResetToken(resetToken);
             user.get().setTokenExpiry(tokenExpiry);
+            System.out.println(tokenExpiry);
             userRepository.save(user.get());
             System.out.println("hy");
             System.out.println(user.get().getEmail());
@@ -91,39 +91,60 @@ public class AuthService {
 //        message.setFrom(fromEmail);
         message.setTo(email);
 
-        message.setSubject("Password Reset Request");
-        message.setText("To reset your password, please click the link below:\n" + resetUrl + "?token=" + resetToken);
+        message.setSubject("Demande de Réinitialisation de Mot de Passe");
+        message.setText("Pour réinitialiser votre mot de passe, veuillez visiter le lien suivant :\n" + resetUrl + "?token=" + resetToken+"\nCe lien va expirer dans 1 heure.\n" +
+                "Merci !");
         System.out.println("before sent");
         emailSender.send(message);
         System.out.println("after sent");
     }
-    public void resetPassword(String token, String newPassword) {
+    public String resetPassword(String token, String newPassword) {
         System.out.println(newPassword);
         System.out.println(token);
         User user = userRepository.findByResetToken(token);
         System.out.println(user);
         if (user != null && user.getTokenExpiry().isAfter(LocalDateTime.now())) {
-            System.out.println(user.getPassword());
-            System.out.println("hyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy");
+
             user.setPassword(this.passwordEncoder.encode(newPassword));
-            System.out.println(user.getPassword());
 
             user.setResetToken(null);
             user.setTokenExpiry(null);
             userRepository.save(user);
             sendPasswordResetConfirmationEmail(user.getEmail());
+            return "mot de passe modifie";
 
         } else {
-            // Handle invalid or expired token
+            return "Reset token est expire.";
         }
+    }
+    public boolean isTokenExpired(LocalDateTime tokenExpiry) {
+        System.out.println(LocalDateTime.now().isAfter(tokenExpiry));
+        return LocalDateTime.now().isAfter(tokenExpiry);
     }
     private void sendPasswordResetConfirmationEmail(String email) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(email);
-        message.setSubject("Password Reset Confirmation");
-        message.setText("Your password has been successfully reset.");
+        message.setSubject("Confirmation de changement de mot de passe");
+        message.setText("votre mot de passe est mdifiee avec succes.");
 
         emailSender.send(message);
+    }
+    public void changePassword(String email, String oldPassword, String newPassword) {
+        // Authenticate the user with the old password
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(email, oldPassword)
+        );
+
+        // Fetch the user from the database
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+        // Update the password
+        user.setPassword(passwordEncoder.encode(newPassword));
+        user.setNeedsPasswordChange(false);
+
+        // Save the updated user
+        userRepository.save(user);
     }
 }
 

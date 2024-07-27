@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -25,6 +26,7 @@ public class AuthController {
     private final AuthService authService;
     @Autowired
     private JwtService jwtService;
+    private final PasswordEncoder passwordEncoder;
 
     @PostMapping("/register")
     public ResponseEntity<AuthenticationResponse> register(
@@ -84,4 +86,30 @@ public class AuthController {
             throw new RuntimeException("Token validation failed", e);
         }
     }
+    @PostMapping("/change-password")
+    public ResponseEntity<String> changePassword(
+            @RequestBody Map<String, String> payload
+    ) {
+        String email = payload.get("email");
+        String oldPassword = payload.get("oldPassword");
+        String newPassword = payload.get("newPassword");
+        String confirmPassword = payload.get("confirmPassword");
+        Optional<User> userOptional = userRepository.findByEmail(email);
+        if (userOptional.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Utilisateur non trouvé.");
+        }
+
+        User user = userOptional.get();
+
+        if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("L'ancien mot de passe ne correspond pas.");
+        }
+//        if (!newPassword.equals(confirmPassword)) {
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Le nouveau mot de passe et la confirmation ne correspondent pas.");
+//        }
+        authService.changePassword(email, oldPassword, newPassword);
+        return ResponseEntity.ok("Mot de passe changé avec succès.");
+    }
+
+
 }
