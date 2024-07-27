@@ -1,0 +1,119 @@
+<app-header></app-header>
+
+<section class="vh-100">
+  <div class="wrapper">
+    <main class="authentication-content">
+      <div class="container-fluid">
+        <div class="authentication-card">
+          <div class="card shadow rounded-0 overflow-hidden">
+            <div class="flex flex-wrap h-full">
+              <div class="w-full  p-4 sm:p-6">
+                <div class="p-4 sm:p-5">
+                  <div class="container">
+                    <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
+                      {{ errorMessage }}
+                    </div>
+                    <form>
+                      <div class="form-group">
+                        <label for="oldPassword">Ancien mot de passe</label>
+                        <input type="password" class="form-control form-control-lg" id="oldPassword" [(ngModel)]="oldPassword" name="oldPassword" required>
+                      </div>
+                      <div class="form-group">
+                        <label for="newPassword">Nouveau mot de passe</label>
+                        <input type="password" class="form-control form-control-lg" id="newPassword" [(ngModel)]="newPassword" name="newPassword" required>
+                      </div>
+                      <div class="form-group">
+                        <label for="confirmPassword">Comfirmer le mot de passe</label>
+                        <input type="password" class="form-control form-control-lg" id="confirmPassword" [(ngModel)]="confirmPassword" name="confirmPassword" required>
+                      </div>
+                      <button (click)="onChangePassword()" class="btn btn-primary btn-lg">Enregistrer</button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</section>
+<app-footer></app-footer>
+<style>
+  
+  
+  .wrapper {
+    flex: 1;
+    margin-top: 5rem;
+
+  }
+  
+  .authentication-content {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .container-fluid {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+  }
+  
+  .authentication-card {
+    width: 100%;
+    max-width: 500px;
+  }
+  
+  .card {
+    width: 100%;
+  }
+  
+  footer {
+    background-color: #104b9b; /* Adjust color as needed */
+    color: white;
+    padding: 1rem 0;
+    text-align: center;
+    width: 100%;
+    position: relative;
+    bottom: 0;
+  }
+  
+  .container {
+    margin-top: 1rem;
+  }
+  
+  .form-group {
+    margin-bottom: 1rem;
+  }
+  
+  .form-control {
+    background-color: #fff;
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+  }
+  
+  .btn-primary {
+    background-color: #fdad02;
+    border-color: #104b9b;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+    border-color: #004085;
+}
+  
+  .alert-danger {
+    background-color: #f8d7da;
+    color: #721c24;
+    border-color: #f5c6cb;
+    border-radius: 5px;
+    margin-bottom: 1rem;
+    padding: 0.75rem 1.25rem;
+  }
+  
+</style>
