@@ -74,14 +74,14 @@ export const routes: Routes = [
     path : 'Prof/AddQuestion',
     component : AddQuestionsComponent,
 
-  }
+  },
 
 
 
+  { path: 'update-question/:chapter/:numQuestion', component: UpdateQuestionComponent },
 
 
-
-  , {
+  {
     path : 'Prof/AllChapiters',
     component : AllChapitersComponent,
 
