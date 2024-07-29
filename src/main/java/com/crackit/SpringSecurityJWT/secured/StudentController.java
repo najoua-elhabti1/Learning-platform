@@ -10,12 +10,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.gridfs.GridFsTemplate;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import com.mongodb.client.gridfs.model.GridFSFile;
 
-import javax.management.Query;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
@@ -25,6 +27,8 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/crackit/v1/student")
 public class StudentController {
+
+    private final GridFsTemplate gridFsTemplate;
 
     @Autowired
     private FileDocumentRepository fileRepository;
@@ -53,6 +57,7 @@ public class StudentController {
             FileDocument fileDocument = fileDocumentOpt.get();
             List<Question> questions = fileDocument.getQuestions();  // Récupérer les questions
             return ResponseEntity.ok(new ChapterDetailsResponse(
+                    fileDocument.getId(),
                     fileDocument.getChapter(),
                     fileDocument.getObjectifs(),
                     fileDocument.getPlan(),
@@ -79,6 +84,48 @@ public class StudentController {
     }
 
 
+
+
+
+    @GetMapping("/download/{id}")
+    public ResponseEntity<Resource> downloadFile(@PathVariable String id) {
+        FileDocument fileDocument = fileRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("File not found with id " + id));
+        GridFSFile gridFsFile = gridFsTemplate.findOne(new Query(Criteria.where("_id").is(id)));
+        if (gridFsFile == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        try {
+            Resource resource = new InputStreamResource(gridFsTemplate.getResource(gridFsFile).getInputStream());
+
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileDocument.getFileName() + "\"")
+                    .header(HttpHeaders.CONTENT_TYPE, fileDocument.getContentType())
+                    .body(resource);
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @GetMapping("/view/{id}")
+    public ResponseEntity<Resource> viewFile(@PathVariable String id) {
+        FileDocument fileDocument = fileRepository.findById(id).orElseThrow(() -> new RuntimeException("File not found with id " + id));
+        GridFSFile gridFsFile = gridFsTemplate.findOne(new Query(Criteria.where("_id").is(id)));
+        if (gridFsFile == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        try {
+            Resource resource = new InputStreamResource(gridFsTemplate.getResource(gridFsFile).getInputStream());
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + fileDocument.getFileName() + "\"")
+                    .header(HttpHeaders.CONTENT_TYPE, fileDocument.getContentType())
+                    .body(resource);
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
 
 
 
