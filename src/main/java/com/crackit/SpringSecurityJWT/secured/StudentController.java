@@ -78,36 +78,9 @@ public class StudentController {
         return ResponseEntity.ok(chapters);
     }
 
-    //upload PDF
 
 
-//    @GetMapping("/download/chapter/{chapterName}")
-//    public ResponseEntity<Resource> downloadFileByChapterName(@PathVariable String chapterName) {
-//        // Find the file document by chapter name
-//        Optional<FileDocument> fileDocumentOpt = fileRepository.findAll().stream()
-//                .filter(doc -> doc.getChapter().equals(chapterName))
-//                .findFirst();
-//
-//        if (!fileDocumentOpt.isPresent()) {
-//            return ResponseEntity.notFound().build();
-//        }
-//
-//        FileDocument fileDocument = fileDocumentOpt.get();
-//        GridFSFile gridFsFile = gridFsTemplate.findOne(new Query(Criteria.where("_id").is(fileDocument.getId())));
-//        if (gridFsFile == null) {
-//            return ResponseEntity.notFound().build();
-//        }
-//
-//        try {
-//            Resource resource = new InputStreamResource(gridFsTemplate.getResource(gridFsFile).getInputStream());
-//            return ResponseEntity.ok()
-//                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileDocument.getFileName() + "\"")
-//                    .header(HttpHeaders.CONTENT_TYPE, fileDocument.getContentType())
-//                    .body(resource);
-//        } catch (IOException e) {
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-//        }
-  //  }
+
 
 
 

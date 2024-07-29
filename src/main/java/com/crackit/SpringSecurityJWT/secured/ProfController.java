@@ -1,12 +1,11 @@
 package com.crackit.SpringSecurityJWT.secured;
 
 import com.crackit.SpringSecurityJWT.service.FileService;
-import com.crackit.SpringSecurityJWT.user.FileDocument;
-import com.crackit.SpringSecurityJWT.user.QuestionDTO;
-import com.crackit.SpringSecurityJWT.user.Student;
+import com.crackit.SpringSecurityJWT.user.*;
 import com.crackit.SpringSecurityJWT.user.repository.FileDocumentRepository;
 import com.mongodb.client.gridfs.model.GridFSFile;
 import lombok.AllArgsConstructor;
+import org.apache.kafka.common.errors.ResourceNotFoundException;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.apache.poi.xslf.usermodel.XSLFSlide;
 import org.apache.poi.xslf.usermodel.XSLFTextShape;
@@ -255,4 +254,43 @@ public class ProfController {
         }
     }
 
+
+
+
+
+    @PutMapping("/update_question")
+    public ResponseEntity<String> updateQuestion(@RequestBody UpdateChapterDTO updateQuestionDTO) {
+        try {
+            String chapterName = updateQuestionDTO.getChapter();
+            int questionNumber = updateQuestionDTO.getNumQuestion();
+            String newQuestionText = updateQuestionDTO.getQuestion();
+            String newResponseText = updateQuestionDTO.getResponse();
+
+            fileService.updateQuestion(chapterName, questionNumber, newQuestionText, newResponseText);
+
+            return ResponseEntity.ok("Question updated successfully");
+        } catch (IllegalArgumentException | ResourceNotFoundException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+
+
+    @DeleteMapping("/question/{chapterName}/{questionNumber}")
+    public ResponseEntity<String> deleteQuestionByChapterAndNumber(
+            @PathVariable String chapterName,
+            @PathVariable int questionNumber) {
+        try {
+            fileService.deleteQuestionFromChapter(chapterName, questionNumber);
+            return ResponseEntity.ok("Question deleted successfully.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error deleting question: " + e.getMessage());
+        }
+    }
+
+
+    @GetMapping("/question/{chapterName}/{questionNumber}")
+    public ResponseEntity<QuestionDTO> getQuestionByChapterAndNumber(@PathVariable String chapterName, @PathVariable int questionNumber) {
+        return fileService.getQuestionByChapterAndNumber(chapterName, questionNumber);
+    }
 }

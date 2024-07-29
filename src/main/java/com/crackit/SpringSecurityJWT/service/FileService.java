@@ -322,4 +322,104 @@ public class FileService {
  }
 
 
+
+    public void updateQuestion(String chapterName, int questionNumber, String newQuestionText, String newResponseText) {
+        // Validation des paramètres
+        if (chapterName == null || chapterName.trim().isEmpty() || newQuestionText == null || newQuestionText.trim().isEmpty() || newResponseText == null || newResponseText.trim().isEmpty()) {
+            throw new IllegalArgumentException("Chapter name, new question text, and new response text must not be empty.");
+        }
+
+        // Chercher le document par le nom du chapitre
+        Optional<FileDocument> optionalFileDocument = fileRepository.findByChapter(chapterName);
+
+        if (optionalFileDocument.isPresent()) {
+            FileDocument fileDocument = optionalFileDocument.get();
+            List<Question> questions = fileDocument.getQuestions();
+
+            if (questions != null) {
+                // Trouver la question à mettre à jour
+                for (Question question : questions) {
+                    if (question.getNumQuestion() == questionNumber) {
+                        // Mettre à jour les propriétés de la question
+                        question.setQuestion(newQuestionText);
+                        question.setResponse(newResponseText);
+
+                        // Sauvegarder le document mis à jour
+                        fileRepository.save(fileDocument);
+                        return;
+                    }
+                }
+
+                throw new ResourceNotFoundException("Question with number " + questionNumber + " not found in chapter " + chapterName);
+            } else {
+                throw new ResourceNotFoundException("No questions found in chapter " + chapterName);
+            }
+        } else {
+            throw new ResourceNotFoundException("Document not found for chapter " + chapterName);
+        }
+    }
+
+
+
+    public ResponseEntity<QuestionDTO> getQuestionByChapterAndNumber(String chapterName, int questionNumber) {
+        Optional<FileDocument> optionalFileDocument = fileRepository.findByChapter(chapterName);
+
+        if (optionalFileDocument.isPresent()) {
+            FileDocument fileDocument = optionalFileDocument.get();
+            List<Question> questions = fileDocument.getQuestions();
+
+            if (questions != null) {
+                for (Question question : questions) {
+                    if (question.getNumQuestion() == questionNumber) {
+                        QuestionDTO questionDTO = new QuestionDTO(
+                                chapterName,
+                                fileDocument.getCourse(),
+                                question.getNumQuestion(),
+                                question.getQuestion(),
+                                question.getResponse()
+
+                        );
+                        return ResponseEntity.ok(questionDTO);
+                    }
+                }
+            }
+        }
+
+        return ResponseEntity.notFound().build();
+    }
+
+
+
+
+    public void deleteQuestionFromChapter(String chapterName, int questionNumber) {
+        // Validation des paramètres
+        if (chapterName == null || chapterName.trim().isEmpty()) {
+            throw new IllegalArgumentException("Chapter name must not be empty.");
+        }
+
+        // Chercher le document par le nom du chapitre
+        Optional<FileDocument> optionalFileDocument = fileRepository.findByChapter(chapterName);
+
+        if (optionalFileDocument.isPresent()) {
+            FileDocument fileDocument = optionalFileDocument.get();
+            List<Question> questions = fileDocument.getQuestions();
+
+            if (questions != null) {
+                // Trouver et supprimer la question correspondante
+                boolean questionRemoved = questions.removeIf(question -> question.getNumQuestion() == questionNumber);
+
+                if (questionRemoved) {
+                    // Sauvegarder le document mis à jour
+                    fileRepository.save(fileDocument);
+                } else {
+                    throw new ResourceNotFoundException("Question with number " + questionNumber + " not found in chapter " + chapterName);
+                }
+            } else {
+                throw new ResourceNotFoundException("No questions found in chapter " + chapterName);
+            }
+        } else {
+            throw new ResourceNotFoundException("Document not found for chapter " + chapterName);
+        }
+    }
+
 }

@@ -46,6 +46,7 @@ public class SecurityConfiguration {
                         .requestMatchers(POST, "/crackit/v1/admin/**").hasRole(ADMIN.name())
 
                         .requestMatchers(GET, "/crackit/v1/prof/**").permitAll()
+                        .requestMatchers(PUT, "/crackit/v1/prof/**").permitAll()
                         .requestMatchers(DELETE, "/crackit/v1/prof/**").permitAll()
                         .requestMatchers(POST, "/crackit/v1/prof/**").permitAll()
                         .requestMatchers(DELETE, "/crackit/v1/prof/**").permitAll()
