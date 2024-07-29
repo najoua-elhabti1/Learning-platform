@@ -17,6 +17,7 @@ import { AdminGuard } from "./services/admin.guard";
 import {ProfGuard} from "./services/Prof.guard";
 import {AddQuestionsComponentN} from "./Student/profImport.component";
 import { ChangePwdComponent } from './Student/change-pwd/change-pwd.component';
+import { ViewPptComponent } from './Student/viewChapiter.component';
 
 
 export const routes: Routes = [
@@ -35,7 +36,7 @@ export const routes: Routes = [
 
   { path: 'chapters', component: ChaptersComponent },
   { path: 'chapter-detail/:chapterName', component: ChapterDetailComponent },
-
+  { path: 'view-ppt/:id', component: ViewPptComponent },
 
 
   {

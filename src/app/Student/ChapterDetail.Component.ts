@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { HeaderComponent } from '../header/header.component';
 import { StudentService } from '../services/student.service';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-chapter-detail',
@@ -19,7 +20,6 @@ import { StudentService } from '../services/student.service';
             <th>Plan</th>
             <th>Introduction</th>
             <th>Conclusion</th>
-            <th>Visibility</th>
             <th>Action</th>
           </tr>
         </thead>
@@ -30,18 +30,22 @@ import { StudentService } from '../services/student.service';
             <td>{{ chapter.plan }}</td>
             <td>{{ chapter.introduction }}</td>
             <td>{{ chapter.conclusion }}</td>
-            <td>{{ chapter.isVisible }}</td>
             <td>
               <button
                 class="btn btn-primary"
                 [routerLink]="['/static-question-form', chapter.chapter]">
                 View Questions
               </button>
+              <button (click)="downloadFile(chapter.id)">Download File</button>
+              <button (click)="viewChapter(chapter.id)">View File</button>
             </td>
           </tr>
         </tbody>
       </table>
     </div>
+    <div *ngIf="fileUrl" class="iframe-container">
+  <iframe [src]="fileUrl" width="100%" height="600px" frameborder="0"></iframe>
+</div>
   `,
   styles: [`
     .container {
@@ -94,19 +98,42 @@ import { StudentService } from '../services/student.service';
 })
 export class ChapterDetailComponent implements OnInit {
   chapter: any;
+  public fileUrl: SafeResourceUrl | undefined;
 
   constructor(
     private route: ActivatedRoute,
-    private studentService: StudentService
+    private studentService: StudentService,
+    private sanitizer: DomSanitizer
   ) {}
 
   ngOnInit(): void {
     this.route.params.subscribe(params => {
       const chapterName = params['chapterName'];
       this.studentService.getChapterDetails(chapterName).subscribe(
-        data => this.chapter = data,
+        data =>{ this.chapter = data;console.log(data);},
         error => console.error('Error fetching chapter details', error)
       );
     });
+  }
+  downloadFile(fileId: string) {
+    this.studentService.downloadFile(fileId).subscribe(blob => {
+      const a = document.createElement('a');
+      const objectUrl = URL.createObjectURL(blob);
+      a.href = objectUrl;
+      a.download = this.chapter.chapter+'.pptx'; 
+      a.click();
+      URL.revokeObjectURL(objectUrl);
+    });
+  }
+
+  // viewFile(fileId: string) {
+  //   const fileUrl = this.studentService.getFileUrl(fileId);
+  //   const officeViewerUrl = `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(fileUrl)}`;
+  //   this.fileUrl = this.sanitizer.bypassSecurityTrustResourceUrl(officeViewerUrl);
+  //   console.log(fileUrl);
+
+  // }
+  viewChapter(fileId: string) {
+    window.open(`/view-ppt/${fileId}`, '_blank');
   }
 }

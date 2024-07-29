@@ -18,6 +18,16 @@ export class StudentService {
     const encodedName = encodeURIComponent(chapterName);
     return this.http.get<any>(`${this.baseUrl}/chapter/${encodedName}`);
   }
+  downloadFile(fileId: string) {
+    return this.http.get(`${this.baseUrl}/download/${fileId}`, { responseType: 'blob' });
+  }
+
+  viewFile(fileId: string) {
+    return this.http.get(`${this.baseUrl}/view/${fileId}`, { responseType: 'blob' });
+  }
+  getFileUrl(fileId: string) {
+    return `${this.baseUrl}/view/${fileId}`;
+  }
 }
 
 
