@@ -1,59 +1,70 @@
-import { Component, inject, OnInit } from '@angular/core';
-import { HeaderComponent } from '../../header/header.component';
-import { ProfMenuComponent } from '../prof-menu/prof-menu.component';
-import { FormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
-import { AuthService } from '../../services/auth/auth.service';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+
+import { Router, ActivatedRoute } from '@angular/router';
+import {QuestionDTO} from "../../models/QuestionDTO.model";
+import {ProfService} from "../../services/prof.service";
+import {HeaderComponent} from "../../header/header.component";
+import {ProfMenuComponent} from "../prof-menu/prof-menu.component";
+import {FormsModule} from "@angular/forms";
+import {CommonModule} from "@angular/common";
 
 @Component({
   selector: 'app-update-question',
+
   standalone: true,
-  imports: [HeaderComponent,ProfMenuComponent,FormsModule,CommonModule],
+  imports: [HeaderComponent, ProfMenuComponent, FormsModule, CommonModule],
   templateUrl: './update-question.component.html',
-  styleUrl: './update-question.component.css'
+  styleUrls: ['./update-question.component.css']
 })
 export class UpdateQuestionComponent implements OnInit {
-  courses = ['Course 1', 'Course 2', 'Course 3'];
-  chapters = ['Chapter 1', 'Chapter 2', 'Chapter 3'];
-  question: any = {}; // Assuming question object structure matches your form fields
-  numQuestion!: number;
-  authService = inject(AuthService);
-  router = inject(Router);
+  question: QuestionDTO = {
+    numQuestion: 0,
+    question: '',
+    response: '',
+    chapter: '',
+    course: ''
+  };
+  courses: string[] = [];  // Remplir avec les options de cours
+  chapters: string[] = []; // Remplir avec les options de chapitres
+
   constructor(
-    private route: ActivatedRoute,
+    private profService: ProfService,
+    private router: Router,
+    private route: ActivatedRoute
   ) {}
+
   ngOnInit(): void {
     this.route.params.subscribe(params => {
-      this.numQuestion = params['numQuestion'];
-      this.fetchQuestion(this.numQuestion);
+      const chapter = params['chapter'];
+      const numQuestion = params['numQuestion'];
+      this.getQuestion(chapter, numQuestion);
     });
   }
 
-  fetchQuestion(numQuestion: number): void {
-    this.authService.getQuestion(numQuestion).subscribe(
-      (response: any) => {
-        this.question = response;
-        console.log(this.question.course);
-      },
-      (error: any) => {
-        console.error('Error fetching question:', error);
-      }
-    );
+  getQuestion(chapter: string, numQuestion: number): void {
+    this.profService.getQuestionByChapterAndNumber(chapter, numQuestion)
+      .subscribe(question => {
+        this.question = question;
+
+      });
   }
 
-  updateQuestion(): void {
-    this.authService.updateQuestion(this.numQuestion, this.question).subscribe(
-      () => {
-        console.log('Question updated successfully');
-        // Optionally, navigate back to the list page or show a success message
-        this.router.navigateByUrl('/Prof/AllQuestions');
-      },
-      (error: any) => {
-        console.error('Error updating question:', error);
-        // Handle error, show error message to user
-      }
-    );
+  onSubmit(): void {
+    this.route.params.subscribe(params => {
+      const chapter = params['chapter'];
+      const numQuestion = params['numQuestion'];
+      const updatedQuestion = this.question.question;
+      const updatedResponse = this.question.response;
+console.log(updatedQuestion);
+console.log(updatedResponse);
+      this.profService.updateQuestion(chapter, numQuestion, updatedQuestion, updatedResponse)
+        .subscribe(response => {
+          alert('Question updated successfully');
+          this.router.navigate(['/some-path']); // Mettez à jour avec le chemin souhaité
+        }, error => {
+          console.error('Update failed', error);
+          alert('Failed to update question');
+        });
+    });
   }
-
 }

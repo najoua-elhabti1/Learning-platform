@@ -108,24 +108,6 @@ export class AuthService {
       return of('No access token found');
     }
   }
-  uploadQuestions(file: File): Observable<any> {
-    const token = localStorage.getItem('access_token');
-    if (token) {
-      const formData = new FormData();
-      formData.append('file', file);
-
-      const headers = new HttpHeaders({
-        'Authorization': `Bearer ${JSON.parse(token)}`
-      });
-
-      return this.http.post(this.uploadQuestionUrl, formData, { headers });
-    } else {
-      console.log('No access token found');
-      return of('No access token found');
-    }
-    
-    
-  }
 
   uploadChapter(file: File,chapter: string, course: string, isVisible :boolean): Observable<any> {
     const token = localStorage.getItem('access_token');
@@ -140,7 +122,7 @@ export class AuthService {
 
       const headers = new HttpHeaders({
         'Authorization': `Bearer ${JSON.parse(token)}`,
-      
+
       });
 
       return this.http.post(this.uploadChapterUrl, formData, { headers });
@@ -148,17 +130,17 @@ export class AuthService {
       console.log('No access token found');
       return of('No access token found');
     }
-    
-    
+
+
   }
 
   getAllCourses(): Observable<FileDocument[]> {
     const token = localStorage.getItem('access_token');
     if (token) {
-      
+
       const headers = new HttpHeaders({
         'Authorization': `Bearer ${JSON.parse(token)}`,
-      
+
       });
 
     return this.http.get<FileDocument[]>(`${this.AllChapitersUrl}/all_courses`, { headers });
@@ -171,107 +153,50 @@ export class AuthService {
 downloadCourse(courseId: string, fileName: string): Observable<any> {
   const token = localStorage.getItem('access_token');
   if (token) {
-    
+
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${JSON.parse(token)}`,
       'Content-Type': 'application/json',
       'Accept': 'application/octet-stream',
-    
+
     });
 
   return this.http.get(`${this.AllChapitersUrl}/download/${courseId}`, { headers, responseType: 'blob' });
 }else {
   console.log('No access token found');
-  return of('No access token found'); 
+  return of('No access token found');
 }
 
 }
-addManualQuestion(formData: FormData): Observable<string> {
-    const token = localStorage.getItem('access_token');
-    if (token) {
-    return this.http.post<string>(`${this.AllChapitersUrl}/addQuestion`, formData, {
-      headers: new HttpHeaders({
-        'Authorization': `Bearer ${JSON.parse(token)}`,
-        'Accept': 'application/json'
-      })
-    });
-  }else {
-    console.log('No access token found');
-    return of('No access token found'); // Return an empty array to match the expected return type
-  }
 
-  }
 
-getAllQuestions(): Observable<QuestionReponse[]> {
-  const token = localStorage.getItem('access_token');
-    if (token) {
-      
-      const headers = new HttpHeaders({
-        'Authorization': `Bearer ${JSON.parse(token)}`,
-      
-      });
 
-    return this.http.get<QuestionReponse[]>(`${this.AllChapitersUrl}/getAllQuestions`, { headers });
-  }else {
-    console.log('No access token found');
-    return of([]); // Return an empty array to match the expected return type
-  }
-}
 
-deleteQuestion(id: number): Observable<any> {
-  const token = localStorage.getItem('access_token');
-  if (token) {
-    
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${JSON.parse(token)}`,
-    
-    });
 
-  return this.http.delete<QuestionReponse[]>(`${this.AllChapitersUrl}/delete/${id}`, { headers });
-}else {
-  console.log('No access token found');
-  return of([]); 
-}
-}
 
 updateQuestion(id: number, updatedQuestion: QuestionReponse): Observable<QuestionReponse> {
   const token = localStorage.getItem('access_token');
   if (token) {
-    
+
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${JSON.parse(token)}`,
-    
+
     });
 
   return this.http.put<QuestionReponse>(`${this.AllChapitersUrl}/update/${id}`, updatedQuestion, { headers });
 }else {
   console.log('No access token found');
-  return of(); 
+  return of();
 }
 }
-downloadExcelQuestions() {
-  const token = localStorage.getItem('access_token');
-  if (token) {
-    
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${JSON.parse(token)}`,
-    
-    });
 
-  return this.http.get(`${this.AllChapitersUrl}/download/questions`,  { headers , responseType: 'blob' });
-}else {
-  console.log('No access token found');
-  return of(); 
-}
-  
-}
 getQuestion(numQuestion: number) : Observable<any>{
   const token = localStorage.getItem('access_token');
   if (token) {
-    
+
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${JSON.parse(token)}`,
-    
+
     });
 
   return this.http.get<QuestionReponse>(`${this.AllChapitersUrl}/getQuestion/${numQuestion}`, { headers });
@@ -282,19 +207,7 @@ getQuestion(numQuestion: number) : Observable<any>{
 
 }
 
-deleteAllQuestions(): Observable<any> {
-  const token = localStorage.getItem('access_token');
-  if (token) {
-    const headers = {
-      'Authorization': `Bearer ${JSON.parse(token)}`
-    };
-    return this.http.delete<any>(`${this.AllChapitersUrl}`, { headers });
-  } else {
-    console.log('No access token found');
-    // Handle no token scenario
-    return of();
-  }
-}
+
 currentUser() {
   const user = localStorage.getItem('connectedUser');
   return user ? JSON.parse(user) : null;
@@ -303,11 +216,11 @@ currentUser() {
 updateVisibility(courseId: string, isVisible: boolean): Observable<any>  {
   const token = localStorage.getItem('access_token');
   if (token) {
-    
+
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${JSON.parse(token)}`,
       'Content-Type': 'application/json',
-    
+
     });
 
   return this.http.put<any>(`${this.AllChapitersUrl}/${courseId}/visibility`,  isVisible  , { headers });
@@ -317,15 +230,15 @@ updateVisibility(courseId: string, isVisible: boolean): Observable<any>  {
 }
 
 }
- 
+
 changePassword(email: string, oldPassword: string, newPassword: string, confirmPassword: string): Observable<any> {
   const token = localStorage.getItem('access_token');
   if (token) {
-    
+
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${JSON.parse(token)}`,
-     
-    
+
+
     });
   const payload = {
     email: email,
@@ -364,5 +277,5 @@ export interface QuestionReponse {
   chapter: string;
   response: string;
   imagePath: string;
-  
+
 }

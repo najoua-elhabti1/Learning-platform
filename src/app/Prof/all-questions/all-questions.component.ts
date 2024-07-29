@@ -59,4 +59,21 @@ export class AllQuestionsComponent implements OnInit {
       }
     );
   }
+
+
+  deleteQuestion(chapter: string, numQuestion: number): void {
+    this.profService.deleteQuestionByChapterAndNumber(chapter, numQuestion)
+      .subscribe(
+        response => {
+          console.log('Question deleted successfully:', response);
+        },
+        error => {
+          console.error('Error deleting question:', error);
+        }
+      );
+  }
+
+  navigateToUpdateQuestion(chapter: string, numQuestion: number): void {
+    this.router.navigate(['/update-question', chapter, numQuestion]);
+  }
 }

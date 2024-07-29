@@ -1,7 +1,8 @@
+
 <app-header></app-header>
 <app-prof-menu></app-prof-menu>
 
-<div class="flex justify-between items-center  mt-8 mb-4 px-4 lg:px-8">
+<div class="flex justify-between items-center mt-8 mb-4 px-4 lg:px-8">
   <h1 class="text-3xl font-bold text-gray-700">Liste des Questions</h1>
   <div class="flex space-x-4">
     <button (click)="downloadQuestionsExcel()" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded shadow-md transition duration-300">Télécharger Excel</button>
@@ -14,51 +15,46 @@
     <div class="inline-block min-w-full overflow-hidden align-middle border-b border-gray-200 shadow sm:rounded-lg">
       <table class="min-w-full">
         <thead>
-          <tr>
-            <th class="px-6 py-3 text-xs font-medium leading-4 tracking-wider text-left text-gray-600 uppercase border-b border-gray-200 bg-gray-100" style="width: 100px; word-wrap: break-word; overflow-wrap: break-word;">Num Question</th>
-            <th class="px-6 py-3 text-xs font-medium leading-4 tracking-wider text-left text-gray-600 uppercase border-b border-gray-200 bg-gray-100" style="width: 200px; word-wrap: break-word; overflow-wrap: break-word;">Question</th>
-            <!-- <th class="px-6 py-3 text-xs font-medium leading-4 tracking-wider text-left text-gray-600 uppercase border-b border-gray-200 bg-gray-100" style="width: 200px; word-wrap: break-word; overflow-wrap: break-word;">Image</th> -->
-            <th class="px-6 py-3 text-xs font-medium leading-4 tracking-wider text-left text-gray-600 uppercase border-b border-gray-200 bg-gray-100" style="width: 200px; word-wrap: break-word; overflow-wrap: break-word;">Response</th>
-            <th class="px-6 py-3 text-xs font-medium leading-4 tracking-wider text-left text-gray-600 uppercase border-b border-gray-200 bg-gray-100" style="width: 100px; word-wrap: break-word; overflow-wrap: break-word;">Course</th>
-            <th class="px-6 py-3 text-xs font-medium leading-4 tracking-wider text-left text-gray-600 uppercase border-b border-gray-200 bg-gray-100" style="width: 100px; word-wrap: break-word; overflow-wrap: break-word;">Chapter</th>
-            <th class="px-6 py-3 border-b border-gray-200 bg-gray-100" style="width: 200px; word-wrap: break-word; overflow-wrap: break-word;"></th>
-          </tr>
+        <tr>
+          <th class="px-6 py-3 text-xs font-medium leading-4 tracking-wider text-left text-gray-600 uppercase border-b border-gray-200 bg-gray-100" style="width: 100px; word-wrap: break-word; overflow-wrap: break-word;">Num Question</th>
+          <th class="px-6 py-3 text-xs font-medium leading-4 tracking-wider text-left text-gray-600 uppercase border-b border-gray-200 bg-gray-100" style="width: 200px; word-wrap: break-word; overflow-wrap: break-word;">Question</th>
+          <th class="px-6 py-3 text-xs font-medium leading-4 tracking-wider text-left text-gray-600 uppercase border-b border-gray-200 bg-gray-100" style="width: 200px; word-wrap: break-word; overflow-wrap: break-word;">Response</th>
+          <th class="px-6 py-3 text-xs font-medium leading-4 tracking-wider text-left text-gray-600 uppercase border-b border-gray-200 bg-gray-100" style="width: 100px; word-wrap: break-word; overflow-wrap: break-word;">Course</th>
+          <th class="px-6 py-3 text-xs font-medium leading-4 tracking-wider text-left text-gray-600 uppercase border-b border-gray-200 bg-gray-100" style="width: 100px; word-wrap: break-word; overflow-wrap: break-word;">Chapter</th>
+          <th class="px-6 py-3 border-b border-gray-200 bg-gray-100" style="width: 200px; word-wrap: break-word; overflow-wrap: break-word;"></th>
+        </tr>
         </thead>
         <tbody class="bg-white">
-          <tr *ngFor="let question of questions">
-            <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
-              <div class="flex items-center">
-                <div class="text-sm leading-5 text-gray-600">{{ question.numQuestion }}</div>
-              </div>
-            </td>
-            <td class="px-6 py-4 whitespace-normal border-b border-gray-200">
-              <div class="text-sm leading-5 text-gray-600" style="width: 200px; word-wrap: break-word; overflow-wrap: break-word;">
-                {{ question.question }}
-              </div>
-            </td>
-            <!-- <td class="px-6 py-4 whitespace-normal border-b border-gray-200">
-              <div class="text-sm leading-5 text-gray-600" style="width: 200px; word-wrap: break-word; overflow-wrap: break-word;">
-                <img *ngIf="question.imagePath" [src]="getImageUrl(question.imagePath)" alt="Question Image" class="w-32 h-auto"/>
-              </div>
-            </td> -->
-            <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
-              <div class="text-sm leading-5 text-gray-600" style="width: 200px; word-wrap: break-word; overflow-wrap: break-word;">
-                {{ question.response }}
-              </div>
-            </td>
-            <td class="px-6 py-4 text-sm leading-5 text-gray-600 whitespace-no-wrap border-b border-gray-200">
-              <div class="text-sm leading-5 text-gray-600" style="width: 100px; word-wrap: break-word; overflow-wrap: break-word;">{{ question.course }}</div>
-            </td>
-            <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
-              <div class="text-sm leading-5 text-gray-600" style="width: 100px; word-wrap: break-word; overflow-wrap: break-word;">
-                {{ question.chapter }}
-              </div>
-            </td>
-            <td class="px-6 py-4 text-sm font-medium leading-5 text-right whitespace-no-wrap border-b border-gray-200">
-              <!-- <button (click)="deleteQuestion(question.numQuestion)" class="hover:text-red-500 text-red-400 font-bold py-2 px-4 rounded transition duration-300">Delete</button>
-              <button (click)="navigateToupdateQuestion(question.numQuestion)" class="hover:text-blue-700 text-blue-500 font-bold py-2 px-4 rounded transition duration-300">Update</button> -->
-            </td>
-          </tr>
+        <tr *ngFor="let question of questions">
+          <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
+            <div class="flex items-center">
+              <div class="text-sm leading-5 text-gray-600">{{ question.numQuestion }}</div>
+            </div>
+          </td>
+          <td class="px-6 py-4 whitespace-normal border-b border-gray-200">
+            <div class="text-sm leading-5 text-gray-600" style="width: 200px; word-wrap: break-word; overflow-wrap: break-word;">
+              {{ question.question }}
+            </div>
+          </td>
+          <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
+            <div class="text-sm leading-5 text-gray-600" style="width: 200px; word-wrap: break-word; overflow-wrap: break-word;">
+              {{ question.response }}
+            </div>
+          </td>
+          <td class="px-6 py-4 text-sm leading-5 text-gray-600 whitespace-no-wrap border-b border-gray-200">
+            <div class="text-sm leading-5 text-gray-600" style="width: 100px; word-wrap: break-word; overflow-wrap: break-word;">{{ question.course }}</div>
+          </td>
+          <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
+            <div class="text-sm leading-5 text-gray-600" style="width: 100px; word-wrap: break-word; overflow-wrap: break-word;">
+              {{ question.chapter }}
+            </div>
+          </td>
+          <td class="px-6 py-4 text-sm font-medium leading-5 text-right whitespace-no-wrap border-b border-gray-200">
+            <button (click)="navigateToUpdateQuestion(question.chapter, question.numQuestion)" class="hover:text-blue-500 text-blue-400 font-bold py-2 px-4 rounded transition duration-300">Modifier la Question</button>
+
+            <button (click)="deleteQuestion(question.chapter, question.numQuestion)" class="hover:text-blue-500 text-blue-400 font-bold py-2 px-4 rounded transition duration-300">supprimer</button>
+          </td>
+        </tr>
         </tbody>
       </table>
     </div>

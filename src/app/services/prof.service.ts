@@ -65,4 +65,39 @@ export class ProfService {
 
   //ajouter endpoint to update and delete question
 
+
+  getQuestionByChapterAndNumber(chapter: string, numQuestion: number): Observable<QuestionDTO> {
+    const url = `${this.baseUrl}/question/${chapter}/${numQuestion}`;
+    return this.http.get<QuestionDTO>(url).pipe(
+      catchError(this.handleError<QuestionDTO>('getQuestionByChapterAndNumber'))
+    );
+  }
+
+
+  updateQuestion(chapter: string, numQuestion: number, newQuestionText: string, newResponseText: string): Observable<string> {
+
+    const body = {
+      chapter: chapter,
+      numQuestion: numQuestion,
+      question: newQuestionText,
+      response: newResponseText
+    };
+
+    // Envoi de la requête PUT
+    return this.http.put<string>(`${this.baseUrl}/update_question`, body, {
+      responseType: 'text' as 'json'
+    }).pipe(
+      catchError(this.handleError<string>('updateQuestion'))
+    );
+  }
+  deleteQuestionByChapterAndNumber(chapter: string, numQuestion: number): Observable<string> {
+    const url = `${this.baseUrl}/question/${chapter}/${numQuestion}`;
+    return this.http.delete<string>(url, {
+      responseType: 'text' as 'json'
+    }).pipe(
+      catchError(this.handleError<string>('deleteQuestionByChapterAndNumber'))
+    );
+  }
+
+
 }
