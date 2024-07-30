@@ -47,6 +47,9 @@ public class FileDocument {
     @Field("isVisible")
     private Boolean isVisible;
 
+    @Field("pptFilePath")
+    private String pptFilePath;
+
     @Field("data")
     private byte[] data;
 

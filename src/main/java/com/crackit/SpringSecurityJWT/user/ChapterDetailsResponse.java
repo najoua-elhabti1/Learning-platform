@@ -13,6 +13,7 @@ public class ChapterDetailsResponse {
     private final String id;
 
     private final String chapter;
+    private final String chapterName;
     private final String objectifs;
     private final String plan;
     private final String introduction;

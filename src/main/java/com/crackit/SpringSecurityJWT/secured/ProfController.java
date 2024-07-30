@@ -105,13 +105,14 @@ public class ProfController {
         fileDocument.setIntroduction(introduction);
         fileDocument.setConclusion(conclusion);
         fileDocument.setIsVisible(isVisible);
-        fileRepository.save(fileDocument);
+        FileDocument savedFile = fileService.saveFile(file,chapter,course,objectifs,plan,introduction,conclusion,isVisible);
+//        fileRepository.save(fileDocument);
 
         String downloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path("/crackit/v1/prof/")
                 .path(fileDocument.getId())
                 .toUriString();
-        response.put("message", String.valueOf(ResponseEntity.status(HttpStatus.OK).body(downloadUri)));
+        response.put("message", String.valueOf(ResponseEntity.status(HttpStatus.OK).body(savedFile)));
 
         return ResponseEntity.ok(response);
     }

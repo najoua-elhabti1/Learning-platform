@@ -11,7 +11,14 @@ import com.mongodb.client.gridfs.GridFSDownloadStream;
 import com.mongodb.client.gridfs.model.GridFSFile;
 import com.mongodb.client.model.Filters;
 import org.apache.kafka.common.errors.ResourceNotFoundException;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
+import org.apache.poi.sl.usermodel.SlideShow;
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xslf.usermodel.XMLSlideShow;
+import org.apache.poi.xslf.usermodel.XSLFSlide;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,9 +29,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -421,5 +435,59 @@ public class FileService {
             throw new ResourceNotFoundException("Document not found for chapter " + chapterName);
         }
     }
+    private final String uploadDir = "uploads/";
 
+    public FileDocument saveFile(MultipartFile file, String chapter, String course, String objectifs, String plan, String introduction, String conclusion, boolean isVisible) throws IOException {
+        Path path = Paths.get(uploadDir + file.getOriginalFilename());
+        Files.createDirectories(path.getParent());
+        Files.write(path, file.getBytes());
+
+        FileDocument fileDocument = FileDocument.builder()
+                .fileName(file.getOriginalFilename())
+                .chapter(chapter)
+                .course(course)
+                .contentType(file.getContentType())
+                .objectifs(objectifs)
+                .plan(plan)
+                .introduction(introduction)
+                .conclusion(conclusion)
+                .isVisible(isVisible)
+                .pptFilePath(path.toString())
+                .data(file.getBytes())
+                .build();
+
+        return fileRepository.save(fileDocument);
+    }
+    public static void convertPptToPdf(InputStream pptInputStream, ByteArrayOutputStream pdfOutputStream) throws IOException {
+        SlideShow<?, ?> ppt = new XMLSlideShow(pptInputStream);
+        Dimension pgsize = ppt.getPageSize();
+        PDDocument pdfDoc = new PDDocument();
+
+        for (XSLFSlide slide : ((XMLSlideShow) ppt).getSlides()) {
+            BufferedImage img = new BufferedImage(pgsize.width, pgsize.height, BufferedImage.TYPE_INT_RGB);
+            Graphics2D graphics = img.createGraphics();
+            // Clear the drawing area
+            graphics.setPaint(java.awt.Color.white);
+            graphics.fill(new java.awt.Rectangle(0, 0, pgsize.width, pgsize.height));
+
+            // Render the slide
+            slide.draw(graphics);
+
+            // Add the image to the PDF document
+            PDPage page = new PDPage(new org.apache.pdfbox.pdmodel.common.PDRectangle(pgsize.width, pgsize.height));
+            pdfDoc.addPage(page);
+            PDImageXObject pdImage = PDImageXObject.createFromByteArray(pdfDoc, convertBufferedImageToByteArray(img), "slide");
+            PDPageContentStream contentStream = new PDPageContentStream(pdfDoc, page);
+            contentStream.drawImage(pdImage, 0, 0, pgsize.width, pgsize.height);
+            contentStream.close();
+        }
+        pdfDoc.save(pdfOutputStream);
+        pdfDoc.close();
+    }
+
+    private static byte[] convertBufferedImageToByteArray(BufferedImage image) throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ImageIO.write(image, "png", baos);
+        return baos.toByteArray();
+    }
 }

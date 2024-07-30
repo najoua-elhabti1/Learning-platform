@@ -8,4 +8,6 @@ import java.util.Optional;
 
 public interface FileDocumentRepository extends MongoRepository<FileDocument, String> {
     Optional<FileDocument> findByChapter(String chapter);
+
+    Optional<FileDocument> findById(String id);
 }
