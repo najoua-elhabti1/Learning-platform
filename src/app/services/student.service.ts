@@ -25,8 +25,11 @@ export class StudentService {
   viewFile(fileId: string) {
     return this.http.get(`${this.baseUrl}/view/${fileId}`, { responseType: 'blob' });
   }
-  getFileUrl(fileId: string) {
-    return `${this.baseUrl}/view/${fileId}`;
+  // getFileUrl(fileId: string) {
+  //   return `${this.baseUrl}/view/${fileId}`;
+  // }
+  getPptUrl(fileId: string): string {
+    return `${this.baseUrl}/${fileId}/ppt`;
   }
 }
 

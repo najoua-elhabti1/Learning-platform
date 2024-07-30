@@ -37,7 +37,7 @@ export const routes: Routes = [
   { path: 'chapters', component: ChaptersComponent },
   { path: 'chapter-detail/:chapterName', component: ChapterDetailComponent },
   { path: 'view-ppt/:id', component: ViewPptComponent },
-
+  { path: 'courses/:id/ppt', component: ViewPptComponent },
 
   {
     path : '',

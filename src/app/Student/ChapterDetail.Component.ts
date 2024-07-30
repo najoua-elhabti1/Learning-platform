@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { HeaderComponent } from '../header/header.component';
 import { StudentService } from '../services/student.service';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
@@ -37,15 +37,18 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
                 View Questions
               </button>
               <button (click)="downloadFile(chapter.id)">Download File</button>
-              <button (click)="viewChapter(chapter.id)">View File</button>
+              <button (click)="viewPpt(chapter.chapterName)">View PPT</button>
+<iframe *ngIf="pptUrl" [src]="pptUrl" width="100%" height="600px"></iframe>
+
             </td>
           </tr>
         </tbody>
       </table>
     </div>
-    <div *ngIf="fileUrl" class="iframe-container">
-  <iframe [src]="fileUrl" width="100%" height="600px" frameborder="0"></iframe>
-</div>
+    <button (click)="viewPpt(chapter.chapterName)">View PPT</button>
+<iframe *ngIf="pptUrl" [src]="pptUrl" width="100%" height="600px"></iframe>
+
+
   `,
   styles: [`
     .container {
@@ -97,10 +100,12 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
   `]
 })
 export class ChapterDetailComponent implements OnInit {
+  
+  pptUrl: SafeResourceUrl| undefined;
   chapter: any;
   public fileUrl: SafeResourceUrl | undefined;
 
-  constructor(
+  constructor(private router: Router,
     private route: ActivatedRoute,
     private studentService: StudentService,
     private sanitizer: DomSanitizer
@@ -133,7 +138,11 @@ export class ChapterDetailComponent implements OnInit {
   //   console.log(fileUrl);
 
   // }
-  viewChapter(fileId: string) {
-    window.open(`/view-ppt/${fileId}`, '_blank');
+  // viewChapter(fileId: string) {
+  //   window.open(`/view-ppt/${fileId}`, '_blank');
+  // }
+  viewPpt(fileId: string): void {
+    console.log(this.chapter.chapterName);
+    this.router.navigate([`/courses/${fileId}/ppt`]);
   }
 }
