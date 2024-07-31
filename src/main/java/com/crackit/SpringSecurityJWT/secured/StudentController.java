@@ -15,6 +15,7 @@ import org.springframework.data.mongodb.gridfs.GridFsTemplate;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import com.mongodb.client.gridfs.model.GridFSFile;
 
@@ -26,6 +27,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @RestController
 @RequestMapping("/crackit/v1/student")
+@PreAuthorize("hasRole('Student')")
 public class StudentController {
 
     private final GridFsTemplate gridFsTemplate;

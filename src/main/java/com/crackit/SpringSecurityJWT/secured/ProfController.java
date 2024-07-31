@@ -40,7 +40,7 @@ import java.util.Optional;
 @AllArgsConstructor
 @RestController
 @RequestMapping("/crackit/v1/prof")
-//@PreAuthorize("hasRole('Prof')")
+@PreAuthorize("hasRole('Prof')")
 public class ProfController {
 
     @GetMapping
