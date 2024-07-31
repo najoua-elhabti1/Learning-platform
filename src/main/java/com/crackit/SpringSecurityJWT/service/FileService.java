@@ -437,26 +437,11 @@ public class FileService {
     }
     private final String uploadDir = "uploads/";
 
-    public FileDocument saveFile(MultipartFile file, String chapter, String course, String objectifs, String plan, String introduction, String conclusion, boolean isVisible) throws IOException {
+    public void saveFile(MultipartFile file, String chapter, String course, String objectifs, String plan, String introduction, String conclusion, boolean isVisible) throws IOException {
         Path path = Paths.get(uploadDir + file.getOriginalFilename());
         Files.createDirectories(path.getParent());
         Files.write(path, file.getBytes());
 
-        FileDocument fileDocument = FileDocument.builder()
-                .fileName(file.getOriginalFilename())
-                .chapter(chapter)
-                .course(course)
-                .contentType(file.getContentType())
-                .objectifs(objectifs)
-                .plan(plan)
-                .introduction(introduction)
-                .conclusion(conclusion)
-                .isVisible(isVisible)
-                .pptFilePath(path.toString())
-                .data(file.getBytes())
-                .build();
-
-        return fileRepository.save(fileDocument);
     }
     public static void convertPptToPdf(InputStream pptInputStream, ByteArrayOutputStream pdfOutputStream) throws IOException {
         SlideShow<?, ?> ppt = new XMLSlideShow(pptInputStream);

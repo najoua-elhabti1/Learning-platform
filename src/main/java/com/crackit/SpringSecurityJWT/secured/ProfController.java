@@ -6,9 +6,7 @@ import com.crackit.SpringSecurityJWT.user.repository.FileDocumentRepository;
 import com.mongodb.client.gridfs.model.GridFSFile;
 import lombok.AllArgsConstructor;
 import org.apache.kafka.common.errors.ResourceNotFoundException;
-import org.apache.poi.xslf.usermodel.XMLSlideShow;
-import org.apache.poi.xslf.usermodel.XSLFSlide;
-import org.apache.poi.xslf.usermodel.XSLFTextShape;
+import org.apache.poi.xslf.usermodel.*;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
@@ -80,16 +78,16 @@ public class ProfController {
             XSLFSlide[] slides = ppt.getSlides().toArray(new XSLFSlide[0]);
 
             if (slides.length > 1) {
-                objectifs = extractTextFromSlide(slides[1]);
+                objectifs = extractFormattedTextFromSlide(slides[1]);
             }
             if (slides.length > 2) {
-                plan = extractTextFromSlide(slides[2]);
+                plan = extractFormattedTextFromSlide(slides[2]);
             }
             if (slides.length > 3) {
-                introduction = extractTextFromSlide(slides[3]);
+                introduction = extractFormattedTextFromSlide(slides[3]);
             }
             if (slides.length > 4) {
-                conclusion = extractTextFromSlide(slides[slides.length - 1]);
+                conclusion = extractFormattedTextFromSlide(slides[slides.length - 1]);
             }
         }
 
@@ -105,28 +103,39 @@ public class ProfController {
         fileDocument.setIntroduction(introduction);
         fileDocument.setConclusion(conclusion);
         fileDocument.setIsVisible(isVisible);
-        FileDocument savedFile = fileService.saveFile(file,chapter,course,objectifs,plan,introduction,conclusion,isVisible);
-//        fileRepository.save(fileDocument);
+        fileService.saveFile(file,chapter,course,objectifs,plan,introduction,conclusion,isVisible);
+        fileRepository.save(fileDocument);
 
         String downloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path("/crackit/v1/prof/")
                 .path(fileDocument.getId())
                 .toUriString();
-        response.put("message", String.valueOf(ResponseEntity.status(HttpStatus.OK).body(savedFile)));
+        response.put("message", String.valueOf(ResponseEntity.status(HttpStatus.OK).body(fileDocument)));
 
         return ResponseEntity.ok(response);
     }
+    private String extractFormattedTextFromSlide(XSLFSlide slide) {
+        StringBuilder slideText = new StringBuilder();
+        boolean firstLineSkipped = false;
 
-
-    private String extractTextFromSlide(XSLFSlide slide) {
-        StringBuilder text = new StringBuilder();
-        slide.getShapes().forEach(shape -> {
+        for (XSLFShape shape : slide.getShapes()) {
             if (shape instanceof XSLFTextShape) {
                 XSLFTextShape textShape = (XSLFTextShape) shape;
-                text.append(textShape.getText()).append("\n");
+                for (XSLFTextParagraph paragraph : textShape.getTextParagraphs()) {
+                    String paragraphText = paragraph.getText();
+
+                    // Skip the first line of text
+                    if (!firstLineSkipped) {
+                        firstLineSkipped = true;  // Mark that the first line has been skipped
+                    } else {
+                        slideText.append("- ").append(paragraph.getText()).append("\n"); // Preserve line breaks
+                    }
+                }
+                slideText.append("\n"); // Separate text shapes within a slide
             }
-        });
-        return text.toString().trim();
+        }
+
+        return slideText.toString().trim();
     }
 
     @PutMapping("/{courseId}/visibility")
@@ -141,12 +150,16 @@ public class ProfController {
 
     @GetMapping("/download/{id}")
     public ResponseEntity<Resource> downloadFile(@PathVariable String id) {
+        System.out.println(id);
+
         FileDocument fileDocument = fileRepository.findById(id).orElseThrow(() -> new RuntimeException("File not found with id " + id));
         GridFSFile gridFsFile = gridFsTemplate.findOne(new Query(Criteria.where("_id").is(id)));
+
+        System.out.println(gridFsFile);
         if (gridFsFile == null) {
             return ResponseEntity.notFound().build();
         }
-
+        System.out.println("here");
         try {
             Resource resource = new InputStreamResource(gridFsTemplate.getResource(gridFsFile).getInputStream());
 

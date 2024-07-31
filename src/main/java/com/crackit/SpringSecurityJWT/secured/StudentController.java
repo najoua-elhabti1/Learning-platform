@@ -8,6 +8,7 @@ import com.crackit.SpringSecurityJWT.user.repository.FileDocumentRepository;
 import com.mongodb.client.gridfs.model.GridFSFile;
 import lombok.AllArgsConstructor;
 import org.apache.kafka.common.errors.ResourceNotFoundException;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
@@ -98,7 +99,10 @@ public class StudentController {
     public ResponseEntity<Resource> downloadFile(@PathVariable String id) {
         FileDocument fileDocument = fileRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("File not found with id " + id));
-        GridFSFile gridFsFile = gridFsTemplate.findOne(new Query(Criteria.where("_id").is(id)));
+        ObjectId objectId = new ObjectId(id);
+        System.out.println(objectId);
+        GridFSFile gridFsFile = gridFsTemplate.findOne(new Query(Criteria.where("_id").is(objectId)));
+        System.out.println(gridFsFile);
         if (gridFsFile == null) {
             return ResponseEntity.notFound().build();
         }
