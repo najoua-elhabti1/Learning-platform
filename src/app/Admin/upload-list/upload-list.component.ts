@@ -6,15 +6,17 @@ import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth/auth.service';
 import { MenuComponent } from '../../menu/menu.component';
 import { AdminMenuComponent } from "../admin-menu/admin-menu.component";
+import { FooterComponent } from "../../footer/footer.component";
 
 @Component({
   selector: 'app-upload-list',
   standalone: true,
-  imports: [HeaderComponent, CommonModule, FormsModule, MenuComponent, AdminMenuComponent],
+  imports: [HeaderComponent, CommonModule, FormsModule, MenuComponent, AdminMenuComponent, FooterComponent],
   templateUrl: './upload-list.component.html',
   styleUrls: ['./upload-list.component.css']
 })
 export class UploadListComponent {
+  selectedChoice: string | null = null;
   selectedFile: File | null = null;
   uploadStatus: string = '';
   sendEmailStatus: string = '';
@@ -60,5 +62,8 @@ export class UploadListComponent {
         }
       }
     );
+  }
+  selectChoice(choice: string) {
+    this.selectedChoice = choice;
   }
 }

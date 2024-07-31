@@ -43,6 +43,12 @@ import { StudentComponent } from "./student.component";
       </table>
       <iframe *ngIf="pptUrl" [src]="pptUrl" width="100%" height="600px"></iframe>
     </div>
+<<<<<<< HEAD
+=======
+    
+
+
+>>>>>>> 313d4558fea9494ab0c686c256c50aa141e653fb
   `,
   styles: [`
     .container {
@@ -152,7 +158,10 @@ export class ChapterDetailComponent implements OnInit {
       URL.revokeObjectURL(objectUrl);
     });
   }
+<<<<<<< HEAD
 
+=======
+>>>>>>> 313d4558fea9494ab0c686c256c50aa141e653fb
   viewPpt(fileId: string): void {
     this.router.navigate([`student/courses/${fileId}/ppt`]);
   }

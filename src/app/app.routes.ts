@@ -64,6 +64,16 @@ export const routes: Routes = [
     canActivate:[StudentGuard]
 
  },
+ {
+  path : 'Prof/ChangePwd',
+  component : ChangePwdComponent,
+
+},
+{
+  path : 'Admin/ChangePwd',
+  component : ChangePwdComponent,
+
+},
   {
     path : 'reset-password',
     component : ResetPasswordComponent

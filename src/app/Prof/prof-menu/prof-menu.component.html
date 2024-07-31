@@ -14,20 +14,16 @@
 </nav> -->
 
 <div class="bg-customYellow">
-    <nav class="container mx-auto flex justify-between items-center py-4">
-        <!-- <div class="flex items-center space-x-6">
-            <div class="hidden md:flex space-x-8">
-                <a (click)="navigateToListAll()" class="text-customBlue hover:text-gray-900">Liste des cours et chapitres</a>
-            </div>
-        </div> -->
+    <nav class="container mx-auto flex justify-between items-center py-4  ">
+        <div class="flex space-x-16">
         <div class="relative">
             <button class="text-gray-700 hover:text-gray-900 focus:outline-none focus:text-gray-900" (click)="toggleQuestionMenu()">
                 <span class="sr-only">Open user menu</span>
                 <p>Question</p>
             </button>
             <div id="question-menu" class="origin-top-right absolute left-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 hidden" role="menu">
-                <a (click)="navigateToAddQuestion()" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Ajouter une question</a>
-                <a (click)="navigateToAllQuestions()" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Liste des questions</a>
+                <button (click)="navigateToAddQuestion()" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Ajouter une question</button>
+                <button (click)="navigateToAllQuestions()" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Liste des questions</button>
             </div>
         </div>
         <div class="relative">
@@ -36,11 +32,12 @@
                 <p>Cours et chapitres</p>
             </button>
             <div id="course-menu" class="origin-top-right absolute left-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 hidden" role="menu">
-                <a (click)="navigateToAddChapter()" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Ajouter un chapitre</a>
-                <a (click)="navigateToListAll()" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Liste des chapitres</a>
+                <button (click)="navigateToAddChapter()" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Ajouter un chapitre</button>
+                <button (click)="navigateToListAll()" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Liste des chapitres</button>
             </div>
         </div>
-        <div class="hidden md:flex items-center">
+    </div>
+        <!-- <div class="hidden md:flex items-center">
             <div class="relative">
                 <label for="search" class="sr-only">Search</label>
                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -50,15 +47,20 @@
                 </div>
                 <input id="search" name="search" type="search" placeholder="Search" class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
             </div>
-        </div>
+        </div> -->
         <div class="flex items-center space-x-4">
+<<<<<<< HEAD
 
             <button type="button" class="relative text-gray-700 hover:text-gray-900 focus:outline-none focus:text-gray-900">
+=======
+            
+            <!-- <button type="button" class="relative text-gray-700 hover:text-gray-900 focus:outline-none focus:text-gray-900">
+>>>>>>> 313d4558fea9494ab0c686c256c50aa141e653fb
                 <span class="sr-only">View notifications</span>
                 <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6 6 0 10-12 0v3.159c0 .548-.215 1.082-.595 1.478L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
                 </svg>
-            </button>
+            </button> -->
             <div class="relative">
                 <button class="text-gray-700 hover:text-gray-900 focus:outline-none focus:text-gray-900" (click)="toggleUserMenu()">
                     <span class="sr-only">Open user menu</span>
@@ -66,8 +68,13 @@
                 </button>
 
                 <div id="user-menu" class="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 hidden" role="menu">
+<<<<<<< HEAD
                     <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Changer mot de passe</a>
                     <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" (click)="onLogout()" role="menuitem">Deconnexion</a>
+=======
+                    <button (click)="navigateToModifyPwd()" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Changer mot de passe</button>
+                    <button (click)="onLogout()" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Fermer la session</button>
+>>>>>>> 313d4558fea9494ab0c686c256c50aa141e653fb
                 </div>
             </div>
         </div>

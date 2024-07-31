@@ -1,82 +1,61 @@
 <app-header></app-header>
 <app-prof-menu></app-prof-menu>
-<!-- 
-<div *ngIf="courses.length > 0">
-  <div *ngFor="let course of courses" class="course-item p-4 mb-4 border rounded-lg shadow">
-    <h3 class="text-xl font-semibold">{{ course.course }} - Chapter: {{ course.chapter }}</h3>
-    <p>File Name: {{ course.fileName }}</p>
-    <p>Content Type: {{ course.contentType }}</p>
-    
-    <button *ngIf="!course.isVisible" (click)="makeVisibleToStudents(course.id, true)" class="btn btn-primary bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-      Make Visible to Students
-    </button>
-    <button *ngIf="course.isVisible" (click)="makeVisibleToStudents(course.id, false)" class="btn btn-secondary bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
-      Make Invisible to Students
-    </button>
-    
-    <button (click)="downloadCourse(course.id, course.fileName)" class="btn btn-secondary bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
-      Download
-    </button>
-  </div>
-</div>
-<div *ngIf="courses.length === 0" class="text-center">
-  <p>No courses available.</p>
-</div> -->
 
 <div class="flex flex-col mt-8 px-4 lg:px-8" *ngIf="courses.length > 0">
-  <div class="py-2 -my-2 overflow-x-auto">
+  <h1 class="text-3xl font-bold text-gray-700">Liste des Chapitres</h1>
+  <div class="py-2 mt-8 -my-2 overflow-x-auto">
     <div class="inline-block min-w-full overflow-hidden align-middle border-b border-gray-200 shadow sm:rounded-lg">
       <table class="min-w-full">
         <thead>
           <tr>
-            <th class="px-6 py-3 text-xs font-medium leading-4 tracking-wider text-left text-gray-600 uppercase border-b border-gray-200 bg-gray-100" style="width: 100px; word-wrap: break-word; overflow-wrap: break-word;">Cours</th>
-            <th class="px-6 py-3 text-xs font-medium leading-4 tracking-wider text-left text-gray-600 uppercase border-b border-gray-200 bg-gray-100" style="width: 100px; word-wrap: break-word; overflow-wrap: break-word;">Chapitre</th>
-            <th class="px-6 py-3 text-xs font-medium leading-4 tracking-wider text-left text-gray-600 uppercase border-b border-gray-200 bg-gray-100" style="width: 200px; word-wrap: break-word; overflow-wrap: break-word;">Objectifs</th>
-            <th class="px-6 py-3 text-xs font-medium leading-4 tracking-wider text-left text-gray-600 uppercase border-b border-gray-200 bg-gray-100" style="width: 200px; word-wrap: break-word; overflow-wrap: break-word;">Plan</th>
-            <th class="px-6 py-3 text-xs font-medium leading-4 tracking-wider text-left text-gray-600 uppercase border-b border-gray-200 bg-gray-100" style="width: 200px; word-wrap: break-word; overflow-wrap: break-word;">Introduction</th>
-            <th class="px-6 py-3 text-xs font-medium leading-4 tracking-wider text-left text-gray-600 uppercase border-b border-gray-200 bg-gray-100" style="width: 200px; word-wrap: break-word; overflow-wrap: break-word;">Conclusion</th>
-
-
-
-            <th class="px-6 py-3 border-b border-gray-200 bg-gray-100" style="width: 200px; word-wrap: break-word; overflow-wrap: break-word;"></th>
+            <th class="px-6 py-3 text-xs font-medium leading-4 tracking-wider text-left text-gray-600 uppercase border-b border-gray-200 bg-gray-100">
+              Cours
+            </th>
+            <th class="px-6 py-3 text-xs font-medium leading-4 tracking-wider text-left text-gray-600 uppercase border-b border-gray-200 bg-gray-100">
+              Chapitre
+            </th>
+            <th class="px-6 py-3 text-xs font-medium leading-4 tracking-wider text-left text-gray-600 uppercase border-b border-gray-200 bg-gray-100">
+              Objectifs
+            </th>
+            <th class="px-6 py-3 text-xs font-medium leading-4 tracking-wider text-left text-gray-600 uppercase border-b border-gray-200 bg-gray-100">
+              Plan
+            </th>
+            <th class="px-6 py-3 text-xs font-medium leading-4 tracking-wider text-left text-gray-600 uppercase border-b border-gray-200 bg-gray-100">
+              Introduction
+            </th>
+            <th class="px-6 py-3 text-xs font-medium leading-4 tracking-wider text-left text-gray-600 uppercase border-b border-gray-200 bg-gray-100">
+              Conclusion
+            </th>
+            <th class="px-6 py-3 border-b border-gray-200 bg-gray-100"></th>
           </tr>
         </thead>
         <tbody class="bg-white">
           <tr *ngFor="let course of courses">
-            <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
-              <div class="flex items-center">
-                <div class="text-sm leading-5 text-gray-600">{{ course.course }} </div>
-              </div>
+            <td class="px-6 py-4 border-b border-gray-200">
+              <div class="text-sm leading-5 text-gray-600">{{ course.course }}</div>
             </td>
-            <td class="px-6 py-4 whitespace-normal border-b border-gray-200">
-              <div class="text-sm leading-5 text-gray-600">
-                {{ course.chapter }}
-              </div>
+            <td class="px-6 py-4 border-b border-gray-200">
+              <div class="text-sm leading-5 text-gray-600">{{ course.chapter }}</div>
             </td>
-            <td class="px-6 py-4 whitespace-normal border-b border-gray-200">
-              <div class="text-sm leading-5 text-gray-600" style="width: 200px; word-wrap: break-word; overflow-wrap: break-word;">
-                {{ course.objectifs }}
-              </div>
+            <td class="px-6 py-4 border-b border-gray-200 whitespace-pre-wrap">
+              <div class="text-sm leading-5 text-gray-600">{{ course.objectifs }}</div>
             </td>
-            <td class="px-6 py-4 whitespace-normal border-b border-gray-200">
-              <div class="text-sm leading-5 text-gray-600" style="width: 200px; word-wrap: break-word; overflow-wrap: break-word;">
-                {{ course.plan }}
-              </div>
+            <td class="px-6 py-4 border-b border-gray-200 whitespace-pre-wrap">
+              <div class="text-sm leading-5 text-gray-600">{{ course.plan }}</div>
             </td>
-            <td class="px-6 py-4 whitespace-normal border-b border-gray-200">
-              <div class="text-sm leading-5 text-gray-600" style="width: 200px; word-wrap: break-word; overflow-wrap: break-word;">
-                {{ course.introduction }}
-              </div>
+            <td class="px-6 py-4 border-b border-gray-200 whitespace-pre-wrap">
+              <div class="text-sm leading-5 text-gray-600">{{ course.introduction }}</div>
             </td>
-            <td class="px-6 py-4 whitespace-normal border-b border-gray-200">
-              <div class="text-sm leading-5 text-gray-600" style="width: 200px; word-wrap: break-word; overflow-wrap: break-word;">
-                {{ course.conclusion }}
-              </div>
+            <td class="px-6 py-4 border-b border-gray-200 whitespace-pre-wrap">
+              <div class="text-sm leading-5 text-gray-600">{{ course.conclusion }}</div>
             </td>
-          
             <td class="px-6 py-4 text-sm font-medium leading-5 text-right whitespace-no-wrap border-b border-gray-200">
-              <button *ngIf="!course.isVisible" (click)="makeVisibleToStudents(course.id, true)"  class="hover:text-red-500 text-red-400 font-bold py-2 px-4 rounded transition duration-300">Make Visible to Students</button>
-              <button *ngIf="course.isVisible" (click)="makeVisibleToStudents(course.id, false)" class="hover:text-blue-700 text-blue-500 font-bold py-2 px-4 rounded transition duration-300">Make Invisible to Students</button>
+              <button *ngIf="!course.isVisible" (click)="makeVisibleToStudents(course.id, true)" class="hover:text-red-500 text-red-400 font-bold py-2 px-4 rounded transition duration-300">
+                Rendre Visible pour les etudiants
+              </button>
+              <button *ngIf="course.isVisible" (click)="makeVisibleToStudents(course.id, false)" class="hover:text-blue-700 text-blue-500 font-bold py-2 px-4 rounded transition duration-300">
+                Rendre Invisible pour les etudiants
+              </button>
               <button (click)="downloadCourse(course.id, course.fileName)" class="btn btn-secondary bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
                 Download
               </button>
@@ -87,6 +66,6 @@
     </div>
   </div>
 </div>
-  <div *ngIf="courses.length === 0" class="text-center">
-    <p>No courses available.</p>
-  </div>
+<div *ngIf="courses.length === 0" class="text-center">
+  <p>No courses available.</p>
+</div>
