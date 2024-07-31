@@ -36,7 +36,13 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
-                .csrf(AbstractHttpConfigurer::disable)
+                .csrf(csrf -> csrf.disable()) // Disable CSRF
+                .headers(headers -> headers
+                        .frameOptions(frameOptions -> frameOptions.disable()) // Disable X-Frame-Options header
+                        .addHeaderWriter((request, response) -> response.setHeader(
+                                "Content-Security-Policy",
+                                "default-src 'self'; style-src 'self' https://stackpath.bootstrapcdn.com https://cdnjs.cloudflare.com; font-src 'self' https://stackpath.bootstrapcdn.com https://cdnjs.cloudflare.com; connect-src 'self' http://localhost:8080; frame-ancestors 'self' http://localhost:4200"
+                        )))
                 .authorizeHttpRequests(req -> req
                         .requestMatchers("/crackit/v1/auth/**").permitAll()
                         .requestMatchers("/crackit/v1/prof/add_questions").hasRole(Prof.name())
@@ -45,6 +51,7 @@ public class SecurityConfiguration {
                         .requestMatchers(GET, "/crackit/v1/admin/**").hasRole(ADMIN.name())
                         .requestMatchers(POST, "/crackit/v1/admin/**").hasRole(ADMIN.name())
 
+
                         .requestMatchers(GET, "/crackit/v1/prof/**").hasRole(Prof.name())
                         .requestMatchers(PUT, "/crackit/v1/prof/**").hasRole(Prof.name())
                         .requestMatchers(DELETE, "/crackit/v1/prof/**").hasRole(Prof.name())
@@ -52,6 +59,15 @@ public class SecurityConfiguration {
                         .requestMatchers(DELETE, "/crackit/v1/prof/**").hasRole(Prof.name())
                         .requestMatchers(GET, "/crackit/v1/student/**").hasRole(Student.name())
                         .requestMatchers(POST, "/crackit/v1/student/**").hasRole(Student.name())
+
+                        .requestMatchers(GET, "/crackit/v1/prof/**").permitAll()
+                        .requestMatchers(PUT, "/crackit/v1/prof/**").permitAll()
+                        .requestMatchers(DELETE, "/crackit/v1/prof/**").permitAll()
+                        .requestMatchers(POST, "/crackit/v1/prof/**").permitAll()
+                        .requestMatchers(DELETE, "/crackit/v1/prof/**").permitAll()
+                        .requestMatchers(GET, "/crackit/v1/student/**").permitAll()
+                        .requestMatchers(POST, "/crackit/v1/student/**").permitAll()
+
                         .anyRequest().authenticated())
                 .exceptionHandling(exceptionHandling -> exceptionHandling
                         .authenticationEntryPoint(jwtAuthenticationEntryPoint)
@@ -61,6 +77,7 @@ public class SecurityConfiguration {
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
+
     @Bean
     public CorsFilter corsFilter() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
