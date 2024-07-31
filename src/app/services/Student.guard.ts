@@ -19,8 +19,8 @@ export class StudentGuard implements CanActivate {
 
       return true;
     } else {
-      // Redirige vers une page non autorisée ou gère l'accès d'une autre manière
-      this.router.navigate(['/Login']); // Exemple de redirection vers une page d'autorisation refusée
+
+      this.router.navigate(['/Login']);
       return false;
     }
   }

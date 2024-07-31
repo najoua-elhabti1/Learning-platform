@@ -6,13 +6,14 @@ import { MenuComponent } from '../menu/menu.component';
 import { ProfMenuComponent } from '../Prof/prof-menu/prof-menu.component';
 import { RouterOutlet, ActivatedRoute } from '@angular/router';
 import { StudentService } from '../services/student.service';
+import {StudentComponent} from "./student.component";
 
 @Component({
   selector: 'app-static-question-form',
   standalone: true,
-  imports: [CommonModule, FormsModule, HeaderComponent, MenuComponent, ProfMenuComponent, RouterOutlet],
+  imports: [CommonModule, FormsModule, HeaderComponent, MenuComponent, ProfMenuComponent, RouterOutlet, StudentComponent],
   template: `
-    <app-header></app-header>
+    <app-student></app-student>
     <div class="container">
       <h2 class="form-title">Formulaire de Questions</h2>
       <form *ngIf="questions.length > 0" (ngSubmit)="submitAnswers()">

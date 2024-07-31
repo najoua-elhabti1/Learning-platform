@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Observable, of, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -10,56 +11,56 @@ export class StudentService {
 
   constructor(private http: HttpClient) {}
 
+  private getAuthHeaders(): HttpHeaders {
+    const token = localStorage.getItem('access_token');
+    if (!token) {
+      console.log('No access token found');
+      return new HttpHeaders(); // Return headers with no token
+    }
+    return new HttpHeaders({
+      'Authorization': `Bearer ${JSON.parse(token)}`,
+      'Content-Type': 'application/json'
+    });
+  }
+
   getAllChapters(): Observable<string[]> {
-    return this.http.get<string[]>(`${this.baseUrl}/chapters`);
+    return this.http.get<string[]>(`${this.baseUrl}/chapters`, { headers: this.getAuthHeaders() })
+      .pipe(
+        catchError(this.handleError<string[]>('getAllChapters', []))
+      );
   }
 
   getChapterDetails(chapterName: string): Observable<any> {
     const encodedName = encodeURIComponent(chapterName);
-    return this.http.get<any>(`${this.baseUrl}/chapter/${encodedName}`);
-  }
-  downloadFile(fileId: string) {
-    return this.http.get(`${this.baseUrl}/download/${fileId}`, { responseType: 'blob' });
+    return this.http.get<any>(`${this.baseUrl}/chapter/${encodedName}`, { headers: this.getAuthHeaders() })
+      .pipe(
+        catchError(this.handleError<any>('getChapterDetails'))
+      );
   }
 
-  viewFile(fileId: string) {
-    return this.http.get(`${this.baseUrl}/view/${fileId}`, { responseType: 'blob' });
+  downloadFile(fileId: string): Observable<Blob> {
+    return this.http.get<Blob>(`${this.baseUrl}/download/${fileId}`, { headers: this.getAuthHeaders(), responseType: 'blob' as 'json' })
+      .pipe(
+        catchError(this.handleError<Blob>('downloadFile'))
+      );
   }
-  // getFileUrl(fileId: string) {
-  //   return `${this.baseUrl}/view/${fileId}`;
-  // }
+
+  viewFile(fileId: string): Observable<Blob> {
+    return this.http.get<Blob>(`${this.baseUrl}/view/${fileId}`, { headers: this.getAuthHeaders(), responseType: 'blob' as 'json' })
+      .pipe(
+        catchError(this.handleError<Blob>('viewFile'))
+      );
+  }
+
+  private handleError<T>(operation = 'operation', result?: T) {
+    return (error: any): Observable<T> => {
+      console.error(`${operation} failed: ${error.message}`);
+      alert(`${operation} failed. Please try again later.`);
+      return of(result as T);
+    };
+  }
+
   getPptUrl(fileId: string): string {
     return `${this.baseUrl}/${fileId}/ppt`;
   }
 }
-
-
-// import { Injectable } from '@angular/core';
-// import { HttpClient, HttpHeaders } from '@angular/common/http';
-// import { Observable } from 'rxjs';
-
-// @Injectable({
-//   providedIn: 'root'
-// })
-// export class StudentService {
-//   private baseUrl = 'http://localhost:8080/crackit/v1/student';
-//
-//   constructor(private http: HttpClient) {}
-//
-//   private getAuthHeaders(): HttpHeaders {
-//     const token = localStorage.getItem('authToken'); // Récupérer le token du stockage
-//     return new HttpHeaders({
-//       'Authorization': `Bearer ${token}`,
-//       'Content-Type': 'application/json'
-//     });
-//   }
-//
-//   getAllChapters(): Observable<string[]> {
-//     return this.http.get<string[]>(`${this.baseUrl}/chapters`, { headers: this.getAuthHeaders() });
-//   }
-//
-//   getChapterDetails(chapterName: string): Observable<any> {
-//     const encodedName = encodeURIComponent(chapterName);
-//     return this.http.get<any>(`${this.baseUrl}/chapter/${encodedName}`, { headers: this.getAuthHeaders() });
-//   }
-// }

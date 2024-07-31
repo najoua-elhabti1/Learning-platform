@@ -34,7 +34,7 @@ export class ViewPptComponent implements OnInit {
   }
 
     }
-    
-  
-    
-  
+
+
+
+

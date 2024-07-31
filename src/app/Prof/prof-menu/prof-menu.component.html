@@ -6,7 +6,7 @@
                     <a href="#" class="px-3 py-2 text-sm font-medium">Home</a>
                     <button (click)="onLogout()" class="px-3 py-2 text-sm font-medium">Logout</button>
                     <a href="#" class="px-3 py-2 text-sm font-medium">Ajouter un chapitre</a>
-                    <a href="#" class="px-3 py-2 text-sm font-medium">Ajouter une question</a> 
+                    <a href="#" class="px-3 py-2 text-sm font-medium">Ajouter une question</a>
                 </div>
             </div>
         </div>
@@ -52,7 +52,7 @@
             </div>
         </div>
         <div class="flex items-center space-x-4">
-            
+
             <button type="button" class="relative text-gray-700 hover:text-gray-900 focus:outline-none focus:text-gray-900">
                 <span class="sr-only">View notifications</span>
                 <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -64,10 +64,10 @@
                     <span class="sr-only">Open user menu</span>
                     <img class="h-8 w-8 rounded-full" src="../../../assets/2.png" alt="">
                 </button>
-                
+
                 <div id="user-menu" class="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 hidden" role="menu">
                     <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Changer mot de passe</a>
-                    <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Deconnexion</a>
+                    <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" (click)="onLogout()" role="menuitem">Deconnexion</a>
                 </div>
             </div>
         </div>

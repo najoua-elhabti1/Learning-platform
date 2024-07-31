@@ -15,9 +15,10 @@ import { ChapterDetailComponent } from './Student/ChapterDetail.Component';
 import { StaticQuestionFormComponent } from './Student/Questions.component';
 import { AdminGuard } from "./services/admin.guard";
 import {ProfGuard} from "./services/Prof.guard";
-import {AddQuestionsComponentN} from "./Student/profImport.component";
+
 import { ChangePwdComponent } from './Student/change-pwd/change-pwd.component';
 import { ViewPptComponent } from './Student/viewChapiter.component';
+import {StudentGuard} from "./services/Student.guard";
 
 
 export const routes: Routes = [
@@ -30,14 +31,14 @@ export const routes: Routes = [
     path: 'login',
     component: LoginComponent
   },
-  { path: 'static-question-form/:chapterName', component: StaticQuestionFormComponent },
-  { path: 'student', component: StudentComponent },
-  { path: 'ProfImport', component:  AddQuestionsComponentN},
 
-  { path: 'chapters', component: ChaptersComponent },
-  { path: 'chapter-detail/:chapterName', component: ChapterDetailComponent },
-  { path: 'view-ppt/:id', component: ViewPptComponent },
-  { path: 'courses/:id/ppt', component: ViewPptComponent },
+  { path: 'student', component: StudentComponent ,canActivate:[StudentGuard]},
+
+  { path: 'student/static-question-form/:chapterName', component: StaticQuestionFormComponent ,canActivate:[StudentGuard]},
+  { path: 'student/chapters', component: ChaptersComponent ,canActivate:[StudentGuard]},
+  { path: 'student/chapter-detail/:chapterName', component: ChapterDetailComponent ,canActivate:[StudentGuard]},
+  { path: 'student/view-ppt/:id', component: ViewPptComponent ,canActivate:[StudentGuard]},
+  { path: 'student/courses/:chapterName/ppt', component: ViewPptComponent ,canActivate:[StudentGuard]},
 
   {
     path : '',
@@ -60,6 +61,7 @@ export const routes: Routes = [
   {
     path : 'Student/ChangePwd',
     component : ChangePwdComponent,
+    canActivate:[StudentGuard]
 
  },
   {
@@ -68,32 +70,36 @@ export const routes: Routes = [
   }, {
     path : 'Prof/AddChapiter',
     component : AddChapiterComponent,
+    canActivate:[ProfGuard]
 
   },
 
   {
     path : 'Prof/AddQuestion',
     component : AddQuestionsComponent,
-
+    canActivate:[ProfGuard]
   },
 
 
 
-  { path: 'update-question/:chapter/:numQuestion', component: UpdateQuestionComponent },
+  { path: 'update-question/:chapter/:numQuestion', component: UpdateQuestionComponent, canActivate:[ProfGuard] },
 
 
   {
     path : 'Prof/AllChapiters',
     component : AllChapitersComponent,
+    canActivate:[ProfGuard]
 
   }
   , {
     path : 'Prof/AllQuestions',
     component : AllQuestionsComponent,
+    canActivate:[ProfGuard]
 
   }, {
     path: 'Prof/UpdateQuestion/:numQuestion',
     component: UpdateQuestionComponent,
+    canActivate:[ProfGuard]
 
   },
   {

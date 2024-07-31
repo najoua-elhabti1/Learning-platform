@@ -3,13 +3,14 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { HeaderComponent } from '../header/header.component';
 import { StudentService } from '../services/student.service';
+import { StudentComponent } from "./student.component";
 
 @Component({
   selector: 'app-chapters',
   standalone: true,
-  imports: [CommonModule, RouterModule, HeaderComponent],
+  imports: [CommonModule, RouterModule, HeaderComponent, StudentComponent],
   template: `
-    <app-header></app-header>
+    <app-student></app-student>
     <div class="chapters-container">
       <a *ngFor="let chapter of chapters" class="chapter-card" (click)="viewChapterDetails(chapter.name)">
         {{ chapter.name }}
@@ -23,12 +24,13 @@ import { StudentService } from '../services/student.service';
       align-items: center;
       gap: 15px;
       padding: 20px;
+      margin-top: 20px; /* Ajout de l'espace en haut */
       background-size: cover;
     }
 
     .chapter-card {
-      background-color: #f8f9fa;
-      border: 1px solid #e7e7e7;
+      background-color: #0056b3; /* Utilisation de la couleur bleue personnalisée */
+      border: 1px solid #0056b3; /* Bordure légèrement plus foncée pour un meilleur contraste */
       padding: 15px;
       border-radius: 5px;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -36,11 +38,11 @@ import { StudentService } from '../services/student.service';
       width: 100%;
       max-width: 600px;
       text-decoration: none;
-      color: inherit;
+      color: white; /* Couleur du texte en blanc pour le contraste avec le bleu */
     }
 
     .chapter-card:hover {
-      background-color: #e9ecef;
+      background-color: #004494; /* Changement de couleur au survol pour une meilleure visibilité */
       cursor: pointer;
     }
   `]
@@ -60,6 +62,6 @@ export class ChaptersComponent implements OnInit {
   }
 
   viewChapterDetails(chapterName: string): void {
-    this.router.navigate(['/chapter-detail', chapterName]);
+    this.router.navigate(['student/chapter-detail', chapterName]);
   }
 }
