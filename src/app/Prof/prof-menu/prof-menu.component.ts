@@ -60,4 +60,8 @@ toggleQuestionMenu(){
     navigateToListAll(){
       this.router.navigateByUrl('Prof/AllChapiters');
     }
+    navigateToModifyPwd(){
+      this.router.navigateByUrl('Prof/ChangePwd');
+
+    }
 }

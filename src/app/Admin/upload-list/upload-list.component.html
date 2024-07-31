@@ -1,15 +1,115 @@
 <app-header></app-header>
 <app-admin-menu></app-admin-menu>
-<div class="form-container bg-white p-6 shadow-md rounded-md flex flex-col items-center space-y-4 max-w-md mx-auto mt-16">
-  <h3 class="text-xl font-bold">Upload Excel File</h3>
-  <form (ngSubmit)="onSubmit()" class="w-full">
-    <div class="form-group">
-      <input type="file" name="file" (change)="onFileSelected($event)" class="form-control py-2 px-4 border border-gray-300 rounded-md w-full focus:outline-none focus:border-blue-500" />
-    </div>
-    <button type="submit" class="btn btn-primary py-2 px-4 bg-blue-500 text-white rounded-md shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">Upload</button>
-  </form>
-  <button (click)="sendEmails()" class="btn btn-secondary py-2 px-4 bg-green-500 text-white rounded-md shadow-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50">Send Emails</button>
-  <p class="text-red-500 mt-3" *ngIf="uploadStatus">{{ uploadStatus }}</p>
-  <p class="text-red-500 mt-3" *ngIf="uploadStatus">{{ sendEmailStatus }}</p>
 
+<div class="choice-wrapper p-8">
+  <div class="choice-buttons flex justify-center space-x-4 mb-16">
+    <button (click)="selectChoice('upload')" class="choice-button bg-blue-600 hover:bg-blue-700">Télécharger liste</button>
+    <button (click)="selectChoice('email')" class="choice-button bg-yellow-500 hover:bg-yellow-600">Envoyer des emails</button>
+  </div>
+  <div *ngIf="selectedChoice === 'upload'">
+    <!-- Upload Excel File Section -->
+    <div class="upload-section bg-white shadow-lg rounded-lg p-8">
+      <h3 class="section-title">Télécharger le fichier Excel des étudiants</h3>
+      <form (ngSubmit)="onSubmit()" class="w-full space-y-6">
+        <div class="form-group">
+          <input type="file" name="file" (change)="onFileSelected($event)" class="form-control" />
+        </div>
+        <button type="submit" class="submit-button bg-blue-600 hover:bg-blue-700">Télécharger</button>
+      </form>
+      <p class="status-message text-red-500 mt-4" *ngIf="uploadStatus">{{ uploadStatus }}</p>
+    </div>
+  </div>
+  <div *ngIf="selectedChoice === 'email'">
+    <!-- Send Emails Section -->
+    <div class="email-section bg-white shadow-lg rounded-lg p-8">
+      <h3 class="section-title text-gray-700">Envoie des emails aux étudiants</h3>
+      <p class="description text-gray-600 mb-6">Cliquez sur le bouton suivant pour envoyer les emails contenant le login et le mot de passe des étudiants pour pouvoir accéder à la plateforme.</p>
+      <button
+        type="button"
+        (click)="sendEmails()"
+        [disabled]="!uploadStatus"
+        class="submit-button bg-yellow-500 hover:bg-yellow-600"
+      >
+        Envoyer les Emails
+      </button>
+    </div>
+  </div>
 </div>
+
+<app-footer></app-footer>
+
+<style>
+  .choice-wrapper {
+    min-height: 63vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: #f7fafc; /* Light background color */
+    padding: 1rem;
+  }
+
+  .choice-buttons {
+    margin-bottom: 2rem;
+  }
+
+  .choice-button {
+    padding: 1rem 2rem;
+    border-radius: 0.5rem;
+    color: white;
+    font-size: 1rem;
+    font-weight: 500;
+    transition: background-color 0.3s ease;
+    border: none;
+    cursor: pointer;
+  }
+
+  .upload-section, .email-section {
+    width: 100%;
+    max-width: 600px;
+  }
+  
+
+  .section-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+  }
+
+  .form-control {
+    width: 100%;
+    padding: 1rem;
+    border: 1px solid #ced4da;
+    border-radius: 0.5rem;
+    transition: border-color 0.3s ease;
+  }
+
+  .submit-button {
+    width: 100%;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    color: white;
+    font-size: 1rem;
+    font-weight: 500;
+    transition: background-color 0.3s ease;
+    border: none;
+    cursor: pointer;
+  }
+
+  .shadow-lg {
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1); /* Slightly larger shadow */
+  }
+
+  .space-y-6 > * + * {
+    margin-top: 1.5rem; /* Larger spacing between elements */
+  }
+
+  .status-message {
+    font-size: 0.875rem;
+  }
+
+  .description {
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+</style>

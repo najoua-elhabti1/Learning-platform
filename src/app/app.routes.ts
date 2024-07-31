@@ -62,6 +62,16 @@ export const routes: Routes = [
     component : ChangePwdComponent,
 
  },
+ {
+  path : 'Prof/ChangePwd',
+  component : ChangePwdComponent,
+
+},
+{
+  path : 'Admin/ChangePwd',
+  component : ChangePwdComponent,
+
+},
   {
     path : 'reset-password',
     component : ResetPasswordComponent

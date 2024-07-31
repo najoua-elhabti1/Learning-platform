@@ -45,8 +45,7 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
         </tbody>
       </table>
     </div>
-    <button (click)="viewPpt(chapter.chapterName)">View PPT</button>
-<iframe *ngIf="pptUrl" [src]="pptUrl" width="100%" height="600px"></iframe>
+    
 
 
   `,
@@ -130,17 +129,6 @@ export class ChapterDetailComponent implements OnInit {
       URL.revokeObjectURL(objectUrl);
     });
   }
-
-  // viewFile(fileId: string) {
-  //   const fileUrl = this.studentService.getFileUrl(fileId);
-  //   const officeViewerUrl = `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(fileUrl)}`;
-  //   this.fileUrl = this.sanitizer.bypassSecurityTrustResourceUrl(officeViewerUrl);
-  //   console.log(fileUrl);
-
-  // }
-  // viewChapter(fileId: string) {
-  //   window.open(`/view-ppt/${fileId}`, '_blank');
-  // }
   viewPpt(fileId: string): void {
     console.log(this.chapter.chapterName);
     this.router.navigate([`/courses/${fileId}/ppt`]);

@@ -7,11 +7,12 @@ import { Observer } from 'rxjs';
 
 import { HeaderComponent } from '../header/header.component';
 import { AuthService } from '../services/auth/auth.service';
+import { FooterComponent } from "../footer/footer.component";
 
 @Component({
   selector: 'app-request-reset',
   standalone: true,
-  imports: [HeaderComponent,FormsModule, CommonModule],
+  imports: [HeaderComponent, FormsModule, CommonModule, FooterComponent],
   templateUrl: './request-reset.component.html',
   styleUrl: './request-reset.component.css'
 })
