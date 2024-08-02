@@ -39,10 +39,9 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Iterator;
+import java.nio.file.StandardCopyOption;
+import java.util.*;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class FileService {
@@ -55,6 +54,7 @@ public class FileService {
 
     @Autowired
     private FileDocumentRepository fileRepository;
+    private static final String UPLOAD_Image_DIR = "uploads/images/";
 
     public ResponseEntity<InputStreamResource> getFile(String id) {
         GridFSFile gridFSFile = gridFSBucket.find(Filters.eq("_id", new ObjectId(id))).first();
@@ -149,7 +149,7 @@ public class FileService {
                     continue;
                 }
 
-                String chapterName = row.getCell(3).getStringCellValue();
+                String chapterName = row.getCell(5).getStringCellValue();
                 Optional<FileDocument> optionalFileDocument = fileRepository.findByChapter(chapterName);
 
                 FileDocument fileDocument;
@@ -174,7 +174,8 @@ public class FileService {
                 Question question = new Question();
                 question.setNumQuestion((int) row.getCell(0).getNumericCellValue());
                 question.setQuestion(row.getCell(1).getStringCellValue());
-                question.setResponse(row.getCell(5).getStringCellValue());
+                question.setResponse(row.getCell(2).getStringCellValue());
+                question.setImagePath(row.getCell(3).getStringCellValue());
 
                 questions.add(question);
                 fileDocument.setQuestions(questions);
@@ -183,8 +184,79 @@ public class FileService {
             }
         }
     }
+    public String encodeImageToBase64(Path imagePath) throws IOException {
+        byte[] imageBytes = Files.readAllBytes(imagePath);
+        return Base64.getEncoder().encodeToString(imageBytes);
+    }
+    public void addQuestionsFromExcelAndImages(MultipartFile excelFile, MultipartFile[] imageFiles) throws IOException {
+        Map<String, byte[]> imageMap = new HashMap<>();
+        // Save images to a map
+        for (MultipartFile imageFile : imageFiles) {
+            String filePath = imageFile.getOriginalFilename();
 
+            if (filePath != null) {
+                String fileName = filePath.substring(filePath.lastIndexOf("/") + 1);
+                System.out.println(fileName);
+                imageMap.put(fileName, imageFile.getBytes());
+            }
+        }
 
+        // Process Excel file
+        try (Workbook workbook = new XSSFWorkbook(excelFile.getInputStream())) {
+            Sheet sheet = workbook.getSheetAt(0);
+            Iterator<Row> rows = sheet.iterator();
+
+            boolean isFirstRow = true;
+            while (rows.hasNext()) {
+                Row row = rows.next();
+                if (isFirstRow) {
+                    isFirstRow = false; // Skip header row
+                    continue;
+                }
+
+                String chapterName = row.getCell(5).getStringCellValue();
+                Optional<FileDocument> optionalFileDocument = fileRepository.findByChapter(chapterName);
+
+                FileDocument fileDocument;
+                if (optionalFileDocument.isPresent()) {
+                    fileDocument = optionalFileDocument.get();
+                } else {
+                    fileDocument = new FileDocument();
+                    fileDocument.setFileName("");
+                    fileDocument.setContentType("");
+                    fileDocument.setChapter(chapterName);
+                    fileDocument.setCourse("");
+                    fileDocument.setObjectifs("");
+                    fileDocument.setPlan("");
+                    fileDocument.setIntroduction("");
+                    fileDocument.setConclusion("");
+                    fileDocument.setIsVisible(true);
+                }
+
+                List<Question> questions = fileDocument.getQuestions() != null ? fileDocument.getQuestions() : new ArrayList<>();
+
+                Question question = new Question();
+                question.setNumQuestion((int) row.getCell(0).getNumericCellValue());
+                question.setQuestion(row.getCell(1).getStringCellValue());
+                question.setResponse(row.getCell(2).getStringCellValue());
+
+                // Handle image
+                String imagePath = row.getCell(3).getStringCellValue();
+                System.out.println(imagePath);
+                System.out.println(imageMap);
+                if (imageMap.containsKey(imagePath)) {
+                    question.setImageContent(Base64.getEncoder().encodeToString(imageMap.get(imagePath)));
+                } else {
+                    question.setImageContent(""); // or handle missing image
+                }
+
+                questions.add(question);
+                fileDocument.setQuestions(questions);
+
+                fileRepository.save(fileDocument);
+            }
+        }
+    }
 
 
 
@@ -286,16 +358,15 @@ public class FileService {
 
 
  //ajouter les questions manuellement
- public void addQuestionToChapter(String chapterName, int numQuestion, String questionText, String responseText) {
-     // Validation des paramètres
+ public void addQuestionToChapter(String chapterName, int numQuestion, String questionText, String responseText, String imagePath) {
+     // Validate parameters
      if (chapterName == null || chapterName.trim().isEmpty() || questionText == null || questionText.trim().isEmpty() || responseText == null || responseText.trim().isEmpty()) {
          throw new IllegalArgumentException("Chapter name, question text, and response text must not be empty.");
      }
 
-     // Chercher le document par le nom du chapitre
+     // Find or create the FileDocument for the chapter
      FileDocument fileDocument = fileRepository.findByChapter(chapterName)
              .orElseGet(() -> {
-                 // Créer un nouveau document si aucun document existant
                  FileDocument newDocument = new FileDocument();
                  newDocument.setFileName("");
                  newDocument.setContentType("");
@@ -309,33 +380,62 @@ public class FileService {
                  return newDocument;
              });
 
-     // Initialiser la liste des questions si elle est nulle
+     // Initialize the list of questions if null
      if (fileDocument.getQuestions() == null) {
          fileDocument.setQuestions(new ArrayList<>());
      }
 
-     // Vérifier si la question avec le même numéro existe déjà
+     // Check if a question with the same number already exists
      Optional<Question> existingQuestion = fileDocument.getQuestions().stream()
-             .filter(q -> q.getNumQuestion() == numQuestion)
+             .filter(q -> q.getNumQuestion().equals(numQuestion))
              .findFirst();
      if (existingQuestion.isPresent()) {
          throw new IllegalArgumentException("A question with the same number already exists.");
      }
 
-     // Créer une nouvelle question et l'ajouter à la liste
+     // Create a new question and add it to the list
      Question question = new Question();
      question.setNumQuestion(numQuestion);
      question.setQuestion(questionText);
      question.setResponse(responseText);
+     question.setImagePath(imagePath);
 
-     // Ajouter la question à la liste des questions
+     // Add the question to the list of questions
      fileDocument.getQuestions().add(question);
 
-     // Sauvegarder le document mis à jour
+     // Save the updated document
      fileRepository.save(fileDocument);
  }
 
+    private String saveImage(MultipartFile file) throws IOException {
+        if (file.isEmpty()) {
+            throw new IOException("File is empty");
+        }
 
+        // Define the directory where the image will be saved
+        Path uploadPath = Paths.get(UPLOAD_Image_DIR);
+
+        // Create the directory if it does not exist
+        if (!Files.exists(uploadPath)) {
+            Files.createDirectories(uploadPath);
+        }
+
+        // Get the original filename and define the path to save the file
+        String originalFilename = file.getOriginalFilename();
+        Path destinationPath = uploadPath.resolve(originalFilename);
+
+        // Check if the file already exists
+        if (Files.exists(destinationPath)) {
+            // Return the existing filename without saving the file again
+            return destinationPath.toString();
+        }
+
+        // Save the file
+        Files.copy(file.getInputStream(), destinationPath, StandardCopyOption.REPLACE_EXISTING);
+
+        // Return the relative path
+        return destinationPath.toString();
+    }
 
     public void updateQuestion(String chapterName, int questionNumber, String newQuestionText, String newResponseText) {
         // Validation des paramètres
@@ -437,12 +537,12 @@ public class FileService {
     }
     private final String uploadDir = "uploads/";
 
-    public void saveFile(MultipartFile file, String chapter, String course, String objectifs, String plan, String introduction, String conclusion, boolean isVisible) throws IOException {
-        Path path = Paths.get(uploadDir + file.getOriginalFilename());
-        Files.createDirectories(path.getParent());
-        Files.write(path, file.getBytes());
-
-    }
+//    public void saveFile(MultipartFile file, String chapter, String course, String objectifs, String plan, String introduction, String conclusion, boolean isVisible) throws IOException {
+//        Path path = Paths.get(uploadDir + file.getOriginalFilename());
+//        Files.createDirectories(path.getParent());
+//        Files.write(path, file.getBytes());
+//
+//    }
     public static void convertPptToPdf(InputStream pptInputStream, ByteArrayOutputStream pdfOutputStream) throws IOException {
         SlideShow<?, ?> ppt = new XMLSlideShow(pptInputStream);
         Dimension pgsize = ppt.getPageSize();

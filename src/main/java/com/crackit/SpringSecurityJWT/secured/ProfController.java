@@ -3,9 +3,12 @@ package com.crackit.SpringSecurityJWT.secured;
 import com.crackit.SpringSecurityJWT.service.FileService;
 import com.crackit.SpringSecurityJWT.user.*;
 import com.crackit.SpringSecurityJWT.user.repository.FileDocumentRepository;
+import com.crackit.SpringSecurityJWT.user.repository.QuestionRepository;
 import com.mongodb.client.gridfs.model.GridFSFile;
 import lombok.AllArgsConstructor;
 import org.apache.kafka.common.errors.ResourceNotFoundException;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.text.PDFTextStripper;
 import org.apache.poi.xslf.usermodel.*;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.InputStreamResource;
@@ -30,6 +33,10 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,6 +47,7 @@ import java.util.Optional;
 @RequestMapping("/crackit/v1/prof")
 @PreAuthorize("hasRole('Prof')")
 public class ProfController {
+    private static final String UPLOAD_Image_DIR = "uploads/images/";
 
     @GetMapping
     public String getMember() {
@@ -59,6 +67,8 @@ public class ProfController {
 
     @Autowired
     private FileService fileService;
+    @Autowired
+    private QuestionRepository questionRepository;
 
     @PostMapping("/upload_course")
     public ResponseEntity<Map<String, String>> uploadFile(@RequestParam("file") MultipartFile file,
@@ -68,27 +78,55 @@ public class ProfController {
         String fileId = gridFsTemplate.store(file.getInputStream(), file.getOriginalFilename(), file.getContentType()).toString();
         Map<String, String> response = new HashMap<>();
 
-        // Extract content from PowerPoint file
+        // Determine the file extension
+        String fileName = file.getOriginalFilename();
+        if (fileName == null) {
+            throw new IOException("File name is null");
+        }
+        String fileExtension = fileName.substring(fileName.lastIndexOf('.') + 1).toLowerCase();
+
         String objectifs = "";
         String plan = "";
         String introduction = "";
         String conclusion = "";
 
-        try (XMLSlideShow ppt = new XMLSlideShow(file.getInputStream())) {
-            XSLFSlide[] slides = ppt.getSlides().toArray(new XSLFSlide[0]);
+        if (fileExtension.equals("ppt") || fileExtension.equals("pptx")) {
+            // Process PowerPoint file
+            try (XMLSlideShow ppt = new XMLSlideShow(file.getInputStream())) {
+                XSLFSlide[] slides = ppt.getSlides().toArray(new XSLFSlide[0]);
 
-            if (slides.length > 1) {
-                objectifs = extractFormattedTextFromSlide(slides[1]);
+                if (slides.length > 1) {
+                    objectifs = extractFormattedTextFromSlide(slides[1]);
+                }
+                if (slides.length > 2) {
+                    plan = extractFormattedTextFromSlide(slides[2]);
+                }
+                if (slides.length > 3) {
+                    introduction = extractFormattedTextFromSlide(slides[3]);
+                }
+                if (slides.length > 4) {
+                    conclusion = extractFormattedTextFromSlide(slides[slides.length - 1]);
+                }
             }
-            if (slides.length > 2) {
-                plan = extractFormattedTextFromSlide(slides[2]);
+        } else if (fileExtension.equals("pdf")) {
+            // Process PDF file
+            try (PDDocument document = PDDocument.load(file.getInputStream())) {
+                int numberOfPages = document.getNumberOfPages();
+                if (numberOfPages > 1) {
+                    objectifs = extractFormattedTextFromPdfPage(document, 2);
+                }
+                if (numberOfPages > 2) {
+                    plan = extractFormattedTextFromPdfPage(document, 3);
+                }
+                if (numberOfPages > 3) {
+                    introduction = extractFormattedTextFromPdfPage(document, 4);
+                }
+                if (numberOfPages > 4) {
+                    conclusion = extractFormattedTextFromPdfPage(document, numberOfPages);
+                }
             }
-            if (slides.length > 3) {
-                introduction = extractFormattedTextFromSlide(slides[3]);
-            }
-            if (slides.length > 4) {
-                conclusion = extractFormattedTextFromSlide(slides[slides.length - 1]);
-            }
+        } else {
+            throw new IOException("Unsupported file type: " + fileExtension);
         }
 
         // Save file metadata and extracted content to database
@@ -103,7 +141,7 @@ public class ProfController {
         fileDocument.setIntroduction(introduction);
         fileDocument.setConclusion(conclusion);
         fileDocument.setIsVisible(isVisible);
-        fileService.saveFile(file,chapter,course,objectifs,plan,introduction,conclusion,isVisible);
+//        fileService.saveFile(file, chapter, course, objectifs, plan, introduction, conclusion, isVisible);
         fileRepository.save(fileDocument);
 
         String downloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
@@ -137,7 +175,26 @@ public class ProfController {
 
         return slideText.toString().trim();
     }
+    private String extractFormattedTextFromPdfPage(PDDocument document, int pageNumber) throws IOException {
+        PDFTextStripper pdfStripper = new PDFTextStripper();
+        pdfStripper.setStartPage(pageNumber);
+        pdfStripper.setEndPage(pageNumber);
 
+        String fullText = pdfStripper.getText(document);
+        String[] lines = fullText.split("\n");
+        StringBuilder formattedText = new StringBuilder();
+
+        boolean firstLineSkipped = false;
+        for (String line : lines) {
+            if (!firstLineSkipped) {
+                firstLineSkipped = true;
+            } else {
+                formattedText.append("- ").append(line.trim()).append("\n");
+            }
+        }
+
+        return formattedText.toString().trim();
+    }
     @PutMapping("/{courseId}/visibility")
     public ResponseEntity<?> updateVisibility(@PathVariable String courseId, @RequestBody boolean isVisible) {
         try {
@@ -208,15 +265,16 @@ public class ProfController {
 
 
 // ndwzohom mn excel n mongo
-    @PostMapping("/add_questions")
-    public ResponseEntity<String> addQuestionsFromExcel(@RequestParam("file") MultipartFile file) {
-        try {
-            fileService.addQuestionsFromExcel(file);
-            return ResponseEntity.ok("Questions ajoutées avec succès.");
-        } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erreur lors de l'ajout des questions : " + e.getMessage());
-        }
+@PostMapping("/add_questions")
+public ResponseEntity<String> addQuestionsFromExcelAndImages(@RequestParam("file") MultipartFile file, @RequestParam("folder") MultipartFile[] images) {
+    try {
+        fileService.addQuestionsFromExcelAndImages(file, images);
+        return ResponseEntity.ok("Questions and images added successfully.");
+    } catch (IOException e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error adding questions: " + e.getMessage());
     }
+}
+
 
 
     @DeleteMapping("/delete_all_questions")
@@ -251,22 +309,32 @@ public class ProfController {
     }
 
     @PostMapping("/add_manual_question")
-    public ResponseEntity<String> addQuestionToChapter(@RequestBody QuestionDTO questionDTO) {
+    public ResponseEntity<String> addQuestionToChapter( @RequestParam("numQuestion") Integer numQuestion,
+                                                        @RequestParam("question") String question,
+                                                        @RequestParam("response") String response,
+                                                        @RequestParam("course") String course,
+                                                        @RequestParam("chapter") String chapter,
+                                                        @RequestParam("imagePath") MultipartFile imageFile) {
         try {
+            // Save image and get its path
+            String imageFilePath = saveImage(imageFile);
 
-
+            // Add question to chapter
             fileService.addQuestionToChapter(
-                    questionDTO.getChapterName(),
-                    questionDTO.getNumQuestion(),
-                    questionDTO.getQuestionText(),
-                    questionDTO.getResponseText()
+                    chapter,
+                    numQuestion,
+                    question,
+                    response,
+                    imageFilePath
             );
-            System.out.println("Question added successfully to chapter: " + questionDTO.getChapterName()); // Afficher le message de succès dans la console
-            return ResponseEntity.ok("Question added successfully to chapter: " + questionDTO.getChapterName());
+
+            System.out.println("Question added successfully to chapter: " + chapter);
+            return ResponseEntity.ok("Question added successfully to chapter: " + chapter);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error adding question: " + e.getMessage());
         }
     }
+
 
 
 
@@ -307,4 +375,78 @@ public class ProfController {
     public ResponseEntity<QuestionDTO> getQuestionByChapterAndNumber(@PathVariable String chapterName, @PathVariable int questionNumber) {
         return fileService.getQuestionByChapterAndNumber(chapterName, questionNumber);
     }
+
+    @PostMapping("/addQuestion")
+    public ResponseEntity<Map<String, String>> addQuestion(
+            @RequestParam("numQuestion") Integer numQuestion,
+            @RequestParam("question") String question,
+            @RequestParam("response") String response,
+            @RequestParam("course") String course,
+            @RequestParam("chapter") String chapter,
+            @RequestParam("imagePath") MultipartFile file) {
+        Map<String, String> reponse = new HashMap<>();
+
+        try {
+            if (questionRepository.existsById(numQuestion)) {
+                // Return a response indicating that the question already exists
+                reponse.put("message", "Question with this number already exists.");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(reponse);
+            }
+            // Save image and get its path
+            String imageFilePath = saveImage(file);
+
+            // Create and save QuestionReponse object with the image path
+            QuestionReponse questionReponse = new QuestionReponse();
+            questionReponse.setNumQuestion(numQuestion);
+            questionReponse.setQuestion(question);
+            questionReponse.setResponse(response);
+            questionReponse.setCourse(course);
+            questionReponse.setChapter(chapter);
+            questionReponse.setImagePath(imageFilePath);
+//            fileService.addQuestionToChapter(
+//                    questionDTO.getChapterName(),
+//                    questionDTO.getNumQuestion(),
+//                    questionDTO.getQuestionText(),
+//                    questionDTO.getResponseText()
+//            );
+            // Save the QuestionReponse object
+            // Assuming you have a repository for saving the object
+            questionRepository.save(questionReponse);
+            reponse.put("message", "Question added successfully!");
+            return ResponseEntity.ok(reponse);
+        } catch (IOException e) {
+            reponse.put("message", "Failed to save the image.");
+            return ResponseEntity.ok(reponse);
+        }
+    }
+
+    private String saveImage(MultipartFile file) throws IOException {
+        if (file.isEmpty()) {
+            throw new IOException("File is empty");
+        }
+
+        // Define the directory where the image will be saved
+        Path uploadPath = Paths.get("UPLOAD_Image_DIR");
+
+        // Create the directory if it does not exist
+        if (!Files.exists(uploadPath)) {
+            Files.createDirectories(uploadPath);
+        }
+
+        // Get the original filename and define the path to save the file
+        String originalFilename = file.getOriginalFilename();
+        Path destinationPath = uploadPath.resolve(originalFilename);
+
+        // Check if the file already exists
+        if (Files.exists(destinationPath)) {
+            return destinationPath.toString();
+        }
+
+        // Save the file
+        Files.copy(file.getInputStream(), destinationPath, StandardCopyOption.REPLACE_EXISTING);
+
+        return destinationPath.toString();
+    }
+
+
 }

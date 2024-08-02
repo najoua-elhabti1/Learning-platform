@@ -47,7 +47,7 @@ public class SecurityConfiguration {
                         .requestMatchers("/crackit/v1/auth/**").permitAll()
                         .requestMatchers("/crackit/v1/prof/add_questions").hasRole(Prof.name())
                         .requestMatchers("/crackit/v1/admin/**").hasRole(ADMIN.name())
-                        .requestMatchers("/crackit/v1/student/**").hasRole(Student.name())
+                        .requestMatchers("/crackit/v1/student/**").permitAll()
                         .requestMatchers(GET, "/crackit/v1/admin/**").hasRole(ADMIN.name())
                         .requestMatchers(POST, "/crackit/v1/admin/**").hasRole(ADMIN.name())
 
@@ -57,8 +57,8 @@ public class SecurityConfiguration {
                         .requestMatchers(DELETE, "/crackit/v1/prof/**").hasRole(Prof.name())
                         .requestMatchers(POST, "/crackit/v1/prof/**").hasRole(Prof.name())
                         .requestMatchers(DELETE, "/crackit/v1/prof/**").hasRole(Prof.name())
-                        .requestMatchers(GET, "/crackit/v1/student/**").hasRole(Student.name())
-                        .requestMatchers(POST, "/crackit/v1/student/**").hasRole(Student.name())
+                        .requestMatchers(GET, "/crackit/v1/student/**").permitAll()
+                        .requestMatchers(POST, "/crackit/v1/student/**").permitAll()
 
                         .requestMatchers(GET, "/crackit/v1/prof/**").permitAll()
                         .requestMatchers(PUT, "/crackit/v1/prof/**").permitAll()

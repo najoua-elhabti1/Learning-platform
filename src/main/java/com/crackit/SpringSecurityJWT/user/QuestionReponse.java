@@ -1,9 +1,6 @@
 package com.crackit.SpringSecurityJWT.user;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,14 +14,21 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class QuestionReponse {
     @Id
-
     private Integer numQuestion;
 
-    private String Question;
+    @Lob
+    @Column(length = 100000)
+    private String question;
 
     private String course;
 
     private String chapter;
-
+    @Lob
+    @Column(length = 100000)
     private String response;
+
+    private String imagePath;
+    @Lob
+    @Column(length = 100000)
+    private String imageContent;
 }
