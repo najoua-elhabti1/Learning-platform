@@ -38,8 +38,9 @@ export const routes: Routes = [
   { path: 'student/chapters', component: ChaptersComponent ,canActivate:[StudentGuard]},
   { path: 'student/chapter-detail/:chapterName', component: ChapterDetailComponent ,canActivate:[StudentGuard]},
   { path: 'student/view-ppt/:id', component: ViewPptComponent ,canActivate:[StudentGuard]},
-  { path: 'student/courses/:chapterName/ppt', component: ViewPptComponent ,canActivate:[StudentGuard]},
+  { path: 'student/courses/:id/ppt', component: ViewPptComponent ,canActivate:[StudentGuard]},
 
+  { path: 'courses/:id/ppt', component: ViewPptComponent },
   {
     path : '',
     component : DashboardComponent,

@@ -46,7 +46,7 @@ export class StudentService {
   }
 
   viewFile(fileId: string): Observable<Blob> {
-    return this.http.get<Blob>(`${this.baseUrl}/view/${fileId}`, { headers: this.getAuthHeaders(), responseType: 'blob' as 'json' })
+    return this.http.get<Blob>(`${this.baseUrl}/ppt/${fileId}/pdf`, { headers: this.getAuthHeaders(), responseType: 'blob' as 'json' })
       .pipe(
         catchError(this.handleError<Blob>('viewFile'))
       );
@@ -60,7 +60,4 @@ export class StudentService {
     };
   }
 
-  getPptUrl(fileId: string): string {
-    return `${this.baseUrl}/${fileId}/ppt`;
-  }
 }

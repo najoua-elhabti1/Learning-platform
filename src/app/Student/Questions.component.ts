@@ -6,7 +6,16 @@ import { MenuComponent } from '../menu/menu.component';
 import { ProfMenuComponent } from '../Prof/prof-menu/prof-menu.component';
 import { RouterOutlet, ActivatedRoute } from '@angular/router';
 import { StudentService } from '../services/student.service';
-import {StudentComponent} from "./student.component";
+import { StudentComponent } from './student.component';
+
+interface Question {
+  
+  numQuestion: number;
+  question: string;
+  response: string;
+  imageContent: string;
+  imagePath: string;
+}
 
 @Component({
   selector: 'app-static-question-form',
@@ -19,11 +28,12 @@ import {StudentComponent} from "./student.component";
       <form *ngIf="questions.length > 0" (ngSubmit)="submitAnswers()">
         <div *ngFor="let question of questions" class="form-group">
           <label [for]="question.numQuestion" class="form-label">{{ question.question }}</label>
+          <img *ngIf="question.imageContent" [src]="'data:image/jpeg;base64,' +question.imageContent" alt="Image associée à la question" class="question-image">
           <input
             type="text"
             [id]="question.numQuestion"
             [(ngModel)]="responses[question.numQuestion]"
-            [name]="question.numQuestion"
+            [name]="question.numQuestion.toString()"
             class="form-control"
             placeholder="Votre réponse"
           />
@@ -106,10 +116,17 @@ import {StudentComponent} from "./student.component";
       color: #007bff;
       font-style: italic;
     }
+
+    .question-image {
+      display: block;
+      max-width: 100%;
+      height: auto;
+      margin-bottom: 15px;
+    }
   `]
 })
 export class StaticQuestionFormComponent implements OnInit {
-  questions: any[] = [];
+  questions: Question[] = [];
   responses: { [key: string]: string } = {};
   submitted: boolean = false;
 
@@ -127,6 +144,7 @@ export class StaticQuestionFormComponent implements OnInit {
 
   loadQuestions(chapterName: string): void {
     this.studentService.getChapterDetails(chapterName).subscribe(response => {
+      console.log(response);
       if (response && response.questions) {
         this.questions = response.questions;
         // Initialize responses with the current answers if available

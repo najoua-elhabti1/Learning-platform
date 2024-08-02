@@ -37,16 +37,26 @@ export class ProfService {
       );
   }
 
-  addQuestionsFromExcel(file: File): Observable<string> {
-    const headers = this.getAuthHeaders();
-    const formData = new FormData();
-    formData.append('file', file);
+  addQuestionsFromExcel(formData :FormData): Observable<string> {
+   
+    const token = localStorage.getItem('access_token');
+    if (token) {
+
+      const headers = new HttpHeaders({
+        'Authorization': `Bearer ${JSON.parse(token)}`,
+        
+      });
 
     return this.http.post<string>(`${this.baseUrl}/add_questions`, formData, {
       headers,
       responseType: 'text' as 'json'
     });
+    
+  }else {
+    console.log('No access token found');
+    return of('No access token found');
   }
+}
 
   getAllQuestions(): Observable<QuestionDTO[]> {
     const headers = this.getAuthHeaders();
@@ -69,22 +79,17 @@ export class ProfService {
     });
   }
 
-  addManualQuestion(chapter: string, numQuestion: number, question: string, response: string): Observable<string> {
+  addManualQuestion(obj: FormData): Observable<string> {
     const headers = this.getAuthHeaders();
-    const body = {
-      chapter,
-      numQuestion,
-      question,
-      response
-    };
 
-    return this.http.post<string>(`${this.baseUrl}/add_manual_question`, body, {
-      headers,
-      responseType: 'text' as 'json'
+    return this.http.post<string>(`${this.baseUrl}/add_manual_question`, obj, {
+        headers: headers.delete('Content-Type'), // Let the browser set the Content-Type header
+        responseType: 'text' as 'json'
     }).pipe(
-      catchError(this.handleError<string>('addManualQuestion'))
+        catchError(this.handleError<string>('addManualQuestion'))
     );
-  }
+}
+
 
   private handleError<T>(operation = 'operation', result?: T) {
     return (error: HttpErrorResponse): Observable<T> => {

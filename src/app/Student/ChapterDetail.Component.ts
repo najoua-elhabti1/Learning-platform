@@ -35,20 +35,17 @@ import { StudentComponent } from "./student.component";
             <button class="btn btn-primary" (click)="viewQuestions(chapter.chapter)">
               View Questions
             </button>
-            <button class="btn btn-primary" (click)="downloadFile(chapter._id)">Download File</button>
-            <button class="btn btn-primary" (click)="viewPpt(chapter._id)">View PPT</button>
+            <button class="btn btn-primary" (click)="downloadFile(chapter.id,chapter.chapterName)">Download File</button>
+            <button class="btn btn-primary" (click)="viewPpt(chapter.chapterName)">View PPT</button>
           </td>
         </tr>
         </tbody>
       </table>
       <iframe *ngIf="pptUrl" [src]="pptUrl" width="100%" height="600px"></iframe>
     </div>
-<<<<<<< HEAD
-=======
-    
 
 
->>>>>>> 313d4558fea9494ab0c686c256c50aa141e653fb
+
   `,
   styles: [`
     .container {
@@ -148,21 +145,24 @@ export class ChapterDetailComponent implements OnInit {
     this.router.navigate(['student/static-question-form', chapterName]);
   }
 
-  downloadFile(fileId: string) {
-    this.studentService.downloadFile(fileId).subscribe(blob => {
-      const a = document.createElement('a');
-      const objectUrl = URL.createObjectURL(blob);
-      a.href = objectUrl;
-      a.download = this.chapter.chapter + '.pptx';
-      a.click();
-      URL.revokeObjectURL(objectUrl);
+  downloadFile(fileId: string, fileName: string) {
+    this.studentService.downloadFile(fileId).subscribe((response: Blob) => {
+      const url = window.URL.createObjectURL(response);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = fileName;
+          document.body.appendChild(a);
+          a.click();
+          window.URL.revokeObjectURL(url);
+          document.body.removeChild(a);
+    },
+    error => {
+      console.error('Error downloading the file:', error);
     });
   }
-<<<<<<< HEAD
 
-=======
->>>>>>> 313d4558fea9494ab0c686c256c50aa141e653fb
   viewPpt(fileId: string): void {
-    this.router.navigate([`student/courses/${fileId}/ppt`]);
+    console.log(this.chapter.chapterName);
+    this.router.navigate([`/courses/${fileId}/ppt`]);
   }
 }

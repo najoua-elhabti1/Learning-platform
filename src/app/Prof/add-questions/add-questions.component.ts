@@ -23,11 +23,23 @@ export class AddQuestionsComponent {
   selectedChapter: string = this.chapters[0];
   selectedFile: File | null = null;
   uploadStatus: string = '';
+  uploadImagesStatus: string = '';
   AddStatus: string = '';
   profService = inject(ProfService);
+  selectedImage: File | null  = null;
+  selectedImages: File[] = [];
 
-  onFileSelected(event: any) {
-    this.selectedFile = event.target.files[0];
+  onExcelFileSelected(event: any) {
+    const file = event.target.files[0];
+    if (file) {
+      this.selectedFile = file;
+    }
+  }
+  onImagesFolderSelected(event: any) {
+    const files = event.target.files;
+    if (files.length > 0) {
+      this.selectedImages = files; // Store the files for uploading
+    }
   }
 
   toggleQuestionType(event: Event) {
@@ -46,38 +58,80 @@ export class AddQuestionsComponent {
   }
 
   uploadQuestions() {
-    if (this.selectedFile) {
-      this.profService.addQuestionsFromExcel(this.selectedFile).subscribe(
+    
+    if (this.selectedFile && this.selectedImages.length > 0) {
+      const formData = new FormData();
+  formData.append('file', this.selectedFile);
+
+  // Add images to FormData
+  for (let i = 0; i < this.selectedImages.length; i++) {
+    formData.append('folder', this.selectedImages[i]);
+  }
+      this.profService.addQuestionsFromExcel(formData).subscribe(
         () => {
-          this.uploadStatus = 'Fichier téléchargé avec succès !';
+          this.uploadStatus = 'Fichier et images téléchargés avec succès !';
         },
         (error: HttpErrorResponse) => {
           console.error('Erreur de téléchargement :', error);
           if (error.status === 401) {
             this.uploadStatus = 'Non autorisé. Veuillez vous reconnecter.';
           } else {
-            this.uploadStatus = `${error.status} Échec du téléchargement du fichier.`;
+            this.uploadStatus = `${error.status} Échec du téléchargement du fichier et des images.`;
           }
         }
       );
     } else {
-      this.uploadStatus = 'Choisir un fichier premièrement.';
+      this.uploadStatus = 'Veuillez choisir un fichier Excel et des images.';
     }
+  }
+  uploadQuestionsImages(){
+
   }
 
-  addManualQuestion() {
-    if (this.manualQuestion && this.manualResponse && this.numQuestion !== null) {
-      this.profService.addManualQuestion(this.selectedChapter, this.numQuestion, this.manualQuestion, this.manualResponse).subscribe(
-        () => {
-          this.AddStatus = 'Question ajoutée avec succès !';
-        },
-        error => {
-          console.error('Erreur lors de l\'ajout de la question :', error);
-          this.AddStatus = 'Une erreur est survenue lors de l\'ajout de la question.';
-        }
-      );
-    } else {
-      this.AddStatus = 'Tous les champs doivent être remplis.';
+  // addManualQuestion() {
+  //   if (this.manualQuestion && this.manualResponse && this.numQuestion !== null) {
+  //     this.profService.addManualQuestion(this.selectedChapter, this.numQuestion, this.manualQuestion, this.manualResponse).subscribe(
+  //       () => {
+  //         this.AddStatus = 'Question ajoutée avec succès !';
+  //       },
+  //       error => {
+  //         console.error('Erreur lors de l\'ajout de la question :', error);
+  //         this.AddStatus = 'Une erreur est survenue lors de l\'ajout de la question.';
+  //       }
+  //     );
+  //   } else {
+  //     this.AddStatus = 'Tous les champs doivent être remplis.';
+  //   }
+  // }
+  onImageSelected(event: Event) {
+    const target = event.target as HTMLInputElement;
+    if(target.files){
+    if (target.files.length > 0) {
+      this.selectedImage = target.files[0];
     }
   }
+  }
+  addManualQuestion() {
+    const formData = new FormData();
+    
+    if (this.numQuestion  && this.selectedImage) {
+        formData.append('numQuestion', this.numQuestion.toString());
+        formData.append('question', this.manualQuestion);
+        formData.append('response', this.manualResponse);
+        formData.append('course', this.selectedCourse);
+        formData.append('chapter', this.selectedChapter);
+        formData.append('imagePath', this.selectedImage, this.selectedImage.name);
+    }
+
+    this.profService.addManualQuestion(formData).subscribe(
+        response => {
+            this.AddStatus = 'Question added successfully!';
+        },
+        error => {
+            this.AddStatus = 'Failed to add question.';
+        }
+    );
+}
+
+
 }
