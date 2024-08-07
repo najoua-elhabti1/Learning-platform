@@ -19,6 +19,10 @@ import {ProfGuard} from "./services/Prof.guard";
 import { ChangePwdComponent } from './Student/change-pwd/change-pwd.component';
 import { ViewPptComponent } from './Student/viewChapiter.component';
 import {StudentGuard} from "./services/Student.guard";
+import {CourseInputComponent} from "./Prof/AddCourse.component";
+import {AddChapterComponent} from "./Prof/add-chapter2.component";
+import {AddQuestionsComponent2} from "./Prof/add-question2.component";
+
 
 
 export const routes: Routes = [
@@ -36,9 +40,14 @@ export const routes: Routes = [
 
   { path: 'student/static-question-form/:chapterName', component: StaticQuestionFormComponent ,canActivate:[StudentGuard]},
   { path: 'student/chapters', component: ChaptersComponent ,canActivate:[StudentGuard]},
-  { path: 'student/chapter-detail/:chapterName', component: ChapterDetailComponent ,canActivate:[StudentGuard]},
+  { path: 'student/chapter-detail/:courseName', component: ChapterDetailComponent ,canActivate:[StudentGuard]},
   { path: 'student/view-ppt/:id', component: ViewPptComponent ,canActivate:[StudentGuard]},
   { path: 'student/courses/:chapterName/ppt', component: ViewPptComponent ,canActivate:[StudentGuard]},
+  { path: 'course', component:  CourseInputComponent },
+
+  { path: 'add', component:    AddChapterComponent},
+  { path: 'add2', component:      AddQuestionsComponent2},
+
 
   {
     path : '',
@@ -79,10 +88,17 @@ export const routes: Routes = [
     component : ResetPasswordComponent
   }, {
     path : 'Prof/AddChapiter',
-    component : AddChapiterComponent,
-    canActivate:[ProfGuard]
+    component : AddChapterComponent,
+
 
   },
+  {
+    path : 'Prof/AddCourse',
+    component : CourseInputComponent,
+
+
+  },
+
 
   {
     path : 'Prof/AddQuestion',

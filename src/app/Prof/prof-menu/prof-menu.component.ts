@@ -47,11 +47,15 @@ toggleQuestionMenu(){
     }
     navigateToAddChapter(){
       this.router.navigateByUrl('Prof/AddChapiter');
-    
+
     }
+
+  navigateToAddCourse(){
+    this.router.navigateByUrl('Prof/AddCourse');
+  }
     navigateToAddQuestion(){
       this.router.navigateByUrl('Prof/AddQuestion');
-    
+
     }
     navigateToAllQuestions(){
       this.router.navigateByUrl('Prof/AllQuestions');

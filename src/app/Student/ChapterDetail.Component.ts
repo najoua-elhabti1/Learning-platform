@@ -1,168 +1,122 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { HeaderComponent } from '../header/header.component';
+import { ActivatedRoute } from '@angular/router';
 import { StudentService } from '../services/student.service';
-import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { StudentComponent } from "./student.component";
+import { Observable, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
+import { CoursDocument } from '../models/course';
+import { AsyncPipe, CommonModule } from '@angular/common';
+import {StudentComponent} from "./student.component";
+import {HeaderComponent} from "../header/header.component";
 
 @Component({
   selector: 'app-chapter-detail',
   standalone: true,
-  imports: [CommonModule, HeaderComponent, RouterLink, StudentComponent],
   template: `
+
     <app-student></app-student>
     <div class="container">
-      <table class="table" *ngIf="chapter">
+      <h2>Détails du cours</h2>
+
+      <div *ngIf="errorMessage" class="error">
+        {{ errorMessage }}
+      </div>
+
+      <table class="table" *ngIf="course$ | async as course">
         <thead>
         <tr class="bg-customBlue">
-          <th>Title</th>
-          <th>Objective</th>
+          <th>Chapitre</th>
+          <th>Objectif</th>
           <th>Plan</th>
           <th>Introduction</th>
           <th>Conclusion</th>
-          <th>Actions</th>
         </tr>
         </thead>
         <tbody>
-        <tr>
+        <tr *ngFor="let chapter of course.chapters">
           <td>{{ chapter.chapter }}</td>
           <td>{{ chapter.objectifs }}</td>
           <td>{{ chapter.plan }}</td>
           <td>{{ chapter.introduction }}</td>
           <td>{{ chapter.conclusion }}</td>
-          <td class="action-buttons">
-            <button class="btn btn-primary" (click)="viewQuestions(chapter.chapter)">
-              View Questions
-            </button>
-            <button class="btn btn-primary" (click)="downloadFile(chapter._id)">Download File</button>
-            <button class="btn btn-primary" (click)="viewPpt(chapter._id)">View PPT</button>
-          </td>
         </tr>
         </tbody>
       </table>
-      <iframe *ngIf="pptUrl" [src]="pptUrl" width="100%" height="600px"></iframe>
     </div>
-<<<<<<< HEAD
-=======
-    
-
-
->>>>>>> 313d4558fea9494ab0c686c256c50aa141e653fb
   `,
+  imports: [
+    CommonModule,
+    AsyncPipe,
+    StudentComponent,
+    HeaderComponent
+  ],
   styles: [`
     .container {
       padding: 20px;
-      display: flex;
-      justify-content: center;
     }
 
     .table {
       width: 100%;
-      max-width: 1000px;
       border-collapse: collapse;
-      background-color: #ffffff;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      border-radius: 8px;
-      overflow: hidden;
     }
 
     .table th, .table td {
-      border: 1px solid #dee2e6;
-      padding: 12px;
+      border: 1px solid #ddd;
+      padding: 8px;
       text-align: left;
-      vertical-align: middle;
     }
 
-    .bg-customBlue {
-      background-color: #0056b3;
+    .table th {
+      background-color: #0056b3; /* Couleur personnalisée pour l'en-tête du tableau */
       color: white;
-      text-transform: uppercase;
-      font-weight: 600;
     }
 
-    .action-buttons {
-      display: flex;
-      justify-content: space-between;
-      gap: 10px;
+    .table tr:nth-child(even) {
+      background-color: #f2f2f2;
     }
 
-    .btn-primary {
-      background-color: rgba(253, 173, 2, 1);
-      color: white;
-      border: none;
-      padding: 10px 15px;
-      border-radius: 5px;
-      cursor: pointer;
-      font-size: 14px;
-      transition: background-color 0.3s, box-shadow 0.3s;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    }
-
-    .btn-primary:hover {
-      background-color: rgba(253, 173, 2, 0.8);
-    }
-
-    .btn-primary:focus {
-      outline: none;
-      box-shadow: 0 0 0 3px rgba(253, 173, 2, 0.4);
-    }
-
-    .btn-primary:active {
-      background-color: rgba(253, 173, 2, 0.6);
+    .error {
+      color: red;
+      text-align: center;
+      margin-top: 20px;
     }
   `]
 })
 export class ChapterDetailComponent implements OnInit {
-
-  pptUrl: SafeResourceUrl | undefined;
-  chapter: any;
+  course$: Observable<CoursDocument> = of({ id: '', courseName: '', chapters: [] });
+  errorMessage: string | null = null;
 
   constructor(
-    private router: Router,
-    private route: ActivatedRoute,
     private studentService: StudentService,
-    private sanitizer: DomSanitizer
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
-    this.route.params.subscribe(params => {
-      const chapterName = params['chapterName'];
-      if (chapterName) {
-        this.loadChapterDetails(chapterName);
+    this.route.paramMap.subscribe(params => {
+      const courseName = params.get('courseName');
+      console.log('Paramètre courseName récupéré:', courseName);
+
+      if (courseName) {
+        console.log('Appel de getCourseDetails avec courseName:', courseName);
+
+        this.course$ = this.studentService.getCourseDetails(courseName).pipe(
+          catchError(error => {
+            console.error('Erreur lors de la récupération des détails du cours:', error);
+            this.errorMessage = "Erreur lors de la récupération des détails du cours.";
+            return of({ id: '', courseName: '', chapters: [] });
+          })
+        );
+
+        this.course$.subscribe(
+          courseData => {
+            console.log('Données du cours reçues:', courseData);
+          },
+          error => {
+            console.error('Erreur lors de la souscription à course$:', error);
+          }
+        );
+      } else {
+        console.warn('courseName est nul ou vide');
       }
     });
-  }
-
-  loadChapterDetails(chapterName: string): void {
-    this.studentService.getChapterDetails(chapterName).subscribe(
-      data => {
-        this.chapter = data;
-        console.log(data);
-      },
-      error => console.error('Error fetching chapter details', error)
-    );
-  }
-
-  viewQuestions(chapterName: string) {
-    this.router.navigate(['student/static-question-form', chapterName]);
-  }
-
-  downloadFile(fileId: string) {
-    this.studentService.downloadFile(fileId).subscribe(blob => {
-      const a = document.createElement('a');
-      const objectUrl = URL.createObjectURL(blob);
-      a.href = objectUrl;
-      a.download = this.chapter.chapter + '.pptx';
-      a.click();
-      URL.revokeObjectURL(objectUrl);
-    });
-  }
-<<<<<<< HEAD
-
-=======
->>>>>>> 313d4558fea9494ab0c686c256c50aa141e653fb
-  viewPpt(fileId: string): void {
-    this.router.navigate([`student/courses/${fileId}/ppt`]);
   }
 }

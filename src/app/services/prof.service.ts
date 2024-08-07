@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
+import {HttpClient, HttpErrorResponse, HttpEvent, HttpHeaders, HttpParams} from '@angular/common/http';
 import { Observable, of, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { QuestionDTO } from '../models/QuestionDTO.model';
@@ -86,12 +86,7 @@ export class ProfService {
     );
   }
 
-  private handleError<T>(operation = 'operation', result?: T) {
-    return (error: HttpErrorResponse): Observable<T> => {
-      console.error(`${operation} failed: ${error.message}`);
-      return of(result as T);
-    };
-  }
+
 
   getQuestionByChapterAndNumber(chapter: string, numQuestion: number): Observable<QuestionDTO> {
     const headers = this.getAuthHeaders();
@@ -128,5 +123,39 @@ export class ProfService {
     }).pipe(
       catchError(this.handleError<string>('deleteQuestionByChapterAndNumber'))
     );
+  }
+
+
+
+
+  createCourse(courseName: string): Observable<string> {
+    const params = new HttpParams().set('courseName', courseName);
+
+    // Pas d'en-têtes d'authentification
+    return this.http.post<string>(`${this.baseUrl}/create_cours`, {}, { params })
+      .pipe(
+        catchError(this.handleError<string>('createCourse'))
+      );
+  }
+  getCourses(): Observable<{ courseName: string }[]> {
+    return this.http.get<{ courseName: string }[]>(`${this.baseUrl}/all_courses`);
+  }
+
+  uploadChapter(formData: FormData): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/upload_chapter_to_course`, formData, {
+
+    }).pipe(
+      catchError(error => {
+        console.error('Erreur lors de l\'envoi du chapitre:', error);
+        return of(null);
+      })
+    );
+  }
+
+  private handleError<T>(operation = 'operation', result?: T) {
+    return (error: HttpErrorResponse): Observable<T> => {
+      console.error(`${operation} failed: ${error.message}`);
+      return of(result as T);
+    };
   }
 }

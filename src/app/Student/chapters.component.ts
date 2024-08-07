@@ -3,7 +3,9 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { HeaderComponent } from '../header/header.component';
 import { StudentService } from '../services/student.service';
-import { StudentComponent } from "./student.component";
+import { Observable, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
+import {StudentComponent} from "./student.component";
 
 @Component({
   selector: 'app-chapters',
@@ -12,9 +14,12 @@ import { StudentComponent } from "./student.component";
   template: `
     <app-student></app-student>
     <div class="chapters-container">
-      <a *ngFor="let chapter of chapters" class="chapter-card" (click)="viewChapterDetails(chapter.name)">
-        {{ chapter.name }}
+      <a *ngFor="let cours of courses$ | async" class="chapter-card" (click)="viewChapterDetails(cours.courseName)">
+        {{ cours.courseName }}
       </a>
+    </div>
+    <div *ngIf="errorMessage" class="error-message">
+      {{ errorMessage }}
     </div>
   `,
   styles: [`
@@ -45,23 +50,36 @@ import { StudentComponent } from "./student.component";
       background-color: #004494; /* Changement de couleur au survol pour une meilleure visibilité */
       cursor: pointer;
     }
+
+    .error-message {
+      color: red;
+      text-align: center;
+      margin-top: 20px;
+    }
   `]
 })
 export class ChaptersComponent implements OnInit {
-  chapters: { id: string, name: string }[] = [];
+  courses$: Observable<any[]> = of([]); // Initialisation correcte de l'observable
+  errorMessage: string | null = null; // Pour afficher les erreurs
 
   constructor(private studentService: StudentService, private router: Router) {}
 
   ngOnInit(): void {
-    this.studentService.getAllChapters().subscribe(
-      (data: string[]) => {
-        this.chapters = data.map((chapter, index) => ({ id: `${index}`, name: chapter }));
-      },
-      error => console.error('Error fetching chapters', error)
+    this.courses$ = this.studentService.getCourses().pipe(
+      catchError(error => {
+        console.error('Erreur lors de la récupération des cours:', error);
+        this.errorMessage = "Erreur lors de la récupération des cours.";
+        return of([]); // Retourne un tableau vide en cas d'erreur
+      })
     );
+
+    // Debug: Vérification des données récupérées
+    this.courses$.subscribe(courses => {
+
+    });
   }
 
-  viewChapterDetails(chapterName: string): void {
-    this.router.navigate(['student/chapter-detail', chapterName]);
+  viewChapterDetails(courseName: string): void {
+    this.router.navigate(['student/chapter-detail', courseName]);
   }
 }

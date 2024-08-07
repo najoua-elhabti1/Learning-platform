@@ -2,6 +2,9 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, of, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
+import {CoursDocument} from "../models/course";
+
+
 
 @Injectable({
   providedIn: 'root'
@@ -23,20 +26,32 @@ export class StudentService {
     });
   }
 
-  getAllChapters(): Observable<string[]> {
-    return this.http.get<string[]>(`${this.baseUrl}/chapters`, { headers: this.getAuthHeaders() })
-      .pipe(
-        catchError(this.handleError<string[]>('getAllChapters', []))
-      );
+
+
+
+
+  getCourses(): Observable<{ courseName: string }[]> {
+    return this.http.get<{ courseName: string }[]>(`${this.baseUrl}/all_courses`);
   }
 
-  getChapterDetails(chapterName: string): Observable<any> {
-    const encodedName = encodeURIComponent(chapterName);
-    return this.http.get<any>(`${this.baseUrl}/chapter/${encodedName}`, { headers: this.getAuthHeaders() })
-      .pipe(
-        catchError(this.handleError<any>('getChapterDetails'))
-      );
+
+
+
+
+
+
+  getCourseDetails(courseName: string): Observable<CoursDocument> {
+    return this.http.get<CoursDocument>(`${this.baseUrl}/course_details?courseName=${courseName}`).pipe(
+      catchError(error => {
+        console.error('Erreur lors de la récupération des détails du cours:', error);
+        // Renvoie un objet vide ou une valeur par défaut si vous souhaitez éviter des erreurs dans le composant
+        return of({ id: '', courseName: '', chapters: [] });
+      })
+    );
   }
+
+
+
 
   downloadFile(fileId: string): Observable<Blob> {
     return this.http.get<Blob>(`${this.baseUrl}/download/${fileId}`, { headers: this.getAuthHeaders(), responseType: 'blob' as 'json' })

@@ -126,15 +126,15 @@ export class StaticQuestionFormComponent implements OnInit {
   }
 
   loadQuestions(chapterName: string): void {
-    this.studentService.getChapterDetails(chapterName).subscribe(response => {
-      if (response && response.questions) {
-        this.questions = response.questions;
-        // Initialize responses with the current answers if available
-        this.questions.forEach(question => {
-          this.responses[question.numQuestion] = '';
-        });
-      }
-    });
+    // this.studentService.getCourseDetails(chapterName).subscribe(response => {
+    //   if (response && response.questions) {
+    //     this.questions = response.questions;
+    //     // Initialize responses with the current answers if available
+    //     this.questions.forEach(question => {
+    //       this.responses[question.numQuestion] = '';
+    //     });
+    //   }
+    // });
   }
 
   submitAnswers(): void {
