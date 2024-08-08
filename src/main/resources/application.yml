@@ -28,10 +28,10 @@ spring:
     allow-bean-definition-overriding: true
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/learningByDoing_db3
+    url: jdbc:postgresql://localhost:5432/learningByDoing_db4
     driver-class-name: org.postgresql.Driver
     username: postgres
-    password: 123456
+    password: ahlamelassiri@
   jpa:
     hibernate:
       ddl-auto: update
@@ -44,7 +44,9 @@ spring:
     multipart:
       enabled: true
       location: ${user.home}/uploads
-
+  web:
+    resources:
+      static-locations: file:./UPLOAD_Image_DIR/
 app:
   upload:
     dir: uploads

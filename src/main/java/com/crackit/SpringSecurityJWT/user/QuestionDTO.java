@@ -1,15 +1,15 @@
 package com.crackit.SpringSecurityJWT.user;public class QuestionDTO {
 
     private String chapter;
-    private String course;
+
     private int numQuestion;
     private String question;
     private String response;
 
     // Constructor
-    public QuestionDTO(String chapter, String course, int numQuestion, String question, String response) {
+    public QuestionDTO(String chapter, int numQuestion, String question, String response) {
         this.chapter = chapter;
-        this.course = course;
+
         this.numQuestion = numQuestion;
         this.question = question;
         this.response = response;
@@ -20,9 +20,7 @@ package com.crackit.SpringSecurityJWT.user;public class QuestionDTO {
         return chapter;
     }
 
-    public String getCourse() {
-        return course;
-    }
+
     public String getChapterName() { return chapter; }
     public int getNumQuestion() {
         return numQuestion;
@@ -44,9 +42,7 @@ package com.crackit.SpringSecurityJWT.user;public class QuestionDTO {
         this.chapter = chapter;
     }
 
-    public void setCourse(String course) {
-        this.course = course;
-    }
+
 
     public void setNumQuestion(int numQuestion) {
         this.numQuestion = numQuestion;
@@ -59,4 +55,5 @@ package com.crackit.SpringSecurityJWT.user;public class QuestionDTO {
     public void setResponse(String response) {
         this.response = response;
     }
+
 }

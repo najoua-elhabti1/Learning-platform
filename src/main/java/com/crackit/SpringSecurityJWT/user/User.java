@@ -32,6 +32,7 @@ public class User implements UserDetails {
 
     private String password;
 
+
     private String resetToken;
 
     private LocalDateTime tokenExpiry;
@@ -50,6 +51,8 @@ public class User implements UserDetails {
     public String getUsername() {
         return email;
     }
+
+
 
     @Override
     public boolean isAccountNonExpired() {
@@ -70,4 +73,6 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
+
 }

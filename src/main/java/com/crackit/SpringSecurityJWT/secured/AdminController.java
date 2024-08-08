@@ -84,15 +84,17 @@ public class AdminController {
                 user.setPassword(password);
                 user.setFirstName(student.getFirstName());
                 user.setLastName(student.getLastName());
-                user.setRole(Role.Student); // Ensure Role enum is properly set
+                user.setRole(Role.Student);
+
+
                 userService.registerUser(user);
 
                 emailService.sendEmail(
                         student.getEmail(),
                         "Application Learning by doing Account Registration",
-                        "Bonjour Mme/Mr. "+student.getLastName()+ student.getFirstName()+"," +
-                                "\n\nMerci de trouver ci-joint votre login et mot de passe pour accéder à la plateforme learning by doing."+
-                                "\n\nlogin: " + student.getEmail() + "\nMot de passe: " + password+
+                        "Bonjour Mme/Mr. " + student.getLastName() + " " + student.getFirstName() + "," +
+                                "\n\nMerci de trouver ci-joint votre login et mot de passe pour accéder à la plateforme learning by doing." +
+                                "\n\nlogin: " + student.getEmail() + "\nMot de passe: " + password +
                                 "\nLien : " + "\n\nNB: Merci de réinitialiser votre mot de passe\n" +
                                 "\n" +
                                 "bien cordialement,"

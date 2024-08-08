@@ -18,6 +18,7 @@ public class AuthenticationResponse {
     private String accessToken;
     @JsonProperty("role")
     private Role role;
+
     @JsonProperty("needsPasswordChange")
     private boolean needsPasswordChange;
 

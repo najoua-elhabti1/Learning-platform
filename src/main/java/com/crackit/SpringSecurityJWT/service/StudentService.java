@@ -23,4 +23,8 @@ public class StudentService {
         return studentRepository.findAll();
     }
 
+    public Student getStudentByEmail(String email) {
+        return studentRepository.findByEmail(email);
+    }
+
 }

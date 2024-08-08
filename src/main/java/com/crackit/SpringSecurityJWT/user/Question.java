@@ -1,46 +1,37 @@
 package com.crackit.SpringSecurityJWT.user;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Id;
+import jakarta.persistence.Lob;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Question {
+    @Id
     private Integer numQuestion;
+
+    @Lob
+    @Column(length = 100000)
     private String question;
 
+    private String course;
+
+    private String chapter;
+    @Lob
+    @Column(length = 100000)
     private String response;
 
-    public Question() {}
-
-    // Constructeurs, getters et setters
-    public Question(Integer numQuestion, String question, String response) {
-        this.numQuestion = numQuestion;
-        this.question = question;
-        this.response = response;
-    }
-
-    public Integer getNumQuestion() {
-        return numQuestion;
-    }
-
-    public String getQuestion() {
-        return question;
-    }
-
-
-    public String getResponse() {
-        return response;
-    }
+    private String imagePath;
+    @Lob
+    @Column(length = 100000)
+    private String imageContent;
 
 
 
-    public void setNumQuestion(int numQuestion) {
-        this.numQuestion = numQuestion;
-    }
-
-    public void setQuestion(String question) {
-        this.question = question;
-    }
-
-    public void setResponse(String response) {
-        this.response = response;
-    }
 }
