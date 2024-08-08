@@ -36,19 +36,24 @@ export const routes: Routes = [
     component: LoginComponent
   },
 
-  { path: 'student', component: StudentComponent ,canActivate:[StudentGuard]},
+  { path: 'student', component: StudentComponent},
 
-  { path: 'student/static-question-form/:chapterName', component: StaticQuestionFormComponent ,canActivate:[StudentGuard]},
-  { path: 'student/chapters', component: ChaptersComponent ,canActivate:[StudentGuard]},
-  { path: 'student/chapter-detail/:courseName', component: ChapterDetailComponent ,canActivate:[StudentGuard]},
-  { path: 'student/view-ppt/:id', component: ViewPptComponent ,canActivate:[StudentGuard]},
-  { path: 'student/courses/:chapterName/ppt', component: ViewPptComponent ,canActivate:[StudentGuard]},
+  { path: 'student/static-question-form/:chapterName', component: StaticQuestionFormComponent},
+  { path: 'student/chapters', component: ChaptersComponent },
+  { path: 'student/chapter-detail/:courseName', component: ChapterDetailComponent },
+  { path: 'student/view-ppt/:id', component: ViewPptComponent },
+
+  { path: 'student/courses/:chapterName/ppt', component: ViewPptComponent },
   { path: 'course', component:  CourseInputComponent },
 
   { path: 'add', component:    AddChapterComponent},
   { path: 'add2', component:      AddQuestionsComponent2},
 
 
+  { path: 'student/courses/:id/ppt', component: ViewPptComponent ,canActivate:[StudentGuard]},
+
+
+  { path: 'courses/:id/ppt', component: ViewPptComponent },
   {
     path : '',
     component : DashboardComponent,

@@ -7,6 +7,7 @@ export interface FileClass {
   introduction: string;
   conclusion: string;
   pptFilePath: string;
+  visible:boolean
 }
 
 export interface CoursDocument {

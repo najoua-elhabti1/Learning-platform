@@ -34,8 +34,8 @@ import {StudentComponent} from "./student.component";
     }
 
     .chapter-card {
-      background-color: #0056b3; /* Utilisation de la couleur bleue personnalisée */
-      border: 1px solid #0056b3; /* Bordure légèrement plus foncée pour un meilleur contraste */
+      background-color: #0056b3;
+      border: 1px solid #0056b3;
       padding: 15px;
       border-radius: 5px;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);

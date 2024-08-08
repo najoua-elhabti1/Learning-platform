@@ -24,7 +24,6 @@ import { StudentComponent } from '../Student/student.component';
     <app-header></app-header>
     <app-prof-menu></app-prof-menu>
     <div class="container">
-
       <form [formGroup]="courseForm" (ngSubmit)="onSubmit()">
         <div class="form-group">
           <label for="courseName">Nom du cours</label>
@@ -39,6 +38,21 @@ import { StudentComponent } from '../Student/student.component';
             Le nom du cours est requis.
           </div>
         </div>
+
+        <div class="form-group">
+          <label for="level">Niveau</label>
+          <input
+            type="number"
+            id="level"
+            formControlName="level"
+            class="form-control"
+            placeholder="Entrez le niveau"
+          />
+          <div *ngIf="courseForm.controls['level'].invalid && courseForm.controls['level'].touched" class="error">
+            Le niveau est requis et doit être un nombre.
+          </div>
+        </div>
+
         <button type="submit" class="btn btn-primary" [disabled]="courseForm.invalid">Ajouter le cours</button>
       </form>
     </div>
@@ -102,14 +116,17 @@ export class CourseInputComponent {
 
   constructor(private fb: FormBuilder, private profService: ProfService) {
     this.courseForm = this.fb.group({
-      courseName: ['', Validators.required]
+      courseName: ['', Validators.required],
+      level: ['', [Validators.required, Validators.min(1)]]
     });
   }
 
   onSubmit(): void {
     if (this.courseForm.valid) {
       const courseName = this.courseForm.value.courseName;
-      this.profService.createCourse(courseName).subscribe(
+      const level = this.courseForm.value.level;
+
+      this.profService.createCourse(courseName, level).subscribe(
         response => {
           console.log('Cours ajouté avec succès:', response);
           this.courseForm.reset();

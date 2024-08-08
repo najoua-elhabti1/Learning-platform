@@ -4,4 +4,5 @@ export class QuestionDTO {
   response!: string;
   course!: string;
   chapter!: string;
+  // imageContent!: string;
 }

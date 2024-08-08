@@ -3,6 +3,7 @@ import {HttpClient, HttpErrorResponse, HttpEvent, HttpHeaders, HttpParams} from 
 import { Observable, of, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { QuestionDTO } from '../models/QuestionDTO.model';
+import {CoursDocument} from "../models/course";
 
 @Injectable({
   providedIn: 'root'
@@ -37,16 +38,26 @@ export class ProfService {
       );
   }
 
-  addQuestionsFromExcel(file: File): Observable<string> {
-    const headers = this.getAuthHeaders();
-    const formData = new FormData();
-    formData.append('file', file);
+  addQuestionsFromExcel(formData :FormData): Observable<string> {
+
+    const token = localStorage.getItem('access_token');
+    if (token) {
+
+      const headers = new HttpHeaders({
+        'Authorization': `Bearer ${JSON.parse(token)}`,
+
+      });
 
     return this.http.post<string>(`${this.baseUrl}/add_questions`, formData, {
       headers,
       responseType: 'text' as 'json'
     });
+
+  }else {
+    console.log('No access token found');
+    return of('No access token found');
   }
+}
 
   getAllQuestions(): Observable<QuestionDTO[]> {
     const headers = this.getAuthHeaders();
@@ -69,22 +80,17 @@ export class ProfService {
     });
   }
 
-  addManualQuestion(chapter: string, numQuestion: number, question: string, response: string): Observable<string> {
+  addManualQuestion(obj: FormData): Observable<string> {
     const headers = this.getAuthHeaders();
-    const body = {
-      chapter,
-      numQuestion,
-      question,
-      response
-    };
 
-    return this.http.post<string>(`${this.baseUrl}/add_manual_question`, body, {
-      headers,
-      responseType: 'text' as 'json'
+    return this.http.post<string>(`${this.baseUrl}/add_manual_question`, obj, {
+        headers: headers.delete('Content-Type'), // Let the browser set the Content-Type header
+        responseType: 'text' as 'json'
     }).pipe(
-      catchError(this.handleError<string>('addManualQuestion'))
+        catchError(this.handleError<string>('addManualQuestion'))
     );
-  }
+}
+
 
 
 
@@ -128,18 +134,50 @@ export class ProfService {
 
 
 
-  createCourse(courseName: string): Observable<string> {
-    const params = new HttpParams().set('courseName', courseName);
+  createCourse(courseName: string, level: number): Observable<string> {
+    const params = new HttpParams()
+      .set('courseName', courseName)
+      .set('level', level.toString()); // Convert level to string for HttpParams
 
-    // Pas d'en-têtes d'authentification
     return this.http.post<string>(`${this.baseUrl}/create_cours`, {}, { params })
       .pipe(
         catchError(this.handleError<string>('createCourse'))
       );
   }
+
+
+
+  updateChapterVisibility(courseName: string, chapterName: string, isVisible: boolean): Observable<void> {
+    return this.http.put<void>(`${this.baseUrl}/chapters/visibility`, null, {
+      params: {
+        courseName,
+        chapterName,
+        visibility: isVisible.toString()
+      }
+    });
+  }
+
+  // downloadCourse(courseName: string, chapterName: string): Observable<Blob> {
+  //   return this.http.get(`${this.baseUrl}/download`, {
+  //     params: { courseName, chapterName },
+  //     responseType: 'blob'
+  //   });
+  // }
+
+  getCourses2(): Observable<CoursDocument[]> {
+    return this.http.get<CoursDocument[]>(`${this.baseUrl}/all_courses`);
+  }
   getCourses(): Observable<{ courseName: string }[]> {
     return this.http.get<{ courseName: string }[]>(`${this.baseUrl}/all_courses`);
   }
+
+
+
+
+
+
+
+
 
   uploadChapter(formData: FormData): Observable<any> {
     return this.http.post<any>(`${this.baseUrl}/upload_chapter_to_course`, formData, {

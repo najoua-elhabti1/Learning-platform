@@ -4,6 +4,7 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { StudentService } from '../services/student.service';
+import { HttpHeaders } from '@angular/common/http';
 
 @Component({
   selector: 'app-view-chapiter',
@@ -18,7 +19,7 @@ export class ViewPptComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private courseService: StudentService,
+    private studentService: StudentService,
     private sanitizer: DomSanitizer
   ) { }
   ngOnInit(): void {

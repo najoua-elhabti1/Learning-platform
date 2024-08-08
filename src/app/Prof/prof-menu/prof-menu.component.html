@@ -1,55 +1,43 @@
-
-
 <div class="bg-customYellow">
-    <nav class="container mx-auto flex justify-between items-center py-4  ">
-        <div class="flex space-x-16">
-        <div class="relative">
-            <button class="text-gray-700 hover:text-gray-900 focus:outline-none focus:text-gray-900" (click)="toggleQuestionMenu()">
-                <span class="sr-only">Open user menu</span>
-                <p>Question</p>
-            </button>
-            <div id="question-menu" class="origin-top-right absolute left-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 hidden" role="menu">
-                <button (click)="navigateToAddQuestion()" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Ajouter une question</button>
-                <button (click)="navigateToAllQuestions()" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Liste des questions</button>
-            </div>
+  <nav class="container mx-auto flex justify-between items-center py-4">
+    <div class="flex space-x-16">
+      <!-- Menu Questions -->
+      <div class="relative">
+        <button class="text-gray-700 hover:text-gray-900 focus:outline-none focus:text-gray-900" (click)="toggleQuestionMenu()">
+          <span class="sr-only">Open question menu</span>
+          <p>Question</p>
+        </button>
+        <div id="question-menu" class="origin-top-right absolute left-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 hidden" role="menu">
+          <button (click)="navigateToAddQuestion()" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Ajouter une question</button>
+          <button (click)="navigateToAllQuestions()" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Liste des questions</button>
         </div>
-        <div class="relative">
-            <button class="text-gray-700 hover:text-gray-900 focus:outline-none focus:text-gray-900" (click)="toggleCourseMenu()">
-                <span class="sr-only">Open user menu</span>
-                <p>Cours et chapitres</p>
-            </button>
-            <div id="course-menu" class="origin-top-right absolute left-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 hidden" role="menu">
-              <button (click)="navigateToAddCourse()" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Ajouter un cours</button>
-                <button (click)="navigateToAddChapter()" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Ajouter un chapitre</button>
-                <button (click)="navigateToListAll()" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Liste des chapitres</button>
-            </div>
+      </div>
+
+      <!-- Menu Cours et chapitres -->
+      <div class="relative">
+        <button class="text-gray-700 hover:text-gray-900 focus:outline-none focus:text-gray-900" (click)="toggleCourseMenu()">
+          <span class="sr-only">Open course menu</span>
+          <p>Cours et chapitres</p>
+        </button>
+        <div id="course-menu" class="origin-top-right absolute left-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 hidden" role="menu">
+          <button (click)="navigateToAddCourse()" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Ajouter un cours</button>
+          <button (click)="navigateToAddChapter()" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Ajouter un chapitre</button>
+          <button (click)="navigateToListAll()" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Liste des chapitres</button>
         </div>
+      </div>
     </div>
 
-        <div class="flex items-center space-x-4">
-
-
-            <button type="button" class="relative text-gray-700 hover:text-gray-900 focus:outline-none focus:text-gray-900">      </button>
-
-
-
-            <div class="relative">
-                <button class="text-gray-700 hover:text-gray-900 focus:outline-none focus:text-gray-900" (click)="toggleUserMenu()">
-                    <span class="sr-only">Open user menu</span>
-                    <img class="h-8 w-8 rounded-full" src="../../../assets/2.png" alt="">
-                </button>
-
-                <div id="user-menu" class="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 hidden" role="menu">
-
-                    <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Changer mot de passe</a>
-                    <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" (click)="onLogout()" role="menuitem">Deconnexion</a>
-
-                    <button (click)="navigateToModifyPwd()" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Changer mot de passe</button>
-                    <button (click)="onLogout()" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Fermer la session</button>
-
-                </div>
-            </div>
-
-        </div>
-    </nav>
+    <!-- User Menu -->
+    <div class="relative">
+      <button class="text-gray-700 hover:text-gray-900 focus:outline-none focus:text-gray-900" (click)="toggleUserMenu()">
+        <span class="sr-only">Open user menu</span>
+        <img class="h-8 w-8 rounded-full" src="../../../assets/2.png" alt="">
+      </button>
+      <div id="user-menu" class="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 hidden" role="menu">
+        <button (click)="navigateToModifyPwd()" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Changer mot de passe</button>
+        <button (click)="onLogout()" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Fermer la session</button>
+      </div>
+    </div>
+  </nav>
 </div>
+

@@ -7,65 +7,71 @@
     <div class="inline-block min-w-full overflow-hidden align-middle border-b border-gray-200 shadow sm:rounded-lg">
       <table class="min-w-full">
         <thead>
-          <tr>
-            <th class="px-6 py-3 text-xs font-medium leading-4 tracking-wider text-left text-gray-600 uppercase border-b border-gray-200 bg-gray-100">
-              Cours
-            </th>
-            <th class="px-6 py-3 text-xs font-medium leading-4 tracking-wider text-left text-gray-600 uppercase border-b border-gray-200 bg-gray-100">
-              Chapitre
-            </th>
-            <th class="px-6 py-3 text-xs font-medium leading-4 tracking-wider text-left text-gray-600 uppercase border-b border-gray-200 bg-gray-100">
-              Objectifs
-            </th>
-            <th class="px-6 py-3 text-xs font-medium leading-4 tracking-wider text-left text-gray-600 uppercase border-b border-gray-200 bg-gray-100">
-              Plan
-            </th>
-            <th class="px-6 py-3 text-xs font-medium leading-4 tracking-wider text-left text-gray-600 uppercase border-b border-gray-200 bg-gray-100">
-              Introduction
-            </th>
-            <th class="px-6 py-3 text-xs font-medium leading-4 tracking-wider text-left text-gray-600 uppercase border-b border-gray-200 bg-gray-100">
-              Conclusion
-            </th>
-            <th class="px-6 py-3 border-b border-gray-200 bg-gray-100"></th>
-          </tr>
+        <tr>
+          <th class="px-6 py-3 text-xs font-medium leading-4 tracking-wider text-left text-gray-600 uppercase border-b border-gray-200 bg-gray-100">
+            Cours
+          </th>
+          <th class="px-6 py-3 text-xs font-medium leading-4 tracking-wider text-left text-gray-600 uppercase border-b border-gray-200 bg-gray-100">
+            Chapitre
+          </th>
+          <th class="px-6 py-3 text-xs font-medium leading-4 tracking-wider text-left text-gray-600 uppercase border-b border-gray-200 bg-gray-100">
+            Objectifs
+          </th>
+          <th class="px-6 py-3 text-xs font-medium leading-4 tracking-wider text-left text-gray-600 uppercase border-b border-gray-200 bg-gray-100">
+            Plan
+          </th>
+          <th class="px-6 py-3 text-xs font-medium leading-4 tracking-wider text-left text-gray-600 uppercase border-b border-gray-200 bg-gray-100">
+            Introduction
+          </th>
+          <th class="px-6 py-3 text-xs font-medium leading-4 tracking-wider text-left text-gray-600 uppercase border-b border-gray-200 bg-gray-100">
+            Conclusion
+          </th>
+          <th class="px-6 py-3 border-b border-gray-200 bg-gray-100"></th>
+        </tr>
         </thead>
         <tbody class="bg-white">
-          <tr *ngFor="let course of courses">
-            <td class="px-6 py-4 border-b border-gray-200">
-              <div class="text-sm leading-5 text-gray-600">{{ course.course }}</div>
-            </td>
-            <td class="px-6 py-4 border-b border-gray-200">
-              <div class="text-sm leading-5 text-gray-600">{{ course.chapter }}</div>
-            </td>
-            <td class="px-6 py-4 border-b border-gray-200 whitespace-pre-wrap">
-              <div class="text-sm leading-5 text-gray-600">{{ course.objectifs }}</div>
-            </td>
-            <td class="px-6 py-4 border-b border-gray-200 whitespace-pre-wrap">
-              <div class="text-sm leading-5 text-gray-600">{{ course.plan }}</div>
-            </td>
-            <td class="px-6 py-4 border-b border-gray-200 whitespace-pre-wrap">
-              <div class="text-sm leading-5 text-gray-600">{{ course.introduction }}</div>
-            </td>
-            <td class="px-6 py-4 border-b border-gray-200 whitespace-pre-wrap">
-              <div class="text-sm leading-5 text-gray-600">{{ course.conclusion }}</div>
-            </td>
-            <td class="px-6 py-4 text-sm font-medium leading-5 text-right whitespace-no-wrap border-b border-gray-200">
-              <button *ngIf="!course.isVisible" (click)="makeVisibleToStudents(course.id, true)" class="hover:text-red-500 text-red-400 font-bold py-2 px-4 rounded transition duration-300">
-                Rendre Visible pour les etudiants
-              </button>
-              <button *ngIf="course.isVisible" (click)="makeVisibleToStudents(course.id, false)" class="hover:text-blue-700 text-blue-500 font-bold py-2 px-4 rounded transition duration-300">
-                Rendre Invisible pour les etudiants
-              </button>
-              <button (click)="downloadCourse(course.id, course.fileName)" class="btn btn-secondary bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
-                Download
-              </button>
-            </td>
-          </tr>
+        <ng-container *ngFor="let course of courses">
+          <ng-container *ngFor="let chapter of course.chapters">
+            <tr>
+              <td class="px-6 py-4 border-b border-gray-200">
+                <div class="text-sm leading-5 text-gray-600">{{ course.courseName }}</div>
+              </td>
+              <td class="px-6 py-4 border-b border-gray-200">
+                <div class="text-sm leading-5 text-gray-600">{{ chapter.chapter }}</div>
+              </td>
+              <td class="px-6 py-4 border-b border-gray-200 whitespace-pre-wrap">
+                <div class="text-sm leading-5 text-gray-600">{{ chapter.objectifs }}</div>
+              </td>
+              <td class="px-6 py-4 border-b border-gray-200 whitespace-pre-wrap">
+                <div class="text-sm leading-5 text-gray-600">{{ chapter.plan }}</div>
+              </td>
+              <td class="px-6 py-4 border-b border-gray-200 whitespace-pre-wrap">
+                <div class="text-sm leading-5 text-gray-600">{{ chapter.introduction }}</div>
+              </td>
+              <td class="px-6 py-4 border-b border-gray-200 whitespace-pre-wrap">
+                <div class="text-sm leading-5 text-gray-600">{{ chapter.conclusion }}</div>
+              </td>
+              <td class="px-6 py-4 text-sm font-medium leading-5 text-right whitespace-no-wrap border-b border-gray-200">
+              <td class="px-6 py-4 text-sm font-medium leading-5 text-right whitespace-no-wrap border-b border-gray-200">
+                <button *ngIf="!chapter.visible" (click)="makeVisibleToStudents(course.courseName, chapter.chapter, true)" class="hover:text-red-500 text-red-400 font-bold py-2 px-4 rounded transition duration-300">
+                  on
+                </button>
+                <button *ngIf="chapter.visible" (click)="makeVisibleToStudents(course.courseName, chapter.chapter, false)" class="hover:text-blue-700 text-blue-500 font-bold py-2 px-4 rounded transition duration-300">
+                  off
+                </button>
+
+
+
+              </td>
+            </tr>
+          </ng-container>
+        </ng-container>
         </tbody>
       </table>
     </div>
   </div>
 </div>
+
 <div *ngIf="courses.length === 0" class="text-center">
-  <p>No courses available.</p>
+  <p>Aucun cours disponible.</p>
 </div>
