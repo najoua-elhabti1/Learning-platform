@@ -28,6 +28,18 @@ export class UploadListComponent {
     this.selectedFile = event.target.files[0];
   }
 
+
+
+  clearDatabase() {
+    this.authService.clearDatabase().subscribe(
+      (response: any) => {
+        alert('Base de données vidée avec succès.');
+      },
+      (error: any) => {
+        alert("Échec de la suppression de la base de données.");
+      }
+    );
+  }
   onSubmit() {
     if (this.selectedFile) {
       this.authService.uploadFile(this.selectedFile).subscribe(

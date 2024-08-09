@@ -11,7 +11,7 @@ export class AuthService {
   private uploadUrl = 'http://localhost:8080/crackit/v1/admin/import';
   private uploadChapterUrl = 'http://localhost:8080/crackit/v1/prof/upload_course';
   private uploadQuestionUrl = 'http://localhost:8080/crackit/v1/prof/upload_questions';
-
+  private clearDatabaseUrl = 'http://localhost:8080/crackit/v1/admin/clear-students'
   private registerUsersUrl = 'http://localhost:8080/crackit/v1/admin/register-users';
   private AllChapitersUrl = 'http://localhost:8080/crackit/v1/prof';
 
@@ -253,7 +253,24 @@ changePassword(email: string, oldPassword: string, newPassword: string, confirmP
   return of([]); // Return an empty array to match the expected return type
 }
 }
-
+  clearDatabase(): Observable<any> {
+    const token = localStorage.getItem('access_token');
+    if (token) {
+      const headers = new HttpHeaders({
+        'Authorization': `Bearer ${JSON.parse(token)}`
+      });
+      return this.http.delete(this.clearDatabaseUrl, { headers })
+        .pipe(
+          catchError(error => {
+            console.error('Erreur lors de la suppression de la base de données:', error);
+            return throwError(error);
+          })
+        );
+    } else {
+      console.log('No access token found');
+      return of('No access token found');
+    }
+  }
 
 
 }

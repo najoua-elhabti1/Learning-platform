@@ -69,5 +69,20 @@ export class AllChapitersComponent implements OnInit {
     );
   }
 
+
+
+  deleteChapter(courseName: string, chapterName: string): void {
+    if (confirm(`Êtes-vous sûr de vouloir supprimer le chapitre ${chapterName} du cours ${courseName} ?`)) {
+      this.profService.deleteChapter(courseName, chapterName).subscribe(
+        () => {
+
+          this.loadCourses();
+        },
+          (error: any) => {
+          console.error('Error deleting chapter', error);
+        }
+      );
+    }
+  }
   protected readonly data = data;
 }

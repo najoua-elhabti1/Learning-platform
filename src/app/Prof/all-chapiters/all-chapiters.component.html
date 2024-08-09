@@ -59,10 +59,18 @@
                 <button *ngIf="chapter.visible" (click)="makeVisibleToStudents(course.courseName, chapter.chapter, false)" class="hover:text-blue-700 text-blue-500 font-bold py-2 px-4 rounded transition duration-300">
                   off
                 </button>
+              <button (click)="deleteChapter(course.courseName, chapter.chapter)" class="hover:text-blue-700 text-blue-500 font-bold py-2 px-4 rounded transition duration-300">
+                delete
+              </button>
+
+
+<!--              <button (click)="updateChapter(course.courseName, chapter.chapter)" class="hover:text-blue-700 text-blue-500 font-bold py-2 px-4 rounded transition duration-300">-->
+<!--                update-->
+<!--              </button>-->
 
 
 
-              </td>
+            </td>
             </tr>
           </ng-container>
         </ng-container>

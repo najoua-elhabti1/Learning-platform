@@ -26,6 +26,8 @@ export class AdminMenuComponent {
         }
       );
     }
+
+
     navigateToModifyPwd(){
       this.router.navigateByUrl('Admin/ChangePwd');
 

@@ -196,4 +196,17 @@ export class ProfService {
       return of(result as T);
     };
   }
+
+  deleteChapter(courseName: string, chapterName: string): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/chapters/delete`, {
+      headers: this.getAuthHeaders(),
+      params: {
+        courseName,
+        chapterName
+      }
+    }).pipe(
+      catchError(this.handleError<void>('deleteChapter'))
+    );
+  }
+
 }

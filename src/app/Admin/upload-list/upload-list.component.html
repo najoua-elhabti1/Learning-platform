@@ -5,6 +5,7 @@
   <div class="choice-buttons flex justify-center space-x-4 mb-16">
     <button (click)="selectChoice('upload')" class="choice-button bg-blue-600 hover:bg-blue-700">Télécharger liste</button>
     <button (click)="selectChoice('email')" class="choice-button bg-yellow-500 hover:bg-yellow-600">Envoyer des emails</button>
+    <button (click)="clearDatabase()" class="choice-button bg-red-600 hover:bg-red-700">Vider la base</button>
   </div>
   <div *ngIf="selectedChoice === 'upload'">
     <!-- Upload Excel File Section -->
@@ -68,7 +69,6 @@
     width: 100%;
     max-width: 600px;
   }
-  
 
   .section-title {
     font-size: 1.5rem;
