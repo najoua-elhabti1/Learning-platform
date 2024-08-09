@@ -25,7 +25,24 @@ public class CoursDocument {
     private int level;
     @Field("fileDocuments")
     private List<FileClass> chapters;
-
+    public FileClass getChapterByChapterName(String chapterName){
+        for (FileClass f:
+                chapters) {
+            if(f.getChapter().equals(chapterName)){
+                return f;
+            }
+        }
+        return null;
+    }
+    public FileClass getChapterByChapterID(String chapterId){
+        for (FileClass f:
+                chapters) {
+            if(f.getId().equals(chapterId)){
+                return f;
+            }
+        }
+        return null;
+    }
     public String getId() {
         return id;
     }

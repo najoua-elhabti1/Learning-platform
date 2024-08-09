@@ -326,12 +326,6 @@ public class ProfController {
 
         return ResponseEntity.ok().build();
     }
-}
-
-
-
-
-
 
 
     //afichinahom f table
@@ -347,19 +341,16 @@ public class ProfController {
 //    }
 
 
-
-
-// ndwzohom mn excel n mongo
-//@PostMapping("/add_questions")
-//public ResponseEntity<String> addQuestionsFromExcelAndImages(@RequestParam("file") MultipartFile file, @RequestParam("folder") MultipartFile[] images) {
-//    try {
-//        fileService.addQuestionsFromExcelAndImages(file, images);
-//        return ResponseEntity.ok("Questions and images added successfully.");
-//    } catch (IOException e) {
-//        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error adding questions: " + e.getMessage());
-//    }
-//}
-
+    // ndwzohom mn excel n mongo
+    @PostMapping("/add_questions")
+    public ResponseEntity<String> addQuestionsFromExcelAndImages(@RequestParam("file") MultipartFile file, @RequestParam("folder") MultipartFile[] images) {
+        try {
+            fileService.addQuestionsFromExcelAndImages(file, images);
+            return ResponseEntity.ok("Questions and images added successfully.");
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error adding questions: " + e.getMessage());
+        }
+    }
 
 
 //    @DeleteMapping("/delete_all_questions")
@@ -371,7 +362,6 @@ public class ProfController {
 //            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error deleting questions.");
 //        }
 //    }
-
 
 
 //    @GetMapping("/download/questions")
@@ -422,7 +412,6 @@ public class ProfController {
 //
 //
 //
-
 
 
 //    @PutMapping("/update_question")
@@ -534,4 +523,4 @@ public class ProfController {
 //    }
 
 
-
+}

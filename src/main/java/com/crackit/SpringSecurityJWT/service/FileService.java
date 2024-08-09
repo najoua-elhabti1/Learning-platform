@@ -1,13 +1,24 @@
 package com.crackit.SpringSecurityJWT.service;
 
 
+import com.crackit.SpringSecurityJWT.user.CoursDocument;
+import com.crackit.SpringSecurityJWT.user.FileClass;
+import com.crackit.SpringSecurityJWT.user.Question;
 import com.crackit.SpringSecurityJWT.user.Student;
+import com.crackit.SpringSecurityJWT.user.repository.CourseRepository;
 import com.crackit.SpringSecurityJWT.user.repository.QuestionRepository;
 import com.mongodb.client.gridfs.GridFSBucket;
 import com.mongodb.client.gridfs.GridFSDownloadStream;
 import com.mongodb.client.gridfs.model.GridFSFile;
 import com.mongodb.client.model.Filters;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
+import org.apache.poi.sl.usermodel.SlideShow;
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xslf.usermodel.XMLSlideShow;
+import org.apache.poi.xslf.usermodel.XSLFSlide;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,16 +30,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.Iterator;
+import java.util.*;
 import java.util.List;
 
 @Service
@@ -39,12 +50,29 @@ public class FileService {
 
     @Autowired
     private QuestionRepository questionRepository;
-
+    @Autowired
+    private CourseRepository courseRepository;
 
     private static final String UPLOAD_Image_DIR = "uploads/images/";
 
 
+    public FileClass getChapterFromCourse(String chapterName, String courseName) {
+        Optional<CoursDocument> coursDocument = courseRepository.findByCourseName(courseName);
 
+        if (coursDocument.isPresent()) {
+            for (FileClass f : coursDocument.get().getChapters()) {
+//                System.out.println("Checking chapter: " + f);
+
+                // Check if the chapter name matches the one provided
+                if (f.getChapter().equals(chapterName)) {
+                    return f; // Return the matching chapter
+                }
+            }
+        } else {
+            System.out.println("Course not found: " + courseName);
+        }
+        return null;
+    }
 
     public ResponseEntity<InputStreamResource> getFile(String id) {
         GridFSFile gridFSFile = gridFSBucket.find(Filters.eq("_id", new ObjectId(id))).first();
@@ -197,78 +225,81 @@ public class FileService {
 
 
 
-//    public void addQuestionsFromExcelAndImages(MultipartFile excelFile, MultipartFile[] imageFiles) throws IOException {
-//        Map<String, byte[]> imageMap = new HashMap<>();
-//        // Save images to a map
-//        for (MultipartFile imageFile : imageFiles) {
-//            String filePath = imageFile.getOriginalFilename();
-//
-//            if (filePath != null) {
-//                String fileName = filePath.substring(filePath.lastIndexOf("/") + 1);
-//                System.out.println(fileName);
-//                imageMap.put(fileName, imageFile.getBytes());
-//            }
-//        }
-//
-//        // Process Excel file
-//        try (Workbook workbook = new XSSFWorkbook(excelFile.getInputStream())) {
-//            Sheet sheet = workbook.getSheetAt(0);
-//            Iterator<Row> rows = sheet.iterator();
-//
-//            boolean isFirstRow = true;
-//            while (rows.hasNext()) {
-//                Row row = rows.next();
-//                if (isFirstRow) {
-//                    isFirstRow = false; // Skip header row
-//                    continue;
-//                }
-//
-//                String chapterName = row.getCell(5).getStringCellValue();
-//                Optional<FileDocument> optionalFileDocument = fileRepository.findByChapter(chapterName);
-//
-//                FileDocument fileDocument;
-//                if (optionalFileDocument.isPresent()) {
-//                    fileDocument = optionalFileDocument.get();
-//                } else {
-//                    fileDocument = new FileDocument();
-//                    fileDocument.setFileName("");
-//                    fileDocument.setContentType("");
-//                    fileDocument.setChapter(chapterName);
-//
-//                    fileDocument.setObjectifs("");
-//                    fileDocument.setPlan("");
-//                    fileDocument.setIntroduction("");
-//                    fileDocument.setConclusion("");
-//                    fileDocument.setIsVisible(true);
-//                }
-//
-//                List<Question> questions = fileDocument.getQuestions() != null ? fileDocument.getQuestions() : new ArrayList<>();
-//
-//                Question question = new Question();
-//                question.setNumQuestion((int) row.getCell(0).getNumericCellValue());
-//                question.setQuestion(row.getCell(1).getStringCellValue());
-//                question.setResponse(row.getCell(2).getStringCellValue());
-//
-//                // Handle image
-//                String imagePath = row.getCell(3).getStringCellValue();
-//                System.out.println(imagePath);
-//                System.out.println(imageMap);
-//                if (imageMap.containsKey(imagePath)) {
-//                    question.setImageContent(Base64.getEncoder().encodeToString(imageMap.get(imagePath)));
-//                } else {
-//                    question.setImageContent(""); // or handle missing image
-//                }
-//
-//                questions.add(question);
-//                fileDocument.setQuestions(questions);
-//
-//                fileRepository.save(fileDocument);
-//            }
-//        }
-//    }
-//
-//
-//
+    public void addQuestionsFromExcelAndImages(MultipartFile excelFile, MultipartFile[] imageFiles) throws IOException {
+        Map<String, byte[]> imageMap = new HashMap<>();
+        // Save images to a map
+        for (MultipartFile imageFile : imageFiles) {
+            String filePath = imageFile.getOriginalFilename();
+
+            if (filePath != null) {
+                String fileName = filePath.substring(filePath.lastIndexOf("/") + 1);
+                System.out.println(fileName);
+                imageMap.put(fileName, imageFile.getBytes());
+            }
+        }
+
+        // Process Excel file
+        try (Workbook workbook = new XSSFWorkbook(excelFile.getInputStream())) {
+            Sheet sheet = workbook.getSheetAt(0);
+            Iterator<Row> rows = sheet.iterator();
+
+            boolean isFirstRow = true;
+            while (rows.hasNext()) {
+                Row row = rows.next();
+                if (isFirstRow) {
+                    isFirstRow = false; // Skip header row
+                    continue;
+                }
+
+                String chapterName = row.getCell(5).getStringCellValue();
+                String courseName = row.getCell(4).getStringCellValue();
+                Optional<CoursDocument> coursDocument = courseRepository.findByCourseName(courseName);
+//                System.out.println(coursDocument);
+                FileClass chapter = getChapterFromCourse(chapterName, courseName);
+                System.out.println(chapter.getChapter());
+                FileClass fileDocument;
+                if (chapter != null) {
+                    fileDocument = chapter;
+                } else {
+                    fileDocument = new FileClass();
+                    fileDocument.setChapter("");
+                    fileDocument.setContentType("");
+                    fileDocument.setChapter(chapterName);
+
+                    fileDocument.setObjectifs("");
+                    fileDocument.setPlan("");
+                    fileDocument.setIntroduction("");
+                    fileDocument.setConclusion("");
+                    fileDocument.setIsVisible(true);
+                }
+
+                List<Question> questions = chapter.getQuestions() != null ? chapter.getQuestions() : new ArrayList<>();
+
+                Question question = new Question();
+                question.setNumQuestion((int) row.getCell(0).getNumericCellValue());
+                question.setQuestion(row.getCell(1).getStringCellValue());
+                question.setResponse(row.getCell(2).getStringCellValue());
+
+                // Handle image
+                String imagePath = row.getCell(3).getStringCellValue();
+                System.out.println(imagePath);
+                System.out.println(imageMap);
+                if (imageMap.containsKey(imagePath)) {
+                    question.setImageContent(Base64.getEncoder().encodeToString(imageMap.get(imagePath)));
+                } else {
+                    question.setImageContent(""); // or handle missing image
+                }
+                System.out.println(chapter);
+                questions.add(question);
+                chapter.setQuestions(questions);
+
+//                chapter.get().getQuestions().add(question);
+                coursDocument.get().getChapterByChapterName(chapterName).setQuestions(questions);
+                courseRepository.save(coursDocument.get());
+            }
+        }
+    }
+
 
 
 
@@ -591,33 +622,33 @@ public class FileService {
 //      Files.write(path, file.getBytes());
 //
 //   }
-//    public static void convertPptToPdf(InputStream pptInputStream, ByteArrayOutputStream pdfOutputStream) throws IOException {
-//        SlideShow<?, ?> ppt = new XMLSlideShow(pptInputStream);
-//        Dimension pgsize = ppt.getPageSize();
-//        PDDocument pdfDoc = new PDDocument();
-//
-//        for (XSLFSlide slide : ((XMLSlideShow) ppt).getSlides()) {
-//            BufferedImage img = new BufferedImage(pgsize.width, pgsize.height, BufferedImage.TYPE_INT_RGB);
-//            Graphics2D graphics = img.createGraphics();
-//            // Clear the drawing area
-//            graphics.setPaint(java.awt.Color.white);
-//            graphics.fill(new java.awt.Rectangle(0, 0, pgsize.width, pgsize.height));
-//
-//
-//            slide.draw(graphics);
-//
-//            // Add the image to the PDF document
-//            PDPage page = new PDPage(new org.apache.pdfbox.pdmodel.common.PDRectangle(pgsize.width, pgsize.height));
-//            pdfDoc.addPage(page);
-//            PDImageXObject pdImage = PDImageXObject.createFromByteArray(pdfDoc, convertBufferedImageToByteArray(img), "slide");
-//            PDPageContentStream contentStream = new PDPageContentStream(pdfDoc, page);
-//            contentStream.drawImage(pdImage, 0, 0, pgsize.width, pgsize.height);
-//            contentStream.close();
-//        }
-//        pdfDoc.save(pdfOutputStream);
-//        pdfDoc.close();
-//    }
-//
+    public static void convertPptToPdf(InputStream pptInputStream, ByteArrayOutputStream pdfOutputStream) throws IOException {
+        SlideShow<?, ?> ppt = new XMLSlideShow(pptInputStream);
+        Dimension pgsize = ppt.getPageSize();
+        PDDocument pdfDoc = new PDDocument();
+
+        for (XSLFSlide slide : ((XMLSlideShow) ppt).getSlides()) {
+            BufferedImage img = new BufferedImage(pgsize.width, pgsize.height, BufferedImage.TYPE_INT_RGB);
+            Graphics2D graphics = img.createGraphics();
+            // Clear the drawing area
+            graphics.setPaint(java.awt.Color.white);
+            graphics.fill(new java.awt.Rectangle(0, 0, pgsize.width, pgsize.height));
+
+
+            slide.draw(graphics);
+
+            // Add the image to the PDF document
+            PDPage page = new PDPage(new org.apache.pdfbox.pdmodel.common.PDRectangle(pgsize.width, pgsize.height));
+            pdfDoc.addPage(page);
+            PDImageXObject pdImage = PDImageXObject.createFromByteArray(pdfDoc, convertBufferedImageToByteArray(img), "slide");
+            PDPageContentStream contentStream = new PDPageContentStream(pdfDoc, page);
+            contentStream.drawImage(pdImage, 0, 0, pgsize.width, pgsize.height);
+            contentStream.close();
+        }
+        pdfDoc.save(pdfOutputStream);
+        pdfDoc.close();
+    }
+
 
 
 

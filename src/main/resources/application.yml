@@ -28,10 +28,10 @@ spring:
     allow-bean-definition-overriding: true
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/learningByDoing_db4
+    url: jdbc:postgresql://localhost:5432/learningByDoing_db
     driver-class-name: org.postgresql.Driver
     username: postgres
-    password: ahlamelassiri@
+    password: 123456
   jpa:
     hibernate:
       ddl-auto: update
