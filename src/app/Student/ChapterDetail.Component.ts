@@ -41,7 +41,9 @@ import { HeaderComponent } from '../header/header.component';
           <td>{{ chapter.conclusion }}</td>
 
           <td class="action-buttons">
-            <button class="btn btn-primary" (click)="viewQuestions(chapter.chapter)">View Questions</button>
+          <button class="btn btn-primary" (click)="downloadFile(this.courseName,chapter.id,chapter.chapter)">Download File</button>
+          <button class="btn btn-primary" (click)="viewPpt(this.courseName, chapter.id)">View PPT</button>
+            <button class="btn btn-primary" (click)="viewQuestions(this.courseName,chapter.chapter)">View Questions</button>
           </td>
         </tr>
         </tbody>
@@ -87,7 +89,7 @@ export class ChapterDetailComponent implements OnInit {
   course$: Observable<CoursDocument> = of({ id: '', courseName: '', chapters: [] });
   filteredChapters: any[] = []; // Tableau local pour stocker les chapitres filtrés
   errorMessage: string | null = null;
-
+courseName!: string;
   constructor(
     private studentService: StudentService,
     private route: ActivatedRoute,
@@ -97,6 +99,8 @@ export class ChapterDetailComponent implements OnInit {
   ngOnInit(): void {
     this.route.paramMap.subscribe(params => {
       const courseName = params.get('courseName');
+      if(courseName){      this.courseName=courseName;
+      }
       console.log('Paramètre courseName récupéré:', courseName);
 
       if (courseName) {
@@ -123,12 +127,12 @@ export class ChapterDetailComponent implements OnInit {
     });
   }
 
-  viewQuestions(chapterName: string) {
-    this.router.navigate(['student/static-question-form', chapterName]);
+  viewQuestions(courseName: string, chapterName: string) {
+    this.router.navigate(['student/static-question-form', courseName,chapterName]);
   }
 
-  downloadFile(fileId: string, fileName: string) {
-    this.studentService.downloadFile(fileId).subscribe((response: Blob) => {
+  downloadFile(courseName: string, fileId: string, fileName: string) {
+    this.studentService.downloadFile(courseName,fileId).subscribe((response: Blob) => {
         const url = window.URL.createObjectURL(response);
         const a = document.createElement('a');
         a.href = url;
@@ -143,7 +147,7 @@ export class ChapterDetailComponent implements OnInit {
       });
   }
 
-  viewPpt(chapterName: string): void {
-    this.router.navigate([`/courses/${chapterName}/ppt`]);
+  viewPpt(courseName: string, chapterName: string): void {
+    this.router.navigate([`/courses/${courseName}/${chapterName}/ppt`]);
   }
 }

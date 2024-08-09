@@ -1,4 +1,5 @@
 export interface FileClass {
+  questions: [];
   _id: string;
   chapter: string;
   contentType: string;
@@ -7,7 +8,7 @@ export interface FileClass {
   introduction: string;
   conclusion: string;
   pptFilePath: string;
-  visible:boolean
+  visible:boolean;
 }
 
 export interface CoursDocument {

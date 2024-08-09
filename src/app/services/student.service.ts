@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import {Observable, of, throwError} from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { CoursDocument } from "../models/course";
+import { CoursDocument, FileClass } from "../models/course";
 import { jwtDecode } from "jwt-decode";
 
 @Injectable({
@@ -68,14 +68,37 @@ export class StudentService {
       })
     );
   }
+  getChapterQuestions(courseName: string, chapterName: string): Observable<FileClass> {
+    return this.http.get<FileClass>(`${this.baseUrl}/chapter_questions?courseName=${courseName}&chapterName=${chapterName}`, {
 
-  downloadFile(fileId: string): Observable<Blob> {
-    return this.http.get<Blob>(`${this.baseUrl}/download/${fileId}`, {
-      headers: this.getAuthHeaders(),
+    }).pipe(
+      catchError(error => {
+        console.error('Erreur lors de la récupération des détails du cours:', error);
+
+        return of();
+      })
+    );
+  }
+
+  downloadFile(courseName: string, fileId: string): Observable<Blob> {
+    const token = localStorage.getItem('access_token');
+  if (token) {
+
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${JSON.parse(token)}`,
+      'Content-Type': 'application/json',
+      'Accept': 'application/octet-stream',
+
+    });
+    return this.http.get<Blob>(`${this.baseUrl}/download/${courseName}/${fileId}`, {
+      headers,
       responseType: 'blob' as 'json'
     }).pipe(
       catchError(this.handleError<Blob>('downloadFile'))
-    );
+    );}else {
+      console.log('No access token found');
+      return of();
+    }
   }
 
   viewFile(fileId: string): Observable<Blob> {
