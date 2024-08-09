@@ -138,21 +138,24 @@ export class StaticQuestionFormComponent implements OnInit {
   ngOnInit(): void {
     this.route.params.subscribe(params => {
       const chapterName = params['chapterName'];
-      this.loadQuestions(chapterName);
+      const courseName = params['courseName'];
+
+      this.loadQuestions(courseName,chapterName);
     });
   }
 
-  loadQuestions(chapterName: string): void {
+  loadQuestions(courseName: string, chapterName: string): void {
 
-    // this.studentService.getCourseDetails(chapterName).subscribe(response => {
-    //   if (response && response.questions) {
-    //     this.questions = response.questions;
-    //     // Initialize responses with the current answers if available
-    //     this.questions.forEach(question => {
-    //       this.responses[question.numQuestion] = '';
-    //     });
-    //   }
-    // });
+    this.studentService.getChapterQuestions(courseName,chapterName).subscribe(response => {
+      console.log(response);
+      if (response && response.questions) {
+        this.questions = response.questions;
+        // Initialize responses with the current answers if available
+        this.questions.forEach(question => {
+          this.responses[question.numQuestion] = '';
+        });
+      }
+    });
 
     // this.studentService.getChapterDetails(chapterName).subscribe(response => {
     //   console.log(response);

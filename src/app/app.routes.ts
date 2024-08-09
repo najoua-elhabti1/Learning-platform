@@ -38,7 +38,7 @@ export const routes: Routes = [
 
   { path: 'student', component: StudentComponent},
 
-  { path: 'student/static-question-form/:chapterName', component: StaticQuestionFormComponent},
+  { path: 'student/static-question-form/:courseName/:chapterName', component: StaticQuestionFormComponent },
   { path: 'student/chapters', component: ChaptersComponent },
   { path: 'student/chapter-detail/:courseName', component: ChapterDetailComponent },
   { path: 'student/view-ppt/:id', component: ViewPptComponent },
@@ -53,7 +53,7 @@ export const routes: Routes = [
   { path: 'student/courses/:id/ppt', component: ViewPptComponent ,canActivate:[StudentGuard]},
 
 
-  { path: 'courses/:id/ppt', component: ViewPptComponent },
+  { path: 'courses/:courseName/:id/ppt', component: ViewPptComponent },
   {
     path : '',
     component : DashboardComponent,

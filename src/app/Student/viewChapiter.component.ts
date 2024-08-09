@@ -24,13 +24,15 @@ export class ViewPptComponent implements OnInit {
   ) { }
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
-    if (id) {
-      this.loadPdfFile(id);
+    const courseName = this.route.snapshot.paramMap.get('courseName');
+
+    if (id && courseName) {
+      this.loadPdfFile(courseName, id);
     }
   }
 
-  loadPdfFile(id: string): void {
-    const pdfPath = `http://localhost:8080/crackit/v1/student/ppt/${id}/pdf`;
+  loadPdfFile(courseName:string, id: string): void {
+    const pdfPath = `http://localhost:8080/crackit/v1/student/ppt/${courseName}/${id}/pdf`;
     this.pdfUrl = this.sanitizer.bypassSecurityTrustResourceUrl(pdfPath);
   }
 
