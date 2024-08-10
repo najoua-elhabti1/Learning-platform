@@ -27,4 +27,7 @@ public class StudentService {
         return studentRepository.findByEmail(email);
     }
 
+    public void deleteAllStudents() {
+        studentRepository.deleteAll();
+    }
 }

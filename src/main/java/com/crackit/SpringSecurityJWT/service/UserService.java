@@ -1,5 +1,6 @@
 package com.crackit.SpringSecurityJWT.service;
 
+import com.crackit.SpringSecurityJWT.user.Role;
 import com.crackit.SpringSecurityJWT.user.User;
 import com.crackit.SpringSecurityJWT.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,4 +22,15 @@ public class UserService {
         user.setNeedsPasswordChange(true);
         userRepository.save(user);
     }
+
+    public boolean existsByEmail(String email) {
+        return userRepository.existsByEmail(email);
+    }
+
+    public void deleteAllStudents() {
+        userRepository.deleteByRole(Role.Student);
+
+
+    }
+
 }

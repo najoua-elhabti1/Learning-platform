@@ -353,6 +353,32 @@ public class ProfController {
     }
 
 
+
+
+
+    @DeleteMapping("/chapters/delete")
+    public ResponseEntity<Void> deleteChapter(@RequestParam String courseName,
+                                              @RequestParam String chapterName) {
+        // Find the course by name
+        CoursDocument coursDocument = courseRepository.findByCourseName(courseName)
+                .orElseThrow(() -> new ResourceNotFoundException("Course not found"));
+
+        // Find and remove the chapter
+        FileClass chapter = coursDocument.getChapters().stream()
+                .filter(c -> c.getChapter().equalsIgnoreCase(chapterName))
+                .findFirst()
+                .orElseThrow(() -> new ResourceNotFoundException("Chapter not found"));
+
+        coursDocument.getChapters().remove(chapter);
+
+        courseRepository.save(coursDocument);
+
+        return ResponseEntity.ok().build();
+    }
+}
+
+
+
 //    @DeleteMapping("/delete_all_questions")
 //    public ResponseEntity<String> deleteAllQuestions() {
 //        try {
@@ -523,4 +549,3 @@ public class ProfController {
 //    }
 
 
-}

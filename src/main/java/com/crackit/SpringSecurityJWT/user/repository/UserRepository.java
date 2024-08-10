@@ -1,5 +1,6 @@
 package com.crackit.SpringSecurityJWT.user.repository;
 
+import com.crackit.SpringSecurityJWT.user.Role;
 import com.crackit.SpringSecurityJWT.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -12,4 +13,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     User findByResetToken(String token);
 
 
+    boolean existsByEmail(String email);
+
+    void deleteByRole(Role role);
 }

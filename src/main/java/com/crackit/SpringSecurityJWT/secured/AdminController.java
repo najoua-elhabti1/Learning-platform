@@ -7,6 +7,7 @@ import com.crackit.SpringSecurityJWT.service.UserService;
 import com.crackit.SpringSecurityJWT.user.Student;
 import com.crackit.SpringSecurityJWT.user.User;
 import com.crackit.SpringSecurityJWT.user.Role;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -78,7 +79,23 @@ public class AdminController {
             List<Student> students = studentService.getAllStudents();
 
             for (Student student : students) {
+                if (student.getEmail() == null || student.getEmail().isEmpty()) {
+                    logger.warning("Email for student " + student.getId() + " is null or empty. Skipping registration.");
+                    continue; // Passer à l'étudiant suivant si l'email est null ou vide
+                }
+
+                // Vérifier si l'utilisateur existe déjà avec cet email
+                if (userService.existsByEmail(student.getEmail())) {
+                    logger.info("User with email " + student.getEmail() + " already exists. Skipping registration.");
+                    continue; // Passer à l'étudiant suivant
+                }
+
                 String password = generateRandomPassword();
+                if (password == null || password.isEmpty()) {
+                    logger.warning("Generated password is null or empty for student " + student.getId() + ". Skipping registration.");
+                    continue; // Passer à l'étudiant suivant si le mot de passe est null ou vide
+                }
+
                 User user = new User();
                 user.setEmail(student.getEmail());
                 user.setPassword(password);
@@ -86,9 +103,10 @@ public class AdminController {
                 user.setLastName(student.getLastName());
                 user.setRole(Role.Student);
 
-
+                // Enregistrer l'utilisateur
                 userService.registerUser(user);
 
+                // Envoyer l'email
                 emailService.sendEmail(
                         student.getEmail(),
                         "Application Learning by doing Account Registration",
@@ -109,6 +127,32 @@ public class AdminController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
+
+
+
+
+
+
+    @DeleteMapping("/clear-students")
+    @Transactional
+    public ResponseEntity<Map<String, String>> clearStudents() {
+        Map<String, String> response = new HashMap<>();
+        try {
+            // Supprimer tous les étudiants
+            studentService.deleteAllStudents();
+
+            // Supprimer tous les utilisateurs avec le rôle Student
+            userService.deleteAllStudents();
+
+            response.put("message", "All students and corresponding users have been deleted successfully.");
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            logger.severe("Failed to delete students and users: " + e.getMessage());
+            response.put("message", "Failed to delete students and users. " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+
 
     private String generateRandomPassword() {
         String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
