@@ -328,17 +328,17 @@ public class ProfController {
     }
 
 
-    //afichinahom f table
-//    @GetMapping("/all_questions")
-//    public ResponseEntity<List<QuestionDTO>> getAllQuestions() {
-//        try {
-//            List<QuestionDTO> questions = fileService.getAllQuestions();
-//            return ResponseEntity.ok(questions);
-//        } catch (Exception e) {
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-//                    .body(null);
-//        }
-//    }
+//    afichinahom f table
+    @GetMapping("/all_questions")
+    public ResponseEntity<List<Question>> getAllQuestions() {
+        try {
+            List<Question> questions = fileService.getAllQuestions();
+            return ResponseEntity.ok(questions);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(null);
+        }
+    }
 
 
     // ndwzohom mn excel n mongo
@@ -375,19 +375,19 @@ public class ProfController {
 
         return ResponseEntity.ok().build();
     }
-}
 
 
 
-//    @DeleteMapping("/delete_all_questions")
-//    public ResponseEntity<String> deleteAllQuestions() {
-//        try {
-//            fileService.deleteAllQuestions();
-//            return ResponseEntity.ok("All questions deleted successfully.");
-//        } catch (Exception e) {
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error deleting questions.");
-//        }
-//    }
+
+    @DeleteMapping("/delete_all_questions")
+    public ResponseEntity<String> deleteAllQuestions() {
+        try {
+            fileService.deleteAllQuestions();
+            return ResponseEntity.ok("All questions deleted successfully.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error deleting questions.");
+        }
+    }
 
 
 //    @GetMapping("/download/questions")
@@ -440,41 +440,55 @@ public class ProfController {
 //
 
 
-//    @PutMapping("/update_question")
-//    public ResponseEntity<String> updateQuestion(@RequestBody UpdateChapterDTO updateQuestionDTO) {
-//        try {
-//            String chapterName = updateQuestionDTO.getChapter();
-//            int questionNumber = updateQuestionDTO.getNumQuestion();
-//            String newQuestionText = updateQuestionDTO.getQuestion();
-//            String newResponseText = updateQuestionDTO.getResponse();
-//
-//            fileService.updateQuestion(chapterName, questionNumber, newQuestionText, newResponseText);
-//
-//            return ResponseEntity.ok("Question updated successfully");
-//        } catch (IllegalArgumentException | ResourceNotFoundException e) {
-//            return ResponseEntity.badRequest().body(e.getMessage());
-//        }
-//    }
-//
-//
+    @PutMapping("/update_question")
+    public ResponseEntity<String> updateQuestion(@RequestBody Question updateQuestionDTO) {
+        try {
+            String courseName = updateQuestionDTO.getCourse();
+            String chapterName = updateQuestionDTO.getChapter();
+            int questionNumber = updateQuestionDTO.getNumQuestion();
+            String newQuestionText = updateQuestionDTO.getQuestion();
+            String newResponseText = updateQuestionDTO.getResponse();
+            String newImageContent = updateQuestionDTO.getImageContent();
 
-//    @DeleteMapping("/question/{chapterName}/{questionNumber}")
-//    public ResponseEntity<String> deleteQuestionByChapterAndNumber(
-//            @PathVariable String chapterName,
-//            @PathVariable int questionNumber) {
-//        try {
-//            fileService.deleteQuestionFromChapter(chapterName, questionNumber);
-//            return ResponseEntity.ok("Question deleted successfully.");
-//        } catch (Exception e) {
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error deleting question: " + e.getMessage());
-//        }
-//    }
-//
-//
-//    @GetMapping("/question/{chapterName}/{questionNumber}")
-//    public ResponseEntity<QuestionDTO> getQuestionByChapterAndNumber(@PathVariable String chapterName, @PathVariable int questionNumber) {
-//        return fileService.getQuestionByChapterAndNumber(chapterName, questionNumber);
-//    }
+            // Log received data for debugging
+            System.out.println("Received courseName: " + courseName);
+            System.out.println("Received chapterName: " + chapterName);
+            System.out.println("Received questionNumber: " + questionNumber);
+            System.out.println("Received newQuestionText: " + newQuestionText);
+            System.out.println("Received newResponseText: " + newResponseText);
+            System.out.println("Received newImageContent: " + newImageContent);
+
+            fileService.updateQuestion(courseName, chapterName, questionNumber, newQuestionText, newResponseText, newImageContent);
+
+            return ResponseEntity.ok("Question updated successfully");
+        } catch (IllegalArgumentException | ResourceNotFoundException e) {
+            // Log the exception message
+            System.out.println("Error occurred: " + e.getMessage());
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+
+
+    @DeleteMapping("/question/{courseName}/{chapterName}/{questionNumber}")
+    public ResponseEntity<String> deleteQuestionByChapterAndNumber(
+            @PathVariable String courseName,
+            @PathVariable String chapterName,
+            @PathVariable int questionNumber) {
+        try {
+            fileService.deleteQuestionFromChapter(courseName,chapterName, questionNumber);
+            return ResponseEntity.ok("Question deleted successfully.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error deleting question: " + e.getMessage());
+        }
+    }
+
+
+    @GetMapping("/question/{courseName}/{chapterName}/{questionNumber}")
+    public ResponseEntity<Question> getQuestionByChapterAndNumber(@PathVariable String courseName, @PathVariable String chapterName, @PathVariable int questionNumber) {
+        return fileService.getQuestionByCourseAndChapterAndNumber(courseName,chapterName, questionNumber);
+    }
+}
 //
 //    @PostMapping("/addQuestion")
 //    public ResponseEntity<Map<String, String>> addQuestion(
@@ -520,32 +534,5 @@ public class ProfController {
 //        }
 //    }
 //
-//    private String saveImage(MultipartFile file) throws IOException {
-//        if (file.isEmpty()) {
-//            throw new IOException("File is empty");
-//        }
-//
-//        // Define the directory where the image will be saved
-//        Path uploadPath = Paths.get("UPLOAD_Image_DIR");
-//
-//        // Create the directory if it does not exist
-//        if (!Files.exists(uploadPath)) {
-//            Files.createDirectories(uploadPath);
-//        }
-//
-//        // Get the original filename and define the path to save the file
-//        String originalFilename = file.getOriginalFilename();
-//        Path destinationPath = uploadPath.resolve(originalFilename);
-//
-//        // Check if the file already exists
-//        if (Files.exists(destinationPath)) {
-//            return destinationPath.toString();
-//        }
-//
-//        // Save the file
-//        Files.copy(file.getInputStream(), destinationPath, StandardCopyOption.REPLACE_EXISTING);
-//
-//        return destinationPath.toString();
-//    }
 
 

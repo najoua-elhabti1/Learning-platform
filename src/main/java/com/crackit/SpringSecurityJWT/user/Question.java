@@ -27,7 +27,6 @@ public class Question {
     @Column(length = 100000)
     private String response;
 
-    private String imagePath;
     @Lob
     @Column(length = 100000)
     private String imageContent;

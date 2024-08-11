@@ -11,6 +11,7 @@ import com.mongodb.client.gridfs.GridFSBucket;
 import com.mongodb.client.gridfs.GridFSDownloadStream;
 import com.mongodb.client.gridfs.model.GridFSFile;
 import com.mongodb.client.model.Filters;
+import org.apache.kafka.common.errors.ResourceNotFoundException;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
@@ -306,40 +307,38 @@ public class FileService {
 
 
 
-//    public List<QuestionDTO> getAllQuestions() {
-//        List<QuestionDTO> allQuestions = new ArrayList<>();
-//        List<FileDocument> allDocuments = fileRepository.findAll();
+    public List<Question> getAllQuestions() {
+        List<Question> allQuestions = new ArrayList<>();
+        List<CoursDocument> allDocuments = courseRepository.findAll();
+
+        for (CoursDocument fileDocument : allDocuments) {
+            String courseName = fileDocument.getCourseName();
+            for (FileClass file : fileDocument.getChapters()){
+                String chapterName = file.getChapter();
+                List<Question> questions = file.getQuestions();
+                System.out.println(questions);
+//                System.out.println("Chapter: " + chapterName);
 //
-//        for (FileDocument fileDocument : allDocuments) {
-//            String chapterName = fileDocument.getChapter();
-//
-//            List<Question> questions = fileDocument.getQuestions();
-//
-//
-//            System.out.println("Chapter: " + chapterName);
-//
-//            System.out.println("Questions: " + (questions != null ? questions.size() : 0));
-//
-//            if (questions != null) {
-//                for (Question question : questions) {
-//                    // Log les valeurs des questions
-//                    System.out.println("NumQuestion: " + question.getNumQuestion());
-//                    System.out.println("Question: " + question.getQuestion());
-//                    System.out.println("Response: " + question.getResponse());
-//
-//                    QuestionDTO questionDTO = new QuestionDTO(
-//                            chapterName,
-//                            question.getNumQuestion(),
-//                            question.getQuestion(),
-//                            question.getResponse()
-//                    );
-//                    allQuestions.add(questionDTO);
-//                }
-//            }
-//        }
-//
-//        return allQuestions;
-//    }
+//                System.out.println("Questions: " + (questions != null ? questions.size() : 0));
+
+                if (questions != null) {
+                    for (Question question : questions) {
+                        question.setCourse(courseName);
+                        question.setChapter(chapterName);
+                        // Log les valeurs des questions
+//                        System.out.println("NumQuestion: " + question.getNumQuestion());
+//                        System.out.println("Question: " + question.getQuestion());
+//                        System.out.println("Response: " + question.getResponse());
+                        allQuestions.add(question);
+                    }
+                }
+            }
+
+
+        }
+
+        return allQuestions;
+    }
 
 
 
@@ -351,32 +350,25 @@ public class FileService {
 
 
 
-//    public void deleteAllQuestions() {
-//        // Retrieve all FileDocuments
-//        List<FileDocument> allDocuments = fileRepository.findAll();
-//
-//        // Iterate through each FileDocument
-//        for (FileDocument fileDocument : allDocuments) {
-//            // Get the current list of questions
-//            List<Question> questions = fileDocument.getQuestions();
-//
-//            // Check if the list is not null and not empty
-//            if (questions != null && !questions.isEmpty()) {
-//                // Log or print the number of questions being removed (optional)
-//                System.out.println("Deleting " + questions.size() + " questions from document with ID: " + fileDocument.getId());
-//
-//                // Clear the list of questions
-//                questions.clear();
-//
-//                // Save the updated FileDocument
-//                fileRepository.save(fileDocument);
-//            }
-//        }
-//
-//        // Optionally, if you have a separate repository or collection for questions,
-//        // you might also want to clear questions from there
-//        // questionRepository.deleteAll(); // Uncomment if you have a separate repository
-//    }
+    public void deleteAllQuestions() {
+        // Fetch all course documents
+        List<CoursDocument> allDocuments = courseRepository.findAll();
+
+        for (CoursDocument fileDocument : allDocuments) {
+            // Iterate over each chapter in the course document
+            for (FileClass file : fileDocument.getChapters()) {
+                // Clear the questions list for each chapter
+//                file.getQuestions().clear();
+
+                // Alternatively, set to an empty list (recommended)
+                 fileDocument.getChapterByChapterName(file.getChapter()).setQuestions(new ArrayList<>());
+            }
+
+            // Save the updated course document to the repository
+            courseRepository.save(fileDocument);
+        }
+    }
+
 //
 //    public ByteArrayInputStream generateExcelQuestions() throws IOException {
 //        List<QuestionDTO> allQuestions = getAllQuestions(); // Retrieve all questions as DTOs
@@ -471,157 +463,115 @@ public class FileService {
 
 
 
-  private String saveImage(MultipartFile file) throws IOException {
-     if (file.isEmpty()) {
-          throw new IOException("File is empty");
+    public void updateQuestion(String courseName, String chapterName, int questionNumber, String newQuestionText, String newResponseText, String newImageContent) {
+        // Validation des paramètres
+        if (courseName == null || courseName.trim().isEmpty() || chapterName == null || chapterName.trim().isEmpty() || newQuestionText == null || newQuestionText.trim().isEmpty() || newResponseText == null || newResponseText.trim().isEmpty()) {
+            throw new IllegalArgumentException("course name , Chapter name, new question text, and new response text must not be empty.");
+        }
+        Optional<CoursDocument> coursDocument = courseRepository.findByCourseName(courseName);
+
+        // Chercher le document par le nom du chapitre
+        FileClass file = getChapterFromCourse(chapterName,courseName);
+
+        if (file != null) {
+            List<Question> questions = file.getQuestions();
+
+            if (questions != null) {
+                // Trouver la question à mettre à jour
+                for (Question question : questions) {
+                    if (question.getNumQuestion() == questionNumber) {
+                        // Mettre à jour les propriétés de la question
+                        question.setQuestion(newQuestionText);
+                        question.setResponse(newResponseText);
+                        question.setImageContent(newImageContent);
+                        coursDocument.get().getChapterByChapterName(chapterName).setQuestions(questions);
+                        courseRepository.save(coursDocument.get());
+                        return;
+                    }
+                }
+
+                throw new ResourceNotFoundException("Question with number " + questionNumber + " not found in chapter " + chapterName);
+            } else {
+                throw new ResourceNotFoundException("No questions found in chapter " + chapterName);
+            }
+        } else {
+            throw new ResourceNotFoundException("Document not found for chapter " + chapterName);
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+    public ResponseEntity<Question> getQuestionByCourseAndChapterAndNumber(String courseName, String chapterName, int questionNumber) {
+        FileClass file = getChapterFromCourse(chapterName, courseName);
+
+        if (file != null) {
+
+            List<Question> questions = file.getQuestions();
+
+            if (questions != null) {
+                for (Question question : questions) {
+                    if (question.getNumQuestion() == questionNumber) {
+                        question.setCourse(courseName);
+                        question.setChapter(chapterName);
+                        return ResponseEntity.ok(question);
+                    }
+                }
+            }
         }
 
-        // Define the directory where the image will be saved
-        Path uploadPath = Paths.get(UPLOAD_Image_DIR);
+        return ResponseEntity.notFound().build();
+    }
 
-        // Create the directory if it does not exist
-        if (!Files.exists(uploadPath)) {
-            Files.createDirectories(uploadPath);
+
+
+
+
+
+
+    public void deleteQuestionFromChapter(String courseName, String chapterName, int questionNumber) {
+
+        if (courseName == null || courseName.trim().isEmpty() || chapterName == null || chapterName.trim().isEmpty()) {
+            throw new IllegalArgumentException("Course name or Chapter name must not be empty.");
+        }
+        Optional<CoursDocument> coursDocument = courseRepository.findByCourseName(courseName);
+
+        FileClass file = getChapterFromCourse(chapterName,courseName);
+
+
+        if (file != null) {
+            List<Question> questions = file.getQuestions();
+
+            if (questions != null) {
+                boolean questionRemoved = questions.removeIf(question -> question.getNumQuestion() == questionNumber);
+
+
+                        if (questionRemoved) {
+                            coursDocument.get().getChapterByChapterName(chapterName).setQuestions(questions);
+                            courseRepository.save(coursDocument.get());
+                        }
+                        else {
+                            throw new ResourceNotFoundException("Question with number " + questionNumber + " not found in chapter " + chapterName);
+                        }
+
+
+
+            } else {
+                throw new ResourceNotFoundException("No questions found in chapter " + chapterName);
+            }
+        } else {
+            throw new ResourceNotFoundException("Document not found for chapter " + chapterName);
         }
 
-        // Get the original filename and define the path to save the file
-        String originalFilename = file.getOriginalFilename();
-       Path destinationPath = uploadPath.resolve(originalFilename);
 
-        // Check if the file already exists
-        if (Files.exists(destinationPath)) {
-            return destinationPath.toString();
-       }
+    }
 
-        // Save the file
-      Files.copy(file.getInputStream(), destinationPath, StandardCopyOption.REPLACE_EXISTING);
-      // Return the relative path
-       return destinationPath.toString();
-   }
-
-
-
-
-
-
-
-
-//    public void updateQuestion(String chapterName, int questionNumber, String newQuestionText, String newResponseText) {
-//        // Validation des paramètres
-//        if (chapterName == null || chapterName.trim().isEmpty() || newQuestionText == null || newQuestionText.trim().isEmpty() || newResponseText == null || newResponseText.trim().isEmpty()) {
-//            throw new IllegalArgumentException("Chapter name, new question text, and new response text must not be empty.");
-//        }
-//
-//        // Chercher le document par le nom du chapitre
-//        Optional<FileDocument> optionalFileDocument = fileRepository.findByChapter(chapterName);
-//
-//        if (optionalFileDocument.isPresent()) {
-//            FileDocument fileDocument = optionalFileDocument.get();
-//            List<Question> questions = fileDocument.getQuestions();
-//
-//            if (questions != null) {
-//                // Trouver la question à mettre à jour
-//                for (Question question : questions) {
-//                    if (question.getNumQuestion() == questionNumber) {
-//                        // Mettre à jour les propriétés de la question
-//                        question.setQuestion(newQuestionText);
-//                        question.setResponse(newResponseText);
-//
-//                        // Sauvegarder le document mis à jour
-//                        fileRepository.save(fileDocument);
-//                        return;
-//                    }
-//                }
-//
-//                throw new ResourceNotFoundException("Question with number " + questionNumber + " not found in chapter " + chapterName);
-//            } else {
-//                throw new ResourceNotFoundException("No questions found in chapter " + chapterName);
-//            }
-//        } else {
-//            throw new ResourceNotFoundException("Document not found for chapter " + chapterName);
-//        }
-//    }
-
-
-
-
-
-
-
-
-
-
-//    public ResponseEntity<QuestionDTO> getQuestionByChapterAndNumber(String chapterName, int questionNumber) {
-//        Optional<FileDocument> optionalFileDocument = fileRepository.findByChapter(chapterName);
-//
-//        if (optionalFileDocument.isPresent()) {
-//            FileDocument fileDocument = optionalFileDocument.get();
-//            List<Question> questions = fileDocument.getQuestions();
-//
-//            if (questions != null) {
-//                for (Question question : questions) {
-//                    if (question.getNumQuestion() == questionNumber) {
-//                        QuestionDTO questionDTO = new QuestionDTO(
-//                                chapterName,
-//
-//                                question.getNumQuestion(),
-//                                question.getQuestion(),
-//                                question.getResponse()
-//
-//                        );
-//                        return ResponseEntity.ok(questionDTO);
-//                    }
-//                }
-//            }
-//        }
-//
-//        return ResponseEntity.notFound().build();
-//    }
-//
-
-
-
-
-
-
-//    public void deleteQuestionFromChapter(String chapterName, int questionNumber) {
-//
-//        if (chapterName == null || chapterName.trim().isEmpty()) {
-//            throw new IllegalArgumentException("Chapter name must not be empty.");
-//        }
-//
-
-//        Optional<FileDocument> optionalFileDocument = fileRepository.findByChapter(chapterName);
-//
-//        if (optionalFileDocument.isPresent()) {
-//            FileDocument fileDocument = optionalFileDocument.get();
-//            List<Question> questions = fileDocument.getQuestions();
-//
-//            if (questions != null) {
-//
-//                boolean questionRemoved = questions.removeIf(question -> question.getNumQuestion() == questionNumber);
-//
-//                if (questionRemoved) {
-//
-//                    fileRepository.save(fileDocument);
-//                } else {
-//                    throw new ResourceNotFoundException("Question with number " + questionNumber + " not found in chapter " + chapterName);
-//                }
-//            } else {
-//                throw new ResourceNotFoundException("No questions found in chapter " + chapterName);
-//            }
-//        } else {
-//            throw new ResourceNotFoundException("Document not found for chapter " + chapterName);
-//        }
-//    }
-//    private final String uploadDir = "uploads/";
-//
-//  public void saveFile(MultipartFile file, String chapter, String course, String objectifs, String plan, String introduction, String conclusion, boolean isVisible) throws IOException {
-//        Path path = Paths.get(uploadDir + file.getOriginalFilename());
-//      Files.createDirectories(path.getParent());
-//      Files.write(path, file.getBytes());
-//
-//   }
     public static void convertPptToPdf(InputStream pptInputStream, ByteArrayOutputStream pdfOutputStream) throws IOException {
         SlideShow<?, ?> ppt = new XMLSlideShow(pptInputStream);
         Dimension pgsize = ppt.getPageSize();
