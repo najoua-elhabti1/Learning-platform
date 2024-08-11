@@ -113,7 +113,7 @@ export const routes: Routes = [
 
 
 
-  { path: 'update-question/:chapter/:numQuestion', component: UpdateQuestionComponent, canActivate:[ProfGuard] },
+  { path: 'update-question/:course/:chapter/:numQuestion', component: UpdateQuestionComponent, canActivate:[ProfGuard] },
 
 
   {

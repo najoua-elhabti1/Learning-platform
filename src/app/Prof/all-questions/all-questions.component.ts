@@ -61,11 +61,12 @@ export class AllQuestionsComponent implements OnInit {
   }
 
 
-  deleteQuestion(chapter: string, numQuestion: number): void {
-    this.profService.deleteQuestionByChapterAndNumber(chapter, numQuestion)
+  deleteQuestion(course: string, chapter: string, numQuestion: number): void {
+    this.profService.deleteQuestionByChapterAndNumber(course, chapter, numQuestion)
       .subscribe(
         response => {
           console.log('Question deleted successfully:', response);
+          this.loadQuestions();
         },
         error => {
           console.error('Error deleting question:', error);
@@ -73,7 +74,7 @@ export class AllQuestionsComponent implements OnInit {
       );
   }
 
-  navigateToUpdateQuestion(chapter: string, numQuestion: number): void {
-    this.router.navigate(['/update-question', chapter, numQuestion]);
+  navigateToUpdateQuestion(course: string, chapter: string, numQuestion: number): void {
+    this.router.navigate(['/update-question', course, chapter, numQuestion]);
   }
 }

@@ -22,7 +22,8 @@ export class UpdateQuestionComponent implements OnInit {
     question: '',
     response: '',
     chapter: '',
-    course: ''
+    course: '',
+    imageContent: ''
   };
   courses: string[] = [];  // Remplir avec les options de cours
   chapters: string[] = []; // Remplir avec les options de chapitres
@@ -35,36 +36,59 @@ export class UpdateQuestionComponent implements OnInit {
 
   ngOnInit(): void {
     this.route.params.subscribe(params => {
+      const course = params['course'];
       const chapter = params['chapter'];
       const numQuestion = params['numQuestion'];
-      this.getQuestion(chapter, numQuestion);
+      this.getQuestion(course, chapter, numQuestion);
     });
   }
 
-  getQuestion(chapter: string, numQuestion: number): void {
-    this.profService.getQuestionByChapterAndNumber(chapter, numQuestion)
+  getQuestion(course:string, chapter: string, numQuestion: number): void {
+    this.profService.getQuestionByChapterAndNumber(course, chapter, numQuestion)
       .subscribe(question => {
+        console.log(question);
         this.question = question;
 
       });
   }
+  onFileSelected(event: Event): void {
+    const target = event.target as HTMLInputElement;
 
-  onSubmit(): void {
-    this.route.params.subscribe(params => {
+    if (target && target.files && target.files.length > 0) {
+        const file = target.files[0];
+        const reader = new FileReader();
+
+        reader.onload = () => {
+            if (reader.result) {
+                this.question.imageContent = btoa(reader.result as string);
+            }
+        };
+
+        reader.readAsBinaryString(file);
+    }
+}
+
+onSubmit(): void {
+  this.route.params.subscribe(params => {
+      const course = params['course'];
       const chapter = params['chapter'];
       const numQuestion = params['numQuestion'];
       const updatedQuestion = this.question.question;
       const updatedResponse = this.question.response;
-console.log(updatedQuestion);
-console.log(updatedResponse);
-      this.profService.updateQuestion(chapter, numQuestion, updatedQuestion, updatedResponse)
-        .subscribe(response => {
-          alert('Question updated successfully');
-          this.router.navigate(['/some-path']); // Mettez à jour avec le chemin souhaité
-        }, error => {
-          console.error('Update failed', error);
-          alert('Failed to update question');
-        });
-    });
-  }
+      const updatedImageContent = this.question.imageContent;
+
+      // Log data being sent for debugging
+      console.log('Sending data:', { course, chapter, numQuestion, updatedQuestion, updatedResponse, updatedImageContent });
+
+      this.profService.updateQuestion(course, chapter, numQuestion, updatedQuestion, updatedResponse, updatedImageContent)
+          .subscribe(response => {
+              console.log('Success!', response);
+              alert('Question updated successfully');
+              this.router.navigateByUrl('Prof/AllQuestions');
+          }, error => {
+              console.error('Update failed', error);
+              alert('Failed to update question');
+          });
+  });
+}
 }

@@ -64,9 +64,9 @@ export class ProfService {
     return this.http.get<QuestionDTO[]>(`${this.baseUrl}/all_questions`, { headers });
   }
 
-  deleteAllQuestions(): Observable<any> {
+  deleteAllQuestions(): Observable<string> {
     const headers = this.getAuthHeaders();
-    return this.http.delete<any>(`${this.baseUrl}/delete_all_questions`, {
+    return this.http.delete<string>(`${this.baseUrl}/delete_all_questions`, {
       headers,
       responseType: 'text' as 'json'
     });
@@ -94,35 +94,36 @@ export class ProfService {
 
 
 
-  getQuestionByChapterAndNumber(chapter: string, numQuestion: number): Observable<QuestionDTO> {
+  getQuestionByChapterAndNumber(course: string, chapter: string, numQuestion: number): Observable<QuestionDTO> {
     const headers = this.getAuthHeaders();
-    const url = `${this.baseUrl}/question/${chapter}/${numQuestion}`;
+    const url = `${this.baseUrl}/question/${course}/${chapter}/${numQuestion}`;
     return this.http.get<QuestionDTO>(url, { headers })
       .pipe(
         catchError(this.handleError<QuestionDTO>('getQuestionByChapterAndNumber'))
       );
   }
 
-  updateQuestion(chapter: string, numQuestion: number, newQuestionText: string, newResponseText: string): Observable<string> {
+  updateQuestion(course: string, chapter: string, numQuestion: number, newQuestionText: string, newResponseText: string, newImageContent: string): Observable<any> {
     const headers = this.getAuthHeaders();
     const body = {
+      course,
       chapter,
       numQuestion,
       question: newQuestionText,
-      response: newResponseText
+      response: newResponseText,
+      imageContent : newImageContent
     };
 
-    return this.http.put<string>(`${this.baseUrl}/update_question`, body, {
+    return this.http.put<any>(`${this.baseUrl}/update_question`, body, {
       headers,
       responseType: 'text' as 'json'
     }).pipe(
-      catchError(this.handleError<string>('updateQuestion'))
-    );
+      catchError(this.handleError('updateQuestion', []))    );
   }
 
-  deleteQuestionByChapterAndNumber(chapter: string, numQuestion: number): Observable<string> {
+  deleteQuestionByChapterAndNumber(course: string, chapter: string, numQuestion: number): Observable<string> {
     const headers = this.getAuthHeaders();
-    const url = `${this.baseUrl}/question/${chapter}/${numQuestion}`;
+    const url = `${this.baseUrl}/question/${course}/${chapter}/${numQuestion}`;
     return this.http.delete<string>(url, {
       headers,
       responseType: 'text' as 'json'

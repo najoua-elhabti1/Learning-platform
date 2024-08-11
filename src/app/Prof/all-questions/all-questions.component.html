@@ -19,8 +19,11 @@
           <th class="px-6 py-3 text-xs font-medium leading-4 tracking-wider text-left text-gray-600 uppercase border-b border-gray-200 bg-gray-100" style="width: 100px; word-wrap: break-word; overflow-wrap: break-word;">Num Question</th>
           <th class="px-6 py-3 text-xs font-medium leading-4 tracking-wider text-left text-gray-600 uppercase border-b border-gray-200 bg-gray-100" style="width: 200px; word-wrap: break-word; overflow-wrap: break-word;">Question</th>
           <th class="px-6 py-3 text-xs font-medium leading-4 tracking-wider text-left text-gray-600 uppercase border-b border-gray-200 bg-gray-100" style="width: 200px; word-wrap: break-word; overflow-wrap: break-word;">Response</th>
+          <th class="px-6 py-3 text-xs font-medium leading-4 tracking-wider text-left text-gray-600 uppercase border-b border-gray-200 bg-gray-100" style="width: 100px; word-wrap: break-word; overflow-wrap: break-word;">image</th>
 
-          <th class="px-6 py-3 text-xs font-medium leading-4 tracking-wider text-left text-gray-600 uppercase border-b border-gray-200 bg-gray-100" style="width: 100px; word-wrap: break-word; overflow-wrap: break-word;">Chapter</th>
+          <th class="px-6 py-3 text-xs font-medium leading-4 tracking-wider text-left text-gray-600 uppercase border-b border-gray-200 bg-gray-100" style="width: 100px; word-wrap: break-word; overflow-wrap: break-word;">Chapitre</th>
+          <th class="px-6 py-3 text-xs font-medium leading-4 tracking-wider text-left text-gray-600 uppercase border-b border-gray-200 bg-gray-100" style="width: 100px; word-wrap: break-word; overflow-wrap: break-word;">Cours</th>
+
           <th class="px-6 py-3 border-b border-gray-200 bg-gray-100" style="width: 200px; word-wrap: break-word; overflow-wrap: break-word;"></th>
         </tr>
         </thead>
@@ -41,16 +44,25 @@
               {{ question.response }}
             </div>
           </td>
-
+          <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
+            <div class="text-sm leading-5 text-gray-600" style="width: 200px; word-wrap: break-word; overflow-wrap: break-word;">
+              <img [src]="'data:image/jpeg;base64,' +question.imageContent" alt="">
+            </div>
+          </td>
           <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
             <div class="text-sm leading-5 text-gray-600" style="width: 100px; word-wrap: break-word; overflow-wrap: break-word;">
               {{ question.chapter }}
             </div>
           </td>
+          <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
+            <div class="text-sm leading-5 text-gray-600" style="width: 100px; word-wrap: break-word; overflow-wrap: break-word;">
+              {{ question.course }}
+            </div>
+          </td>
           <td class="px-6 py-4 text-sm font-medium leading-5 text-right whitespace-no-wrap border-b border-gray-200">
-            <button (click)="navigateToUpdateQuestion(question.chapter, question.numQuestion)" class="hover:text-blue-500 text-blue-400 font-bold py-2 px-4 rounded transition duration-300">Modifier la Question</button>
+            <button (click)="navigateToUpdateQuestion(question.course,question.chapter, question.numQuestion)" class="hover:text-blue-500 text-blue-400 font-bold py-2 px-4 rounded transition duration-300">Modifier la Question</button>
 
-            <button (click)="deleteQuestion(question.chapter, question.numQuestion)" class="hover:text-blue-500 text-blue-400 font-bold py-2 px-4 rounded transition duration-300">supprimer</button>
+            <button (click)="deleteQuestion(question.course, question.chapter, question.numQuestion)" class="hover:text-blue-500 text-blue-400 font-bold py-2 px-4 rounded transition duration-300">supprimer</button>
           </td>
         </tr>
         </tbody>
