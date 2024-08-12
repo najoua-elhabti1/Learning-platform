@@ -16,8 +16,7 @@
   <div id="excelUploadSection" class="border p-4 rounded-lg shadow-md mb-4">
     <div><label class="block mb-2 font-bold">Télécharger un fichier Excel</label>
       <input type="file" (change)="onExcelFileSelected($event)" class="border-gray-300 rounded-md p-2 w-full mb-2">
-      <button (click)="uploadQuestions()" class="py-2 px-4 bg-green-500 text-white rounded-md shadow-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50">Télécharger le fichier excel des questions</button>
-      <p class="text-red-500 mt-3" *ngIf="uploadStatus">{{ uploadStatus }}</p>
+      
     </div>
     <div>
       <label class="block mb-2 font-bold">Télécharger les images</label>
@@ -27,6 +26,8 @@
       <p class="text-red-500 mt-3" *ngIf="uploadStatus">{{ uploadImagesStatus }}</p>
     
     </div>
+    <button (click)="uploadQuestions()" class="py-2 px-4 bg-green-500 text-white rounded-md shadow-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50">Télécharger le fichier excel des questions</button>
+      <p class="text-red-500 mt-3" *ngIf="uploadStatus">{{ uploadStatus }}</p>
   </div>
 
   <div id="manualEntrySection" class="border p-4 rounded-lg shadow-md hidden">
