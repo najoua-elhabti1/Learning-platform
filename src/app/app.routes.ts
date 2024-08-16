@@ -22,6 +22,7 @@ import {StudentGuard} from "./services/Student.guard";
 import {CourseInputComponent} from "./Prof/AddCourse.component";
 import {AddChapterComponent} from "./Prof/add-chapter2.component";
 import {AddQuestionsComponent2} from "./Prof/add-question2.component";
+import { CourseActivitiesComponent } from './Prof/course-activities/course-activities.component';
 
 
 
@@ -82,6 +83,10 @@ export const routes: Routes = [
   path : 'Prof/ChangePwd',
   component : ChangePwdComponent,
 
+},
+{
+  path : 'Prof/StudentActivities',
+  component : CourseActivitiesComponent,
 },
 {
   path : 'Admin/ChangePwd',

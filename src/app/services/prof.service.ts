@@ -171,6 +171,9 @@ export class ProfService {
   getCourses(): Observable<{ courseName: string }[]> {
     return this.http.get<{ courseName: string }[]>(`${this.baseUrl}/all_courses`);
   }
+  getChapters(): Observable<string []> {
+    return this.http.get<string []>(`${this.baseUrl}/all_chapters`);
+  }
 
 
 

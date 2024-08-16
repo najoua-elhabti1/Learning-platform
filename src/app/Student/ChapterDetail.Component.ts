@@ -7,6 +7,8 @@ import { CoursDocument } from '../models/course';
 import { CommonModule } from '@angular/common';
 import { StudentComponent } from './student.component';
 import { HeaderComponent } from '../header/header.component';
+import { StudentActivity, StudentActivityService } from '../services/StudentActivites.service';
+import { AuthService } from '../services/auth/auth.service';
 
 @Component({
   selector: 'app-chapter-detail',
@@ -42,7 +44,7 @@ import { HeaderComponent } from '../header/header.component';
 
           <td class="action-buttons">
           <button class="btn btn-primary" (click)="downloadFile(this.courseName,chapter.id,chapter.chapter)">Download File</button>
-          <button class="btn btn-primary" (click)="viewPpt(this.courseName, chapter.id)">View PPT</button>
+          <button class="btn btn-primary" (click)="viewPpt(this.courseName, chapter.id,chapter.chapter)">View PPT</button>
             <button class="btn btn-primary" (click)="viewQuestions(this.courseName,chapter.chapter)">View Questions</button>
           </td>
         </tr>
@@ -90,10 +92,13 @@ export class ChapterDetailComponent implements OnInit {
   filteredChapters: any[] = []; // Tableau local pour stocker les chapitres filtrés
   errorMessage: string | null = null;
 courseName!: string;
+courseId!: string;
   constructor(
     private studentService: StudentService,
+    private authService: AuthService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private studentActivityService: StudentActivityService
   ) {}
 
   ngOnInit(): void {
@@ -113,6 +118,7 @@ courseName!: string;
             return of({ id: '', courseName: '', chapters: [] });
           }),
           map(course => {
+            this.courseId = course.id;
             console.log('Chapitres avant filtrage:', course.chapters);
             const filteredChapters = course.chapters.filter(chapter => chapter.visible === true);
             console.log('Chapitres filtrés:', filteredChapters);
@@ -145,9 +151,28 @@ courseName!: string;
       error => {
         console.error('Error downloading the file:', error);
       });
+      const user = localStorage.getItem('connectedUser');
+      if(user){
+        console.log(JSON.parse(user));
+        const connectedUser = JSON.parse(user);
+        const activity: StudentActivity = {
+          studentId: connectedUser.firstName +" "+ connectedUser.lastName,
+          courseId: fileName,
+          actionType: 'DOWNLOAD',
+          timestamp: new Date().toISOString(),
+          duration: 0
+          // clickCount: 0
+      };
+      this.studentActivityService.logActivity(activity).subscribe();
+
+      }
+      
+
+      
   }
 
-  viewPpt(courseName: string, chapterName: string): void {
-    this.router.navigate([`/courses/${courseName}/${chapterName}/ppt`]);
+  viewPpt(courseName: string,id: string, chapterName: string): void {
+    localStorage.setItem("chapterName",chapterName);
+    this.router.navigate([`/courses/${courseName}/${id}/ppt`]);
   }
 }
