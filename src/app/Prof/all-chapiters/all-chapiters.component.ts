@@ -4,7 +4,7 @@ import { ProfMenuComponent } from '../prof-menu/prof-menu.component';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ProfService } from '../../services/prof.service';
-import { CoursDocument } from '../../models/course'; // Assurez-vous que ce modèle est correct
+import {CoursDocument, FileClass} from '../../models/course'; // Assurez-vous que ce modèle est correct
 import { Router } from '@angular/router';
 import {data} from "autoprefixer";
 
@@ -85,4 +85,9 @@ export class AllChapitersComponent implements OnInit {
     }
   }
   protected readonly data = data;
+
+  update(courseName: string, chapterName: string): void {
+    this.router.navigate(['/update-chapter', courseName, chapterName]);
+  }
+
 }

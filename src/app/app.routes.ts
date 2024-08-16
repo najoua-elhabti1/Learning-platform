@@ -23,6 +23,8 @@ import {CourseInputComponent} from "./Prof/AddCourse.component";
 import {AddChapterComponent} from "./Prof/add-chapter2.component";
 import {AddQuestionsComponent2} from "./Prof/add-question2.component";
 import { CourseActivitiesComponent } from './Prof/course-activities/course-activities.component';
+import {UpdateChapterComponent} from "./Prof/UpdateChapter.component";
+
 
 
 
@@ -38,7 +40,7 @@ export const routes: Routes = [
   },
 
   { path: 'student', component: StudentComponent},
-
+  { path: 'add', component:    AddChapterComponent},
   { path: 'student/static-question-form/:courseName/:chapterName', component: StaticQuestionFormComponent },
   { path: 'student/chapters', component: ChaptersComponent },
   { path: 'student/chapter-detail/:courseName', component: ChapterDetailComponent },
@@ -47,10 +49,10 @@ export const routes: Routes = [
   { path: 'student/courses/:chapterName/ppt', component: ViewPptComponent },
   { path: 'course', component:  CourseInputComponent },
 
-  { path: 'add', component:    AddChapterComponent},
+
   { path: 'add2', component:      AddQuestionsComponent2},
 
-
+  { path: 'update-chapter/:courseName/:chapterName', component: UpdateChapterComponent },
   { path: 'student/courses/:id/ppt', component: ViewPptComponent ,canActivate:[StudentGuard]},
 
 
