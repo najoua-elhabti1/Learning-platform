@@ -3,7 +3,7 @@ import {HttpClient, HttpErrorResponse, HttpEvent, HttpHeaders, HttpParams} from 
 import { Observable, of, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { QuestionDTO } from '../models/QuestionDTO.model';
-import {CoursDocument} from "../models/course";
+import {CoursDocument, FileClass} from "../models/course";
 
 @Injectable({
   providedIn: 'root'
@@ -209,5 +209,32 @@ export class ProfService {
       catchError(this.handleError<void>('deleteChapter'))
     );
   }
+
+
+
+
+  getChapterByCourseAndChapter(courseName: string, chapterName: string): Observable<FileClass> {
+
+    const params = new HttpParams()
+      .set('courseName', courseName)
+      .set('chapterName', chapterName);
+
+    return this.http.get<FileClass>(`${this.baseUrl}/chapter`, { params })
+      .pipe(
+        catchError(this.handleError<FileClass>('getChapterByCourseAndChapter'))
+      );
+  }
+
+
+  updateChapter(formData: FormData): Observable<any> {
+    return this.http.put(`${this.baseUrl}/update_chapter`, formData).pipe(
+      catchError((error: HttpErrorResponse) => {
+        console.error('Update failed', error);
+        return throwError(error);  // Gère l'erreur et retourne un observable d'erreur
+      })
+    );
+  }
+
+
 
 }
