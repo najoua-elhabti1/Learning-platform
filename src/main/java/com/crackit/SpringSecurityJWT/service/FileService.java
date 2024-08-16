@@ -507,7 +507,6 @@ public class FileService {
 
 
 
-
     public ResponseEntity<Question> getQuestionByCourseAndChapterAndNumber(String courseName, String chapterName, int questionNumber) {
         FileClass file = getChapterFromCourse(chapterName, courseName);
 
@@ -530,7 +529,17 @@ public class FileService {
     }
 
 
+public List<String> getAllChapters(){
+    List<String> allChapters = new ArrayList<>();
+    List<CoursDocument> allDocuments = courseRepository.findAll();
 
+    for (CoursDocument fileDocument : allDocuments) {
+        for (FileClass file : fileDocument.getChapters()){
+            allChapters.add(file.getChapter());
+        }
+    }
+    return allChapters;
+}
 
 
 

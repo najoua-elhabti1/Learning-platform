@@ -1,12 +1,14 @@
 package com.crackit.SpringSecurityJWT.secured;
 
 import com.crackit.SpringSecurityJWT.service.FileService;
+import com.crackit.SpringSecurityJWT.service.StudentActivityService;
 import com.crackit.SpringSecurityJWT.user.*;
 import com.crackit.SpringSecurityJWT.user.repository.CourseRepository;
 import com.crackit.SpringSecurityJWT.user.repository.QuestionRepository;
 import com.mongodb.client.gridfs.model.GridFSFile;
 import lombok.AllArgsConstructor;
 import org.apache.kafka.common.errors.ResourceNotFoundException;
+import org.apache.kafka.common.protocol.types.Field;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.apache.poi.xslf.usermodel.*;
@@ -339,6 +341,16 @@ public class ProfController {
                     .body(null);
         }
     }
+    @GetMapping("/all_chapters")
+    public ResponseEntity<List<String>> getAllChapters() {
+        try {
+            List<String> chapters = fileService.getAllChapters();
+            return ResponseEntity.ok(chapters);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(null);
+        }
+    }
 
 
     // ndwzohom mn excel n mongo
@@ -488,6 +500,31 @@ public class ProfController {
     public ResponseEntity<Question> getQuestionByChapterAndNumber(@PathVariable String courseName, @PathVariable String chapterName, @PathVariable int questionNumber) {
         return fileService.getQuestionByCourseAndChapterAndNumber(courseName,chapterName, questionNumber);
     }
+
+    @Autowired
+    private StudentActivityService service;
+
+    @PostMapping("student-activities/log")
+    public ResponseEntity<StudentActivity> logActivity(@RequestBody StudentActivity activity) {
+//        System.out.println("Click Count: " + activity.getClickCount());
+        StudentActivity savedActivity = service.logActivity(activity);
+        return new ResponseEntity<>(savedActivity, HttpStatus.CREATED);
+    }
+
+    @GetMapping("student-activities/course/{courseId}")
+    public List<StudentActivity> getActivitiesByCourse(@PathVariable String courseId) {
+        return service.getActivitiesByCourse(courseId);
+    }
+
+    @GetMapping("student-activities/student/{studentId}")
+    public List<StudentActivity> getActivitiesByStudent(@PathVariable String studentId) {
+        return service.getActivitiesByStudent(studentId);
+    }
+    @GetMapping("student-activities/all")
+    public List<StudentActivity> getAllActivities() {
+        return service.getAllActivities();
+    }
+
 }
 //
 //    @PostMapping("/addQuestion")
