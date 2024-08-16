@@ -389,6 +389,38 @@ public class ProfController {
     }
 
 
+    //update chapter:
+
+
+
+
+    //return chapter by nameChapter and nameCourse
+    @GetMapping("/chapter")
+    public ResponseEntity<FileClass> getChapterByCourseAndChapter(
+            @RequestParam("courseName") String courseName,
+            @RequestParam("chapterName") String chapterName) {
+
+        try {
+            // Rechercher le documentCours par nom de cours
+            CoursDocument coursDocument = courseRepository.findByCourseName(courseName)
+                    .orElseThrow(() -> new ResourceNotFoundException("Course not found"));
+
+            // Chercher le chapitre par nom du chapitre dans la liste des chapitres
+            FileClass chapter = coursDocument.getChapters().stream()
+                    .filter(c -> c.getChapter().equalsIgnoreCase(chapterName))
+                    .findFirst()
+                    .orElseThrow(() -> new ResourceNotFoundException("Chapter not found"));
+
+            // Retourner le chapitre trouvé
+            return ResponseEntity.ok(chapter);
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
+
 
 
     @DeleteMapping("/delete_all_questions")
@@ -501,6 +533,7 @@ public class ProfController {
         return fileService.getQuestionByCourseAndChapterAndNumber(courseName,chapterName, questionNumber);
     }
 
+
     @Autowired
     private StudentActivityService service;
 
@@ -524,6 +557,80 @@ public class ProfController {
     public List<StudentActivity> getAllActivities() {
         return service.getAllActivities();
     }
+
+
+
+    @PutMapping("/update_chapter")
+    public ResponseEntity<Map<String, String>> updateChapter(
+            @RequestParam("courseName") String courseName,
+            @RequestParam("chapter") String chapter,
+            @RequestParam("file") MultipartFile file
+    ) {
+
+        if (file.isEmpty()) {
+            return ResponseEntity.badRequest().body(Collections.singletonMap("error", "No file selected."));
+        }
+
+        try {
+            CoursDocument course = courseRepository.findByCourseName(courseName)
+                    .orElseThrow(() -> new ResourceNotFoundException("Course not found"));
+
+            FileClass chapterToUpdate = course.getChapters().stream()
+                    .filter(chap -> chap.getChapter().equals(chapter))
+                    .findFirst()
+                    .orElseThrow(() -> new ResourceNotFoundException("Chapter not found"));
+
+            String fileId = gridFsTemplate.store(file.getInputStream(), file.getOriginalFilename(), file.getContentType()).toString();
+
+            String fileExtension = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf('.') + 1).toLowerCase();
+            String objectifs = "", plan = "", introduction = "", conclusion = "";
+
+            if (fileExtension.equals("ppt") || fileExtension.equals("pptx")) {
+                try (XMLSlideShow ppt = new XMLSlideShow(file.getInputStream())) {
+                    XSLFSlide[] slides = ppt.getSlides().toArray(new XSLFSlide[0]);
+                    if (slides.length > 1) objectifs = extractFormattedTextFromSlide(slides[1]);
+                    if (slides.length > 2) plan = extractFormattedTextFromSlide(slides[2]);
+                    if (slides.length > 3) introduction = extractFormattedTextFromSlide(slides[3]);
+                    if (slides.length > 4) conclusion = extractFormattedTextFromSlide(slides[slides.length - 1]);
+                }
+            } else if (fileExtension.equals("pdf")) {
+                try (PDDocument document = PDDocument.load(file.getInputStream())) {
+                    int numberOfPages = document.getNumberOfPages();
+                    if (numberOfPages > 1) objectifs = extractFormattedTextFromPdfPage(document, 2);
+                    if (numberOfPages > 2) plan = extractFormattedTextFromPdfPage(document, 3);
+                    if (numberOfPages > 3) introduction = extractFormattedTextFromPdfPage(document, 4);
+                    if (numberOfPages > 4) conclusion = extractFormattedTextFromPdfPage(document, numberOfPages);
+                }
+            } else {
+                throw new IOException("Unsupported file type: " + fileExtension);
+            }
+
+            chapterToUpdate.setPptFilePath(fileId);
+            chapterToUpdate.setObjectifs(objectifs);
+            chapterToUpdate.setPlan(plan);
+            chapterToUpdate.setIntroduction(introduction);
+            chapterToUpdate.setConclusion(conclusion);
+
+            courseRepository.save(course);
+
+            String downloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
+                    .path("/crackit/v1/prof/")
+                    .path(chapterToUpdate.getId())
+                    .toUriString();
+
+            Map<String, String> response = new HashMap<>();
+            response.put("message", "Chapter updated successfully.");
+            response.put("fileId", fileId);
+            response.put("downloadUri", downloadUri);
+
+            return ResponseEntity.ok(response);
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Collections.singletonMap("error", "Error processing file: " + e.getMessage()));
+        }
+    }
+
+
 
 }
 //

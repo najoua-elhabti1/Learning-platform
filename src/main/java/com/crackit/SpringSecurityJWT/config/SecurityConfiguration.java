@@ -1,6 +1,7 @@
 package com.crackit.SpringSecurityJWT.config;
 
 import lombok.RequiredArgsConstructor;
+import org.hibernate.sql.Update;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -57,6 +58,7 @@ public class SecurityConfiguration {
                         .requestMatchers(DELETE, "/crackit/v1/prof/**").permitAll()
                         .requestMatchers(POST, "/crackit/v1/prof/**").permitAll()
                         .requestMatchers(DELETE, "/crackit/v1/prof/**").permitAll()
+
                         .requestMatchers(GET, "/crackit/v1/student/**").permitAll()
                         .requestMatchers(POST, "/crackit/v1/student/**").permitAll()
 
