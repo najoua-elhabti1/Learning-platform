@@ -4,7 +4,7 @@
 <div class="container mx-auto my-8 px-4">
   <!-- Filter by Course Dropdown -->
   <div class="mb-6 flex justify-center items-center">
-    <label for="course-filter" class="mr-4 text-gray-800 font-semibold text-lg">Filter by Course</label>
+    <label for="course-filter" class="mr-4 text-gray-800 font-semibold text-lg">Filtrer par Chapitre</label>
     <div class="relative">
       <select 
         id="course-filter" 
@@ -12,7 +12,7 @@
         [(ngModel)]="selectedCourse" 
         (change)="filterActivities()"
       >
-        <option value="">Tous les cours </option>
+        <option value="">Tous les chapitres</option>
         <option *ngFor="let course of courses" [value]="course">{{ course }}</option>
       </select>
       <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
@@ -47,3 +47,9 @@
     </table>
   </div>
 </div>
+<app-footer></app-footer>
+<style>
+  .container{
+    min-height: 70vh;
+  }
+</style>

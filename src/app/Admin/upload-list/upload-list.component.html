@@ -13,7 +13,7 @@
       <h3 class="section-title">Télécharger le fichier Excel des étudiants</h3>
       <form (ngSubmit)="onSubmit()" class="w-full space-y-6">
         <div class="form-group">
-          <input type="file" name="file" (change)="onFileSelected($event)" class="form-control" />
+          <input type="file" name="file" (change)="onFileSelected($event)" class="form-control p-3" />
         </div>
         <button type="submit" class="submit-button bg-blue-600 hover:bg-blue-700">Télécharger</button>
       </form>
@@ -33,6 +33,7 @@
       >
         Envoyer les Emails
       </button>
+      <p class="status-message text-red-500 mt-4" *ngIf="sendEmailStatus">{{ sendEmailStatus }}</p>
     </div>
   </div>
 </div>
@@ -41,7 +42,7 @@
 
 <style>
   .choice-wrapper {
-    min-height: 63vh;
+    min-height: 70vh;
     display: flex;
     flex-direction: column;
     align-items: center;

@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
 import {HeaderComponent} from "../header/header.component";
-import {MenuComponent} from "../menu/menu.component";
 import {ProfMenuComponent} from "../Prof/prof-menu/prof-menu.component";
 import {AuthService} from "../services/auth/auth.service";
 
@@ -9,7 +8,7 @@ import {AuthService} from "../services/auth/auth.service";
 @Component({
   selector: 'app-student',
   standalone: true,
-  imports: [HeaderComponent, MenuComponent, ProfMenuComponent, RouterOutlet],
+  imports: [HeaderComponent, ProfMenuComponent, RouterOutlet],
   template: `
     <app-header></app-header>
 

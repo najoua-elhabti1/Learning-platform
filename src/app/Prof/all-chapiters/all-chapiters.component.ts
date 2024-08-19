@@ -7,11 +7,12 @@ import { ProfService } from '../../services/prof.service';
 import {CoursDocument, FileClass} from '../../models/course'; // Assurez-vous que ce modèle est correct
 import { Router } from '@angular/router';
 import {data} from "autoprefixer";
+import { FooterComponent } from "../../footer/footer.component";
 
 @Component({
   selector: 'app-all-chapiters',
   standalone: true,
-  imports: [HeaderComponent, ProfMenuComponent, FormsModule, CommonModule],
+  imports: [HeaderComponent, ProfMenuComponent, FormsModule, CommonModule, FooterComponent],
   templateUrl: './all-chapiters.component.html',
   styleUrls: ['./all-chapiters.component.css'] // Correction de 'styleUrl' en 'styleUrls'
 })

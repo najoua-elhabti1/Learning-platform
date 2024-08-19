@@ -2,11 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { HeaderComponent } from '../header/header.component';
-import { MenuComponent } from '../menu/menu.component';
+
 import { ProfMenuComponent } from '../Prof/prof-menu/prof-menu.component';
 import { RouterOutlet, ActivatedRoute } from '@angular/router';
 import { StudentService } from '../services/student.service';
 import { StudentComponent } from './student.component';
+import { StudentMenuComponent } from "./student-menu/student-menu.component";
+import { FooterComponent } from "../footer/footer.component";
 
 interface Question {
   numQuestion: number;
@@ -19,9 +21,10 @@ interface Question {
 @Component({
   selector: 'app-static-question-form',
   standalone: true,
-  imports: [CommonModule, FormsModule, HeaderComponent, MenuComponent, ProfMenuComponent, RouterOutlet, StudentComponent],
+  imports: [CommonModule, FormsModule, HeaderComponent, ProfMenuComponent, RouterOutlet, StudentComponent, StudentMenuComponent, FooterComponent],
   template: `
-    <app-student></app-student>
+  <app-header></app-header>
+    <app-student-menu></app-student-menu>
     <div class="container">
       <h2 class="form-title">Formulaire de Questions</h2>
       <form *ngIf="questions.length > 0" (ngSubmit)="submitAnswers()">
@@ -69,7 +72,7 @@ interface Question {
     (click)="modalImageSrc && openImageModal(modalImageSrc); $event.stopPropagation()"> <!-- Add this check -->
 </div>
  
-
+<app-footer></app-footer>
   `,
   styles: [`
     .container {

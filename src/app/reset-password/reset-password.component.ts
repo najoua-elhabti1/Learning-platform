@@ -5,11 +5,12 @@ import { CommonModule } from '@angular/common';
 import { AuthService } from '../services/auth/auth.service';
 import { Router } from '@angular/router';
 import { HeaderComponent } from '../header/header.component';
+import { FooterComponent } from "../footer/footer.component";
 
 @Component({
   selector: 'app-reset-password',
   standalone: true,
-  imports: [HeaderComponent,FormsModule, CommonModule],
+  imports: [HeaderComponent, FormsModule, CommonModule, FooterComponent],
   templateUrl: './reset-password.component.html',
   styleUrl: './reset-password.component.css'
 })

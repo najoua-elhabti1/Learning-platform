@@ -2,63 +2,64 @@
 <app-prof-menu></app-prof-menu>
 
 <div class="container mx-auto mt-8">
-  <div class="flex items-center mb-4">
-    <label class="block text-gray-700 mr-4">
-      <input type="radio" name="questionType" value="excel" class="mr-2" checked (change)="toggleQuestionType($event)">
+  <div class="flex items-center mb-6">
+    <label class="block text-gray-800 mr-8 cursor-pointer">
+      <input type="radio" name="questionType" value="excel" class="mr-2 accent-blue-500" checked (change)="toggleQuestionType($event)">
       Télécharger un fichier Excel
     </label>
-    <label class="block text-gray-700">
-      <input type="radio" name="questionType" value="manual" class="mr-2" (change)="toggleQuestionType($event)">
+    <label class="block text-gray-800 cursor-pointer">
+      <input type="radio" name="questionType" value="manual" class="mr-2 accent-blue-500" (change)="toggleQuestionType($event)">
       Ajouter les Questions Manuellement
     </label>
   </div>
 
-  <div id="excelUploadSection" class="border p-4 rounded-lg shadow-md mb-4">
-    <div><label class="block mb-2 font-bold">Télécharger un fichier Excel</label>
-      <input type="file" (change)="onExcelFileSelected($event)" class="border-gray-300 rounded-md p-2 w-full mb-2">
-      
+  <!-- Excel Upload Section -->
+  <div id="excelUploadSection" class="border border-gray-300 p-6 rounded-lg shadow-lg mb-6 bg-white">
+    <div>
+      <label class="block mb-3 text-lg font-semibold text-gray-900">Télécharger un fichier Excel</label>
+      <input type="file" (change)="onExcelFileSelected($event)" class="border border-gray-300 rounded-md p-3 w-full mb-4 focus:outline-none focus:border-blue-500">
     </div>
     <div>
-      <label class="block mb-2 font-bold">Télécharger les images</label>
-
-      <input type="file" (change)="onImagesFolderSelected($event)" webkitdirectory multiple class="border-gray-300 rounded-md p-2 w-full mb-2">
-      <!-- <button (click)="uploadQuestionsImages()" class="py-2 px-4 bg-green-500 text-white rounded-md shadow-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50">Télécharger le dossier des images</button> -->
-      <p class="text-red-500 mt-3" *ngIf="uploadStatus">{{ uploadImagesStatus }}</p>
-    
+      <label class="block mb-3 text-lg font-semibold text-gray-900">Télécharger les images</label>
+      <input type="file" (change)="onImagesFolderSelected($event)" webkitdirectory multiple class="border border-gray-300 rounded-md p-3 w-full mb-4 focus:outline-none focus:border-blue-500">
+      <p class="text-red-600 mt-2" *ngIf="uploadImagesStatus">{{ uploadImagesStatus }}</p>
     </div>
-    <button (click)="uploadQuestions()" class="py-2 px-4 bg-green-500 text-white rounded-md shadow-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50">Télécharger le fichier excel des questions</button>
-      <p class="text-red-500 mt-3" *ngIf="uploadStatus">{{ uploadStatus }}</p>
+    <button (click)="uploadQuestions()" class="py-3 px-6 bg-green-500 text-white rounded-lg shadow-lg hover:bg-green-600 focus:outline-none focus:ring-4 focus:ring-green-300">Télécharger le fichier Excel des questions</button>
+    <p class="text-red-600 mt-4" *ngIf="uploadStatus">{{ uploadStatus }}</p>
   </div>
 
-  <div id="manualEntrySection" class="border p-4 rounded-lg shadow-md hidden">
-    <label class="block mb-2 font-bold">Ajouter les Questions Manuellement</label>
-    <label class="block text-gray-700 text-sm font-bold mb-2">Numéro de Question</label>
-    <input type="number" class="border-gray-300 rounded-md p-2 w-full mb-2" placeholder="Entrez le numéro de la question" [(ngModel)]="numQuestion">
+  <!-- Manual Entry Section -->
+  <div id="manualEntrySection" class="border border-gray-300 p-6 rounded-lg shadow-lg hidden bg-white mb-8">
+    <label class="block mb-4 text-lg font-semibold text-gray-900">Ajouter les Questions Manuellement</label>
 
-    <label class="block text-gray-700 text-sm font-bold mb-2">Question</label>
-    <textarea rows="2" class="border-gray-300 rounded-md p-2 w-full mb-2" placeholder="Entrez la question" [(ngModel)]="manualQuestion"></textarea>
+    <label class="block text-gray-700 text-sm font-medium mb-2">Numéro de Question</label>
+    <input type="number" class="border border-gray-300 rounded-md p-2 w-full mb-4 focus:outline-none focus:border-blue-500" placeholder="Entrez le numéro de la question" [(ngModel)]="numQuestion">
 
-    <label class="block text-gray-700 text-sm font-bold mb-2">Réponse</label>
-    <textarea rows="2" class="border-gray-300 rounded-md p-2 w-full mb-2" placeholder="Entrez la réponse" [(ngModel)]="manualResponse"></textarea>
+    <label class="block text-gray-700 text-sm font-medium mb-2">Question</label>
+    <textarea rows="3" class="border border-gray-300 rounded-md p-3 w-full mb-4 focus:outline-none focus:border-blue-500" placeholder="Entrez la question" [(ngModel)]="manualQuestion"></textarea>
 
-    <label class="block text-gray-700 text-sm font-bold mb-2">Image</label>
-    <input type="file" class="border-gray-300 rounded-md p-2 w-full mb-2" (change)="onImageSelected($event)" >
+    <label class="block text-gray-700 text-sm font-medium mb-2">Réponse</label>
+    <textarea rows="3" class="border border-gray-300 rounded-md p-3 w-full mb-4 focus:outline-none focus:border-blue-500" placeholder="Entrez la réponse" [(ngModel)]="manualResponse"></textarea>
 
-    <div class="mb-4">
-      <label for="course" class="block text-gray-700 text-sm font-bold mb-2">Titre du cours</label>
-      <select id="course" [(ngModel)]="selectedCourse" name="course" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
-        <option *ngFor="let course of courses" [ngValue]="course">{{ course }}</option>
+    <label class="block text-gray-700 text-sm font-medium mb-2">Image</label>
+    <input type="file" class="border border-gray-300 rounded-md p-3 w-full mb-4 focus:outline-none focus:border-blue-500" (change)="onImageSelected($event)">
+
+    <div class="mb-6">
+      <label for="course" class="block text-gray-700 text-sm font-medium mb-2">Titre du cours</label>
+      <select id="course" (change)="onCourseChange($event)" [(ngModel)]="selectedCourse" name="course" class="border border-gray-300 rounded-md p-2 w-full focus:outline-none focus:border-blue-500">
+        <option *ngFor="let course of courses$ | async" [value]="course.courseName">{{ course.courseName }}</option>
       </select>
     </div>
 
-    <div class="mb-4">
-      <label for="chapter" class="block text-gray-700 text-sm font-bold mb-2">Titre du chapitre</label>
-      <select id="chapter" [(ngModel)]="selectedChapter" name="chapter" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
-        <option *ngFor="let chapter of chapters" [ngValue]="chapter">{{ chapter }}</option>
+    <div class="mb-6">
+      <label for="chapter" class="block text-gray-700 text-sm font-medium mb-2">Titre du chapitre</label>
+      <select id="chapter" [(ngModel)]="selectedChapter" name="chapter" class="border border-gray-300 rounded-md p-2 w-full focus:outline-none focus:border-blue-500">
+        <option *ngFor="let chapter of chapters$ | async" [value]="chapter">{{ chapter }}</option>
       </select>
     </div>
 
-    <button (click)="addManualQuestion()" class="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded">Ajouter Question</button>
-    <p class="text-red-500 mt-3" *ngIf="AddStatus">{{ AddStatus }}</p>
+    <button (click)="addManualQuestion()" class="bg-blue-500 hover:bg-blue-600 text-white py-3 px-6 rounded-lg shadow-lg focus:outline-none focus:ring-4 focus:ring-blue-300">Ajouter Question</button>
+    <p class="text-red-600 mt-4" *ngIf="AddStatus">{{ AddStatus }}</p>
   </div>
 </div>
+<app-footer></app-footer>

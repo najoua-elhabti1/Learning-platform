@@ -43,14 +43,14 @@ onLogin(){
             console.log("i am here");
             this.router.navigateByUrl('Admin/upload-list');
           } else if (role === 'Prof') {
-            this.router.navigate(['/Prof/Dashboard']);
+            this.router.navigate(['Prof/AllChapiters']);
           }else if (role === 'Student') {
             console.log(res);
             console.log(res.needsPasswordChange);
             if (res.needsPasswordChange) {
               this.router.navigate(['/Student/ChangePwd']);
             }else{
-            this.router.navigate(['/student']);
+            this.router.navigate(['/student/chapters']);
           }
           }else{
             

@@ -4,12 +4,11 @@ import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { ProfService } from '../services/prof.service';
 import { HeaderComponent } from '../header/header.component';
-import { MenuComponent } from '../menu/menu.component';
 import { ProfMenuComponent } from './prof-menu/prof-menu.component';
 import { RouterOutlet } from '@angular/router';
 import { StudentComponent } from '../Student/student.component';
 import { CommonModule } from '@angular/common';
-
+import { FooterComponent } from "../footer/footer.component";
 
 @Component({
   selector: 'app-add-chapter',
@@ -17,132 +16,90 @@ import { CommonModule } from '@angular/common';
   imports: [
     CommonModule,
     HeaderComponent,
-    MenuComponent,
     ProfMenuComponent,
     RouterOutlet,
     StudentComponent,
     ReactiveFormsModule,
-  ],
+    FooterComponent
+],
   template: `
     <app-header></app-header>
-   <app-prof-menu></app-prof-menu>
-    <div class="container">
+    <app-prof-menu></app-prof-menu>
+    <div class="container max-w-lg mx-auto mt-12 p-8 bg-white rounded-lg shadow-lg mb-8">
+    <h2 class="text-center text-2xl font-bold text-gray-800 mb-6">Ajouter un Chapitre</h2>
       <form [formGroup]="chapterForm" (ngSubmit)="onSubmit()">
-        <div class="form-group">
-          <label for="courseName">Nom du cours</label>
+        <div class="mb-4">
+          <label for="courseName" class="block text-gray-700 font-medium mb-2">Nom du cours</label>
           <select
             id="courseName"
             formControlName="courseName"
-            class="form-control"
+            class="form-control border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             <option value="" disabled>Sélectionner un cours</option>
             <option *ngFor="let course of courses$ | async" [value]="course">{{ course }}</option>
           </select>
-          <div *ngIf="chapterForm.controls['courseName'].invalid && chapterForm.controls['courseName'].touched" class="error">
+          <div *ngIf="chapterForm.controls['courseName'].invalid && chapterForm.controls['courseName'].touched" class="text-red-500 mt-1 text-sm">
             Le nom du cours est requis.
           </div>
         </div>
 
-        <div class="form-group">
-          <label for="chapterName">Nom du chapitre</label>
+        <div class="mb-4">
+          <label for="chapterName" class="block text-gray-700 font-medium mb-2">Nom du chapitre</label>
           <input
             type="text"
             id="chapterName"
             formControlName="chapterName"
-            class="form-control"
+            class="form-control border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             placeholder="Entrez le nom du chapitre"
           />
-          <div *ngIf="chapterForm.controls['chapterName'].invalid && chapterForm.controls['chapterName'].touched" class="error">
+          <div *ngIf="chapterForm.controls['chapterName'].invalid && chapterForm.controls['chapterName'].touched" class="text-red-500 mt-1 text-sm">
             Le nom du chapitre est requis.
           </div>
         </div>
 
-        <div class="form-group">
-          <label for="uploadChapter">Télécharger le chapitre</label>
+        <div class="mb-4">
+          <label for="uploadChapter" class="block text-gray-700 font-medium mb-2">Télécharger le chapitre</label>
           <input
             type="file"
             id="uploadChapter"
             (change)="onFileChange($event)"
-            class="form-control"
+            class="form-control border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
-          <div *ngIf="!selectedFile && chapterForm.controls['uploadChapter'].touched" class="error">
+          <div *ngIf="!selectedFile && chapterForm.controls['uploadChapter'].touched" class="text-red-500 mt-1 text-sm">
             Le fichier du chapitre est requis.
           </div>
         </div>
 
-        <div class="form-group form-check">
+        <div class="mb-4 flex items-center">
           <input
             type="checkbox"
             id="isVisible"
             formControlName="isVisible"
-            class="form-check-input"
+            class="h-4 w-4 text-blue-600 border-gray-300 rounded"
           />
-          <label for="isVisible" class="form-check-label">Visible</label>
+          <label for="isVisible" class="ml-2 text-gray-700">Visible</label>
         </div>
 
-        <button type="submit" class="btn btn-primary" [disabled]="chapterForm.invalid">Ajouter le chapitre</button>
+        <button type="submit" class="btn-primary py-2 px-4 rounded-md text-white font-medium disabled:opacity-50" [disabled]="chapterForm.invalid">Ajouter le chapitre</button>
 
-        <div *ngIf="errorMessage" class="error mt-2">
+        <div *ngIf="errorMessage" class="text-red-500 mt-4 font-medium">
           {{ errorMessage }}
         </div>
       </form>
     </div>
+    <app-footer></app-footer>
   `,
   styles: [`
     .container {
       max-width: 600px;
-      margin: 50px auto; /* Ajout de l'espace en haut */
-      padding: 20px;
-      background-color: #007bff; /* Couleur bleu personnalisé */
-      border-radius: 10px;
-      box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-      color: white; /* Texte en blanc pour contraste */
     }
-
-    .form-group {
-      margin-bottom: 20px;
-    }
-
-    .form-control {
-      border-radius: 5px;
-      color: black; /* Changer la couleur du texte des inputs */
-    }
-
-    .form-control::placeholder {
-      color: #d1e7fd; /* Placeholder en bleu clair */
-    }
-
-    .form-check-input {
-      margin-left: 0.25rem;
-    }
-
-    .btn {
-      margin-top: 20px;
-      background-color: #0056b3; /* Un bleu plus sombre pour le bouton */
+    .btn-primary {
+      background-color: #0056b3;
       border: none;
-      padding: 10px 20px;
-      border-radius: 5px;
       font-size: 1rem;
     }
-
-    .btn:disabled {
-      background-color: #b0b0b0;
-    }
-
     .btn-primary:hover {
-      background-color: #003d82; /* Un bleu encore plus sombre pour le hover */
-    }
-
-    .error {
-      color: #ffcccb; /* Rouge clair pour les erreurs */
-      font-size: 0.875rem;
-      margin-top: 5px;
-    }
-
-    .error.mt-2 {
-      margin-top: 20px;
-      color: #ffb3b3;
-      font-weight: bold;
+      background-color: #003d82;
     }
   `]
 })

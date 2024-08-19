@@ -5,11 +5,12 @@ import { HeaderComponent } from '../../header/header.component';
 import { ProfMenuComponent } from '../prof-menu/prof-menu.component';
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../../services/auth/auth.service';
+import { FooterComponent } from "../../footer/footer.component";
 
 @Component({
   selector: 'app-add-chapiter',
   standalone: true,
-  imports: [FormsModule,CommonModule,HeaderComponent,ProfMenuComponent],
+  imports: [FormsModule, CommonModule, HeaderComponent, ProfMenuComponent, FooterComponent],
   templateUrl: './add-chapiter.component.html',
   styleUrl: './add-chapiter.component.css'
 })

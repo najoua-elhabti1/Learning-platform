@@ -6,11 +6,12 @@ import { ProfService } from '../services/prof.service';
 import { HeaderComponent } from '../header/header.component';
 import { ProfMenuComponent } from './prof-menu/prof-menu.component';
 import { CommonModule } from "@angular/common";
+import { FooterComponent } from "../footer/footer.component";
 
 @Component({
   selector: 'app-update-chapter',
   standalone: true,
-  imports: [CommonModule, FormsModule, HeaderComponent, ProfMenuComponent],
+  imports: [CommonModule, FormsModule, HeaderComponent, ProfMenuComponent, FooterComponent],
   template: `
     <app-header></app-header>
     <app-prof-menu></app-prof-menu>
@@ -46,6 +47,7 @@ import { CommonModule } from "@angular/common";
         </div>
       </form>
     </div>
+    <app-footer></app-footer>
   `,
   styles: [`
     .container {

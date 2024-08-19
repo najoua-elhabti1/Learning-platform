@@ -4,14 +4,13 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth/auth.service';
-import { MenuComponent } from '../../menu/menu.component';
 import { AdminMenuComponent } from "../admin-menu/admin-menu.component";
 import { FooterComponent } from "../../footer/footer.component";
 
 @Component({
   selector: 'app-upload-list',
   standalone: true,
-  imports: [HeaderComponent, CommonModule, FormsModule, MenuComponent, AdminMenuComponent, FooterComponent],
+  imports: [HeaderComponent, CommonModule, FormsModule, AdminMenuComponent, FooterComponent],
   templateUrl: './upload-list.component.html',
   styleUrls: ['./upload-list.component.css']
 })
@@ -63,7 +62,7 @@ export class UploadListComponent {
   sendEmails() {
     this.authService.registerUsers().subscribe(
       () => {
-        this.sendEmailStatus = 'Emails sent successfully!';
+        this.sendEmailStatus = 'Emails envoyés avec succès!';
       },
       (error: HttpErrorResponse) => {
         console.error('Send emails error:', error);

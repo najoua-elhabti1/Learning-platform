@@ -5,10 +5,10 @@ import { catchError } from 'rxjs/operators';
 import { ProfService } from '../services/prof.service';
 import { CommonModule } from '@angular/common';
 import { HeaderComponent } from '../header/header.component';
-import { MenuComponent } from '../menu/menu.component';
 import { ProfMenuComponent } from './prof-menu/prof-menu.component';
 import { RouterOutlet } from '@angular/router';
 import { StudentComponent } from '../Student/student.component';
+import { FooterComponent } from "../footer/footer.component";
 
 @Component({
   selector: 'app-add-question',
@@ -16,12 +16,12 @@ import { StudentComponent } from '../Student/student.component';
   imports: [
     CommonModule,
     HeaderComponent,
-    MenuComponent,
     ProfMenuComponent,
     RouterOutlet,
     StudentComponent,
     ReactiveFormsModule,
-  ],
+    FooterComponent
+],
   template: `
     <div class="container">
       <h2>Ajouter une question</h2>
@@ -65,6 +65,7 @@ import { StudentComponent } from '../Student/student.component';
         </div>
       </form>
     </div>
+    <app-footer></app-footer>
   `,
   styles: [`
     .container {

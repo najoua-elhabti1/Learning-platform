@@ -7,12 +7,13 @@ import {HeaderComponent} from "../../header/header.component";
 import {ProfMenuComponent} from "../prof-menu/prof-menu.component";
 import {FormsModule} from "@angular/forms";
 import {CommonModule} from "@angular/common";
+import { FooterComponent } from "../../footer/footer.component";
 
 @Component({
   selector: 'app-update-question',
 
   standalone: true,
-  imports: [HeaderComponent, ProfMenuComponent, FormsModule, CommonModule],
+  imports: [HeaderComponent, ProfMenuComponent, FormsModule, CommonModule, FooterComponent],
   templateUrl: './update-question.component.html',
   styleUrls: ['./update-question.component.css']
 })

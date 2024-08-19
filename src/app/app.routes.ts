@@ -1,7 +1,6 @@
 import { Routes } from '@angular/router';
 import { LoginComponent } from './login/login.component';
 import { RequestResetComponent } from './request-reset/request-reset.component';
-import { DashboardComponent } from './Prof/dashboard/dashboard.component';
 import { ResetPasswordComponent } from './reset-password/reset-password.component';
 import { UploadListComponent } from './Admin/upload-list/upload-list.component';
 import { AddChapiterComponent } from './Prof/add-chapiter/add-chapiter.component';
@@ -57,20 +56,20 @@ export const routes: Routes = [
 
 
   { path: 'courses/:courseName/:id/ppt', component: ViewPptComponent },
-  {
-    path : '',
-    component : DashboardComponent,
+  // {
+  //   path : '',
+  //   component : DashboardComponent,
 
-    children : [
-      {
-        path : 'Prof/Dashboard',
-        component : DashboardComponent,
-        canActivate:[ProfGuard]
-      },
+  //   children : [
+  //     {
+  //       path : 'Prof/Dashboard',
+  //       component : DashboardComponent,
+  //       canActivate:[ProfGuard]
+  //     },
 
 
-    ]
-  },
+  //   ]
+  // },
   {
     path : 'request-reset',
     component : RequestResetComponent

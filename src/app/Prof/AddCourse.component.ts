@@ -3,10 +3,10 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { ProfService } from '../services/prof.service';
 import { CommonModule } from '@angular/common';
 import { HeaderComponent } from '../header/header.component';
-import { MenuComponent } from '../menu/menu.component';
 import { ProfMenuComponent } from './prof-menu/prof-menu.component';
 import { RouterOutlet } from '@angular/router';
 import { StudentComponent } from '../Student/student.component';
+import { FooterComponent } from "../footer/footer.component";
 
 @Component({
   selector: 'app-course-input',
@@ -14,102 +14,58 @@ import { StudentComponent } from '../Student/student.component';
   imports: [
     CommonModule,
     HeaderComponent,
-    MenuComponent,
     ProfMenuComponent,
     RouterOutlet,
     StudentComponent,
     ReactiveFormsModule,
-  ],
+    FooterComponent
+],
   template: `
     <app-header></app-header>
     <app-prof-menu></app-prof-menu>
-    <div class="container">
+    <div class="max-w-lg mx-auto mt-12 p-8 bg-white rounded-lg shadow-lg mb-8">
+      <h2 class="text-center text-2xl font-bold text-gray-800 mb-6">Ajouter un Cours</h2>
       <form [formGroup]="courseForm" (ngSubmit)="onSubmit()">
-        <div class="form-group">
-          <label for="courseName">Nom du cours</label>
+        <div class="mb-4">
+          <label for="courseName" class="block text-gray-700 font-medium mb-2">Nom du cours</label>
           <input
             type="text"
             id="courseName"
             formControlName="courseName"
-            class="form-control"
+            class="w-full p-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
             placeholder="Entrez le nom du cours"
           />
-          <div *ngIf="courseForm.controls['courseName'].invalid && courseForm.controls['courseName'].touched" class="error">
+          <div *ngIf="courseForm.controls['courseName'].invalid && courseForm.controls['courseName'].touched" class="text-red-500 text-sm mt-2">
             Le nom du cours est requis.
           </div>
         </div>
 
-        <div class="form-group">
-          <label for="level">Niveau</label>
+        <div class="mb-6">
+          <label for="level" class="block text-gray-700 font-medium mb-2">Niveau</label>
           <input
             type="number"
             id="level"
             formControlName="level"
-            class="form-control"
+            class="w-full p-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
             placeholder="Entrez le niveau"
           />
-          <div *ngIf="courseForm.controls['level'].invalid && courseForm.controls['level'].touched" class="error">
+          <div *ngIf="courseForm.controls['level'].invalid && courseForm.controls['level'].touched" class="text-red-500 text-sm mt-2">
             Le niveau est requis et doit être un nombre.
           </div>
         </div>
 
-        <button type="submit" class="btn btn-primary" [disabled]="courseForm.invalid">Ajouter le cours</button>
+        <button
+          type="submit"
+          class="w-full py-3 px-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+          [disabled]="courseForm.invalid"
+        >
+          Ajouter le cours
+        </button>
       </form>
     </div>
+    <app-footer></app-footer>
   `,
-  styles: [`
-    .container {
-      max-width: 600px;
-      margin: 50px auto;
-      padding: 30px;
-      background-color: #f8f9fa;
-      border-radius: 10px;
-      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-    }
-
-    h2 {
-      text-align: center;
-      margin-bottom: 30px;
-      color: #343a40;
-    }
-
-    .form-group {
-      margin-bottom: 20px;
-    }
-
-    .form-control {
-      border-radius: 5px;
-      border: 1px solid #ced4da;
-      padding: 10px;
-      font-size: 1rem;
-    }
-
-    .form-control:focus {
-      border-color: #80bdff;
-      box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
-    }
-
-    .btn {
-      width: 100%;
-      padding: 10px;
-      font-size: 1rem;
-      border-radius: 5px;
-      background-color: #007bff;
-      border: none;
-      color: white;
-      transition: background-color 0.3s;
-    }
-
-    .btn:hover {
-      background-color: #0056b3;
-    }
-
-    .error {
-      color: red;
-      font-size: 0.875rem;
-      margin-top: 5px;
-    }
-  `]
+  styles: []
 })
 export class CourseInputComponent {
   courseForm: FormGroup;
@@ -117,21 +73,20 @@ export class CourseInputComponent {
   constructor(private fb: FormBuilder, private profService: ProfService) {
     this.courseForm = this.fb.group({
       courseName: ['', Validators.required],
-      level: ['', [Validators.required, Validators.min(1)]]
+      level: ['', [Validators.required, Validators.min(1)]],
     });
   }
 
   onSubmit(): void {
     if (this.courseForm.valid) {
-      const courseName = this.courseForm.value.courseName;
-      const level = this.courseForm.value.level;
+      const { courseName, level } = this.courseForm.value;
 
       this.profService.createCourse(courseName, level).subscribe(
-        response => {
+        (response) => {
           console.log('Cours ajouté avec succès:', response);
           this.courseForm.reset();
         },
-        error => {
+        (error) => {
           console.error('Erreur lors de l\'ajout du cours:', error);
         }
       );

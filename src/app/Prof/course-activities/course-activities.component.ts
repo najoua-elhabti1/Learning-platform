@@ -6,11 +6,12 @@ import { HeaderComponent } from "../../header/header.component";
 import { ProfMenuComponent } from "../prof-menu/prof-menu.component";
 import { catchError, map, of, Subscription } from 'rxjs';
 import { ProfService } from '../../services/prof.service';
+import { FooterComponent } from "../../footer/footer.component";
 
 @Component({
   selector: 'app-course-activities',
   standalone: true,
-  imports: [FormsModule, CommonModule, HeaderComponent, ProfMenuComponent],
+  imports: [FormsModule, CommonModule, HeaderComponent, ProfMenuComponent, FooterComponent],
   templateUrl: './course-activities.component.html',
   styleUrls: ['./course-activities.component.css']
 })

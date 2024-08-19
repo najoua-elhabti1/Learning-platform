@@ -8,11 +8,13 @@ import { CommonModule } from '@angular/common';
 import { saveAs } from 'file-saver';
 import {QuestionDTO} from "../../models/QuestionDTO.model";
 import {ProfService} from "../../services/prof.service";
+import { Observable, of } from 'rxjs';
+import { FooterComponent } from "../../footer/footer.component";
 
 @Component({
   selector: 'app-all-questions',
   standalone: true,
-  imports: [HeaderComponent, ProfMenuComponent, FormsModule, CommonModule],
+  imports: [HeaderComponent, ProfMenuComponent, FormsModule, CommonModule, FooterComponent],
   templateUrl: './all-questions.component.html',
   styleUrls: ['./all-questions.component.css'] // Corriger l'orthographe de 'styleUrls'
 })
@@ -20,7 +22,7 @@ export class AllQuestionsComponent implements OnInit {
   questions: QuestionDTO[] = [];
   profService = inject(ProfService); // Utiliser ProfService
   router = inject(Router);
-
+  
   ngOnInit(): void {
     this.loadQuestions();
   }
