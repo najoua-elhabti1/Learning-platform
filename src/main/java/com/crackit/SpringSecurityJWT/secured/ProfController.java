@@ -453,35 +453,33 @@ public class ProfController {
 //        }
 //    }
 
-//    @PostMapping("/add_manual_question")
-//    public ResponseEntity<String> addQuestionToChapter( @RequestParam("numQuestion") Integer numQuestion,
-//                                                        @RequestParam("question") String question,
-//                                                        @RequestParam("response") String response,
-//                                                        @RequestParam("course") String course,
-//                                                        @RequestParam("chapter") String chapter,
-//                                                        @RequestParam("imagePath") MultipartFile imageFile) {
-//        try {
-//            // Save image and get its path
-//            String imageFilePath = saveImage(imageFile);
-//
-//            // Add question to chapter
-//            fileService.addQuestionToChapter(
-//                    chapter,
-//                    numQuestion,
-//                    question,
-//                    response,
-//                    imageFilePath
-//            );
-//
-//            System.out.println("Question added successfully to chapter: " + chapter);
-//            return ResponseEntity.ok("Question added successfully to chapter: " + chapter);
-//        } catch (Exception e) {
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error adding question: " + e.getMessage());
-//        }
-//    }
-//
-//
-//
+    @PostMapping("/add_manual_question")
+    public ResponseEntity<String> addQuestionToChapter( @RequestParam("numQuestion") Integer numQuestion,
+                                                        @RequestParam("question") String question,
+                                                        @RequestParam("response") String response,
+                                                        @RequestParam("course") String course,
+                                                        @RequestParam("chapter") String chapter,
+                                                        @RequestParam("imagePath") MultipartFile imageFile) {
+        try {
+
+
+            // Add question to chapter
+            fileService.addQuestionToChapter(
+                    course,
+                    chapter,
+                    numQuestion,
+                    question,
+                    response,
+                    imageFile
+            );
+
+            System.out.println("Question added successfully to chapter: " + chapter);
+            return ResponseEntity.ok("Question added successfully to chapter: " + chapter);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error adding question: " + e.getMessage());
+        }
+    }
+
 
 
     @PutMapping("/update_question")

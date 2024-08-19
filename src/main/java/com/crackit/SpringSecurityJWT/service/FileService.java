@@ -407,54 +407,63 @@ public class FileService {
 
 
 
-// public void addQuestionToChapter(String chapterName, int numQuestion, String questionText, String responseText, String imagePath) {
-//     // Validate parameters
-//     if (chapterName == null || chapterName.trim().isEmpty() || questionText == null || questionText.trim().isEmpty() || responseText == null || responseText.trim().isEmpty()) {
-//         throw new IllegalArgumentException("Chapter name, question text, and response text must not be empty.");
-//     }
-//
-//     // Find or create the FileDocument for the chapter
-//     FileDocument fileDocument = fileRepository.findByChapter(chapterName)
-//             .orElseGet(() -> {
-//                 FileDocument newDocument = new FileDocument();
-//                 newDocument.setFileName("");
-//                 newDocument.setContentType("");
-//                 newDocument.setChapter(chapterName);
-//
-//                 newDocument.setObjectifs("");
-//                 newDocument.setPlan("");
-//                 newDocument.setIntroduction("");
-//                 newDocument.setConclusion("");
-//                 newDocument.setIsVisible(true);
-//                 return newDocument;
-//             });
-//
-//     // Initialize the list of questions if null
-//     if (fileDocument.getQuestions() == null) {
-//         fileDocument.setQuestions(new ArrayList<>());
-//     }
-//
-//     // Check if a question with the same number already exists
-//     Optional<Question> existingQuestion = fileDocument.getQuestions().stream()
-//             .filter(q -> q.getNumQuestion().equals(numQuestion))
-//             .findFirst();
-//     if (existingQuestion.isPresent()) {
-//         throw new IllegalArgumentException("A question with the same number already exists.");
-//     }
-//
-//     // Create a new question and add it to the list
-//     Question question = new Question();
-//     question.setNumQuestion(numQuestion);
-//     question.setQuestion(questionText);
-//     question.setResponse(responseText);
-//     question.setImagePath(imagePath);
-//
-//     // Add the question to the list of questions
+ public void addQuestionToChapter(String courseName, String chapterName, int numQuestion, String questionText, String responseText, MultipartFile imagePath) throws IOException {
+     // Validate parameters
+     if (chapterName == null || chapterName.trim().isEmpty() || questionText == null || questionText.trim().isEmpty() || responseText == null || responseText.trim().isEmpty()) {
+         throw new IllegalArgumentException("Chapter name, question text, and response text must not be empty.");
+     }
+
+     // Find or create the FileDocument for the chapter
+     Optional<CoursDocument> coursDocument = courseRepository.findByCourseName(courseName);
+//                System.out.println(coursDocument);
+     FileClass chapter = getChapterFromCourse(chapterName, courseName);
+     FileClass fileDocument;
+     if (chapter != null) {
+         fileDocument = chapter;
+     } else {
+         fileDocument = new FileClass();
+         fileDocument.setContentType("");
+         fileDocument.setChapter(chapterName);
+
+         fileDocument.setObjectifs("");
+         fileDocument.setPlan("");
+         fileDocument.setIntroduction("");
+         fileDocument.setConclusion("");
+         fileDocument.setIsVisible(true);
+     }
+     // Initialize the list of questions if null
+     if (fileDocument.getQuestions() == null) {
+         fileDocument.setQuestions(new ArrayList<>());
+     }
+
+     // Check if a question with the same number already exists
+     Optional<Question> existingQuestion = fileDocument.getQuestions().stream()
+             .filter(q -> q.getNumQuestion().equals(numQuestion))
+             .findFirst();
+     if (existingQuestion.isPresent()) {
+         throw new IllegalArgumentException("A question with the same number already exists.");
+     }
+     List<Question> questions = chapter.getQuestions() != null ? chapter.getQuestions() : new ArrayList<>();
+
+     // Create a new question and add it to the list
+     Question question = new Question();
+     question.setNumQuestion(numQuestion);
+     question.setQuestion(questionText);
+     question.setResponse(responseText);
+     question.setImageContent(Base64.getEncoder().encodeToString(imagePath.getBytes()));
+
+     // Add the question to the list of questions
 //     fileDocument.getQuestions().add(question);
-//
-//     // Save the updated document
-//     fileRepository.save(fileDocument);
-// }
+
+
+     questions.add(question);
+//     chapter.setQuestions(questions);
+
+//                chapter.get().getQuestions().add(question);
+     coursDocument.get().getChapterByChapterName(chapterName).setQuestions(questions);
+     courseRepository.save(coursDocument.get());
+     // Save the updated document
+ }
 
 
 
