@@ -25,7 +25,7 @@ jobs:
         run: npm install
 
       - name: Run lint
-        run: npm run lint # Ensure you have a lint script in your package.json
+        run: npm run lint 
 
       - name: Run tests
         run: npm run test -- --watch=false --browsers=ChromeHeadless
