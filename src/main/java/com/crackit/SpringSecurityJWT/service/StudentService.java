@@ -1,7 +1,7 @@
 package com.crackit.SpringSecurityJWT.service;
 
-import com.crackit.SpringSecurityJWT.user.Student;
-import com.crackit.SpringSecurityJWT.user.repository.StudentRepository;
+import com.crackit.SpringSecurityJWT.entities.postgres.Student;
+import com.crackit.SpringSecurityJWT.entities.repository.StudentRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

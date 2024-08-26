@@ -1,7 +1,7 @@
 package com.crackit.SpringSecurityJWT.auth;
 
-import com.crackit.SpringSecurityJWT.user.User;
-import com.crackit.SpringSecurityJWT.user.repository.UserRepository;
+import com.crackit.SpringSecurityJWT.entities.postgres.User;
+import com.crackit.SpringSecurityJWT.entities.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -41,7 +41,7 @@ public class PasswordResetController {
             boolean expired = service.isTokenExpired(user.getTokenExpiry());
             return ResponseEntity.ok(expired);
         } else {
-            return ResponseEntity.ok(true); // Return true if user not found or token invalid
+            return ResponseEntity.ok(true);
         }
     }
 

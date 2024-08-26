@@ -1,18 +1,18 @@
-package com.crackit.SpringSecurityJWT.user;
+package com.crackit.SpringSecurityJWT.entities.mongo;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Id;
+import jakarta.persistence.Lob;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Entity
-@Table(name = "_questionReponse")
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class QuestionReponse {
+public class Question {
     @Id
     private Integer numQuestion;
 
@@ -27,8 +27,10 @@ public class QuestionReponse {
     @Column(length = 100000)
     private String response;
 
-    private String imagePath;
     @Lob
     @Column(length = 100000)
     private String imageContent;
+
+
+
 }

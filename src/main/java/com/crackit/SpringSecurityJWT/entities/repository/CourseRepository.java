@@ -1,6 +1,6 @@
-package com.crackit.SpringSecurityJWT.user.repository;
+package com.crackit.SpringSecurityJWT.entities.repository;
 
-import com.crackit.SpringSecurityJWT.user.CoursDocument;
+import com.crackit.SpringSecurityJWT.entities.mongo.CoursDocument;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 

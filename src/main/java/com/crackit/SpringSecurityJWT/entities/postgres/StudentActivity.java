@@ -1,4 +1,4 @@
-package com.crackit.SpringSecurityJWT.user;
+package com.crackit.SpringSecurityJWT.entities.postgres;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -25,7 +25,5 @@ public class StudentActivity {
     private String actionType;
     private LocalDateTime timestamp;
     private Long duration; // For view duration
-//    private Integer clickCount; // For tracking clicks in view mode
-
-    // Getters and Setters
+//    private Integer clickCount;
 }

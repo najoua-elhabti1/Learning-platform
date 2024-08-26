@@ -2,12 +2,11 @@ package com.crackit.SpringSecurityJWT.secured;
 
 import com.crackit.SpringSecurityJWT.service.FileService;
 
-import com.crackit.SpringSecurityJWT.user.CoursDocument;
-import com.crackit.SpringSecurityJWT.user.FileClass;
-import com.crackit.SpringSecurityJWT.user.Student;
-import com.crackit.SpringSecurityJWT.user.repository.CourseRepository;
-import com.crackit.SpringSecurityJWT.user.repository.StudentRepository;
-import com.crackit.SpringSecurityJWT.user.repository.UserRepository;
+import com.crackit.SpringSecurityJWT.entities.mongo.CoursDocument;
+import com.crackit.SpringSecurityJWT.entities.mongo.FileClass;
+import com.crackit.SpringSecurityJWT.entities.postgres.Student;
+import com.crackit.SpringSecurityJWT.entities.repository.CourseRepository;
+import com.crackit.SpringSecurityJWT.entities.repository.StudentRepository;
 import com.mongodb.client.gridfs.GridFSBucket;
 
 import com.mongodb.client.gridfs.model.GridFSFile;
@@ -25,8 +24,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.ByteArrayInputStream;
@@ -35,7 +32,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -48,8 +44,7 @@ public class StudentController {
 
 
 
-    @Value("${app.upload.dir}")
-    private String uploadDir;
+
 
     private final GridFsTemplate gridFsTemplate;
     @Autowired
@@ -57,7 +52,6 @@ public class StudentController {
 
     @Autowired
     private StudentRepository studentRepository;
-    private final FileService fileService;
 
 
     private static final Logger logger = LoggerFactory.getLogger(StudentController.class);
@@ -67,7 +61,6 @@ private CourseRepository courseRepository;
     @Autowired
     public StudentController(GridFsTemplate gridFsTemplate, FileService fileService) {
         this.gridFsTemplate = gridFsTemplate;
-        this.fileService = fileService;
 
     }
 

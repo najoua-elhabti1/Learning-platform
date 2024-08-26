@@ -1,24 +1,19 @@
 package com.crackit.SpringSecurityJWT.secured;
 
+import com.crackit.SpringSecurityJWT.entities.mongo.CoursDocument;
+import com.crackit.SpringSecurityJWT.entities.mongo.FileClass;
+import com.crackit.SpringSecurityJWT.entities.mongo.Question;
+import com.crackit.SpringSecurityJWT.entities.postgres.StudentActivity;
+import com.crackit.SpringSecurityJWT.entities.postgres.Student;
 import com.crackit.SpringSecurityJWT.service.FileService;
 import com.crackit.SpringSecurityJWT.service.StudentActivityService;
-import com.crackit.SpringSecurityJWT.user.*;
-import com.crackit.SpringSecurityJWT.user.repository.CourseRepository;
-import com.crackit.SpringSecurityJWT.user.repository.QuestionRepository;
-import com.mongodb.client.gridfs.model.GridFSFile;
+import com.crackit.SpringSecurityJWT.entities.repository.CourseRepository;
+import com.crackit.SpringSecurityJWT.entities.repository.QuestionRepository;
 import lombok.AllArgsConstructor;
 import org.apache.kafka.common.errors.ResourceNotFoundException;
-import org.apache.kafka.common.protocol.types.Field;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.apache.poi.xslf.usermodel.*;
-import org.springframework.core.io.InputStreamResource;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.data.mongodb.gridfs.GridFsResource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -196,7 +191,7 @@ public class ProfController {
             chapter1.setPlan(plan);
             chapter1.setIntroduction(introduction);
             chapter1.setConclusion(conclusion);
-            chapter1.setIsVisible(isVisible);
+            chapter1.setVisible(isVisible);
             chapter1.setPptFilePath(fileId);
 
             course.getChapters().add(chapter1);
@@ -268,31 +263,6 @@ public class ProfController {
         return formattedText.toString().trim();
     }
 
-//    @GetMapping("/download")
-//    public ResponseEntity<InputStreamResource> downloadChapter(@RequestParam String courseName,
-//                                                               @RequestParam String chapterName) throws IOException {
-//        // Rechercher le documentCours par nom de cours
-//        CoursDocument coursDocument = courseRepository.findByCourseName(courseName)
-//                .orElseThrow(() -> new ResourceNotFoundException("Course not found"));
-//
-//        // Chercher le chapitre par nom du chapitre dans la liste des chapitres
-//        FileClass chapter = coursDocument.getChapters().stream()
-//                .filter(c -> c.getChapter().equalsIgnoreCase(chapterName))
-//                .findFirst()
-//                .orElseThrow(() -> new ResourceNotFoundException("Chapter not found"));
-//
-//        // Télécharger le fichier associé au chapitre
-//        GridFSFile file = gridFsTemplate.findOne(Query.query(Criteria.where("filename").is(chapter.getContentType())));
-//        if (file == null) {
-//            throw new ResourceNotFoundException("File not found");
-//        }
-//
-//        GridFsResource resource = gridFsTemplate.getResource(file);
-//        return ResponseEntity.ok()
-//                .contentType(MediaType.parseMediaType(resource.getContentType()))
-//                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFilename() + "\"")
-//                .body(new InputStreamResource(resource.getInputStream()));
-//    }
 
 
     @PostMapping("/read_students")
@@ -321,7 +291,7 @@ public class ProfController {
                 .orElseThrow(() -> new ResourceNotFoundException("Chapter not found"));
 
 
-        chapter.setIsVisible(visibility);
+        chapter.setVisible(visibility);
 
 
         courseRepository.save(coursDocument);
@@ -389,10 +359,6 @@ public class ProfController {
     }
 
 
-    //update chapter:
-
-
-
 
     //return chapter by nameChapter and nameCourse
     @GetMapping("/chapter")
@@ -434,24 +400,6 @@ public class ProfController {
     }
 
 
-//    @GetMapping("/download/questions")
-//    public ResponseEntity<Resource> downloadExcelQuestions() {
-//        try {
-//            ByteArrayInputStream inputStream = fileService.generateExcelQuestions();
-//            ByteArrayResource resource = new ByteArrayResource(inputStream.readAllBytes());
-//
-//            HttpHeaders headers = new HttpHeaders();
-//            headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=questions.xlsx");
-//            headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_OCTET_STREAM_VALUE);
-//
-//            return ResponseEntity.ok()
-//                    .headers(headers)
-//                    .contentLength(resource.contentLength())
-//                    .body(resource);
-//        } catch (IOException e) {
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-//        }
-//    }
 
     @PostMapping("/add_manual_question")
     public ResponseEntity<String> addQuestionToChapter( @RequestParam("numQuestion") Integer numQuestion,
@@ -631,50 +579,5 @@ public class ProfController {
 
 
 }
-//
-//    @PostMapping("/addQuestion")
-//    public ResponseEntity<Map<String, String>> addQuestion(
-//            @RequestParam("numQuestion") Integer numQuestion,
-//            @RequestParam("question") String question,
-//            @RequestParam("response") String response,
-//            @RequestParam("course") String course,
-//            @RequestParam("chapter") String chapter,
-//            @RequestParam("imagePath") MultipartFile file) {
-//        Map<String, String> reponse = new HashMap<>();
-//
-//        try {
-//            if (questionRepository.existsById(numQuestion)) {
-//                // Return a response indicating that the question already exists
-//                reponse.put("message", "Question with this number already exists.");
-//                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(reponse);
-//            }
-//            // Save image and get its path
-//            String imageFilePath = saveImage(file);
-//
-//            // Create and save QuestionReponse object with the image path
-//            QuestionReponse questionReponse = new QuestionReponse();
-//            questionReponse.setNumQuestion(numQuestion);
-//            questionReponse.setQuestion(question);
-//            questionReponse.setResponse(response);
-//            questionReponse.setCourse(course);
-//            questionReponse.setChapter(chapter);
-//            questionReponse.setImagePath(imageFilePath);
-////            fileService.addQuestionToChapter(
-////                    questionDTO.getChapterName(),
-////                    questionDTO.getNumQuestion(),
-////                    questionDTO.getQuestionText(),
-////                    questionDTO.getResponseText()
-////            );
-//            // Save the QuestionReponse object
-//            // Assuming you have a repository for saving the object
-//            questionRepository.save(questionReponse);
-//            reponse.put("message", "Question added successfully!");
-//            return ResponseEntity.ok(reponse);
-//        } catch (IOException e) {
-//            reponse.put("message", "Failed to save the image.");
-//            return ResponseEntity.ok(reponse);
-//        }
-//    }
-//
 
 

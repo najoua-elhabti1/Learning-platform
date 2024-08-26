@@ -1,4 +1,4 @@
-package com.crackit.SpringSecurityJWT.user;
+package com.crackit.SpringSecurityJWT.entities.postgres;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -22,11 +22,5 @@ public class Student {
     private String email;
     private int level;
 
-    public int getLevel() {
-        return level;
-    }
 
-    public void setLevel(int level) {
-        this.level = level;
-    }
 }

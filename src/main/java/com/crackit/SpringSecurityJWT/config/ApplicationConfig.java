@@ -1,6 +1,6 @@
 package com.crackit.SpringSecurityJWT.config;
 
-import com.crackit.SpringSecurityJWT.user.repository.UserRepository;
+import com.crackit.SpringSecurityJWT.entities.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

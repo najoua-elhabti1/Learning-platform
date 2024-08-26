@@ -1,8 +1,8 @@
 package com.crackit.SpringSecurityJWT.auth;
 
 import com.crackit.SpringSecurityJWT.config.JwtService;
-import com.crackit.SpringSecurityJWT.user.User;
-import com.crackit.SpringSecurityJWT.user.repository.UserRepository;
+import com.crackit.SpringSecurityJWT.entities.postgres.User;
+import com.crackit.SpringSecurityJWT.entities.repository.UserRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureException;

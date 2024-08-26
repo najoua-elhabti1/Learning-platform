@@ -1,9 +1,9 @@
 package com.crackit.SpringSecurityJWT.auth;
 
 import com.crackit.SpringSecurityJWT.config.JwtService;
-import com.crackit.SpringSecurityJWT.user.Role;
-import com.crackit.SpringSecurityJWT.user.User;
-import com.crackit.SpringSecurityJWT.user.repository.UserRepository;
+import com.crackit.SpringSecurityJWT.entities.postgres.Role;
+import com.crackit.SpringSecurityJWT.entities.postgres.User;
+import com.crackit.SpringSecurityJWT.entities.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -83,7 +83,7 @@ public class AuthService {
             return resetToken;
         } else {
             return  "";
-            // Handle case when user with given email is not found
+
         }
     }
     private void sendPasswordResetEmail(String email, String resetToken, String resetUrl) {
@@ -125,7 +125,7 @@ public class AuthService {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(email);
         message.setSubject("Confirmation de changement de mot de passe");
-        message.setText("votre mot de passe est mdifiee avec succes.");
+        message.setText("votre mot de passe est modifiee avec succes.");
 
         emailSender.send(message);
     }

@@ -1,8 +1,8 @@
 package com.crackit.SpringSecurityJWT.service;
 
-import com.crackit.SpringSecurityJWT.user.Role;
-import com.crackit.SpringSecurityJWT.user.User;
-import com.crackit.SpringSecurityJWT.user.repository.UserRepository;
+import com.crackit.SpringSecurityJWT.entities.postgres.Role;
+import com.crackit.SpringSecurityJWT.entities.postgres.User;
+import com.crackit.SpringSecurityJWT.entities.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;

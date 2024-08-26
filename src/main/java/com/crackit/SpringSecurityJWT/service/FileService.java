@@ -1,12 +1,12 @@
 package com.crackit.SpringSecurityJWT.service;
 
 
-import com.crackit.SpringSecurityJWT.user.CoursDocument;
-import com.crackit.SpringSecurityJWT.user.FileClass;
-import com.crackit.SpringSecurityJWT.user.Question;
-import com.crackit.SpringSecurityJWT.user.Student;
-import com.crackit.SpringSecurityJWT.user.repository.CourseRepository;
-import com.crackit.SpringSecurityJWT.user.repository.QuestionRepository;
+import com.crackit.SpringSecurityJWT.entities.mongo.CoursDocument;
+import com.crackit.SpringSecurityJWT.entities.mongo.FileClass;
+import com.crackit.SpringSecurityJWT.entities.mongo.Question;
+import com.crackit.SpringSecurityJWT.entities.postgres.Student;
+import com.crackit.SpringSecurityJWT.entities.repository.CourseRepository;
+import com.crackit.SpringSecurityJWT.entities.repository.QuestionRepository;
 import com.mongodb.client.gridfs.GridFSBucket;
 import com.mongodb.client.gridfs.GridFSDownloadStream;
 import com.mongodb.client.gridfs.model.GridFSFile;
@@ -38,8 +38,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.*;
 import java.util.List;
 
@@ -49,12 +47,10 @@ public class FileService {
     @Autowired
     private GridFSBucket gridFSBucket;
 
-    @Autowired
-    private QuestionRepository questionRepository;
+
     @Autowired
     private CourseRepository courseRepository;
 
-    private static final String UPLOAD_Image_DIR = "uploads/images/";
 
 
     public FileClass getChapterFromCourse(String chapterName, String courseName) {
@@ -142,89 +138,6 @@ public class FileService {
     }
 
 
-    //a mettre a jour pour travailler sur la visibilite de chaque chapitre
-//    public void updateVisibility(String courseId, boolean isVisibleToStudents) {
-//        Optional<FileDocument> optionalCourse = fileRepository.findById(courseId);
-//        if (optionalCourse.isPresent()) {
-//            FileDocument course = optionalCourse.get();
-//            course.setIsVisible(isVisibleToStudents);
-//            fileRepository.save(course);
-//        } else {
-//            throw new ResourceNotFoundException("Course not found with id: " + courseId);
-//        }
-//    }courseId
-
-
-
-   // debut des operations sur les questions
-
-
-
-
-
-
-//    public void addQuestionsFromExcel(MultipartFile file) throws IOException {
-//        try (Workbook workbook = new XSSFWorkbook(file.getInputStream())) {
-//            Sheet sheet = workbook.getSheetAt(0);
-//            Iterator<Row> rows = sheet.iterator();
-//
-//            boolean isFirstRow = true;
-//            while (rows.hasNext()) {
-//                Row row = rows.next();
-//                if (isFirstRow) {
-//                    isFirstRow = false; // Skip header row
-//                    continue;
-//                }
-//
-//                String chapterName = row.getCell(5).getStringCellValue();
-//                Optional<FileDocument> optionalFileDocument = fileRepository.findByChapter(chapterName);
-//
-//                FileDocument fileDocument;
-//                if (optionalFileDocument.isPresent()) {
-//                    fileDocument = optionalFileDocument.get();
-//                } else {
-//                    // Create a new FileDocument if none is found
-//                    fileDocument = new FileDocument();
-//                    fileDocument.setFileName(""); // Set default values or leave empty
-//                    fileDocument.setContentType(""); // Set default values or leave empty
-//                    fileDocument.setChapter(chapterName);
-//
-//                    fileDocument.setObjectifs("");
-//                    fileDocument.setPlan("");
-//                    fileDocument.setIntroduction("");
-//                    fileDocument.setConclusion("");
-//                    fileDocument.setIsVisible(true); // Default visibility
-//                }
-//
-//                List<Question> questions = fileDocument.getQuestions() != null ? fileDocument.getQuestions() : new ArrayList<>();
-//
-//                Question question = new Question();
-//                question.setNumQuestion((int) row.getCell(0).getNumericCellValue());
-//                question.setQuestion(row.getCell(1).getStringCellValue());
-//                question.setResponse(row.getCell(2).getStringCellValue());
-//                question.setImagePath(row.getCell(3).getStringCellValue());
-//
-//                questions.add(question);
-//                fileDocument.setQuestions(questions);
-//
-//                fileRepository.save(fileDocument);
-//            }
-//        }
-  //  }
-
-
-
-
-    public String encodeImageToBase64(Path imagePath) throws IOException {
-     byte[] imageBytes = Files.readAllBytes(imagePath);
-        return Base64.getEncoder().encodeToString(imageBytes);
-  }
-
-
-
-
-
-
 
     public void addQuestionsFromExcelAndImages(MultipartFile excelFile, MultipartFile[] imageFiles) throws IOException {
         Map<String, byte[]> imageMap = new HashMap<>();
@@ -271,7 +184,7 @@ public class FileService {
                     fileDocument.setPlan("");
                     fileDocument.setIntroduction("");
                     fileDocument.setConclusion("");
-                    fileDocument.setIsVisible(true);
+                    fileDocument.setVisible(true);
                 }
 
                 List<Question> questions = chapter.getQuestions() != null ? chapter.getQuestions() : new ArrayList<>();
@@ -300,11 +213,6 @@ public class FileService {
             }
         }
     }
-
-
-
-
-
 
 
     public List<Question> getAllQuestions() {
@@ -341,15 +249,6 @@ public class FileService {
     }
 
 
-
-
-
-
-
-
-
-
-
     public void deleteAllQuestions() {
         // Fetch all course documents
         List<CoursDocument> allDocuments = courseRepository.findAll();
@@ -357,54 +256,15 @@ public class FileService {
         for (CoursDocument fileDocument : allDocuments) {
             // Iterate over each chapter in the course document
             for (FileClass file : fileDocument.getChapters()) {
-                // Clear the questions list for each chapter
 //                file.getQuestions().clear();
 
-                // Alternatively, set to an empty list (recommended)
+
                  fileDocument.getChapterByChapterName(file.getChapter()).setQuestions(new ArrayList<>());
             }
 
-            // Save the updated course document to the repository
             courseRepository.save(fileDocument);
         }
     }
-
-//
-//    public ByteArrayInputStream generateExcelQuestions() throws IOException {
-//        List<QuestionDTO> allQuestions = getAllQuestions(); // Retrieve all questions as DTOs
-//
-//        try (Workbook workbook = new XSSFWorkbook()) {
-//            Sheet sheet = workbook.createSheet("Questions");
-//
-//            // Create header row
-//            Row headerRow = sheet.createRow(0);
-//            headerRow.createCell(0).setCellValue("Chapter");
-//            headerRow.createCell(1).setCellValue("Course");
-//            headerRow.createCell(2).setCellValue("Question Number");
-//            headerRow.createCell(3).setCellValue("Question");
-//            headerRow.createCell(4).setCellValue("Response");
-//
-//            // Populate the rows with question data
-//            int rowIndex = 1;
-//            for (QuestionDTO questionDTO : allQuestions) {
-//                Row row = sheet.createRow(rowIndex++);
-//                row.createCell(0).setCellValue(questionDTO.getChapter());
-//
-//                row.createCell(2).setCellValue(questionDTO.getNumQuestion());
-//                row.createCell(3).setCellValue(questionDTO.getQuestion());
-//                row.createCell(4).setCellValue(questionDTO.getResponse());
-//            }
-//
-//            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-//            workbook.write(outputStream);
-//            return new ByteArrayInputStream(outputStream.toByteArray());
-//        }
-//    }
-
-
-
-
-
 
 
  public void addQuestionToChapter(String courseName, String chapterName, int numQuestion, String questionText, String responseText, MultipartFile imagePath) throws IOException {
@@ -429,7 +289,7 @@ public class FileService {
          fileDocument.setPlan("");
          fileDocument.setIntroduction("");
          fileDocument.setConclusion("");
-         fileDocument.setIsVisible(true);
+         fileDocument.setVisible(true);
      }
      // Initialize the list of questions if null
      if (fileDocument.getQuestions() == null) {
@@ -452,17 +312,11 @@ public class FileService {
      question.setResponse(responseText);
      question.setImageContent(Base64.getEncoder().encodeToString(imagePath.getBytes()));
 
-     // Add the question to the list of questions
-//     fileDocument.getQuestions().add(question);
-
 
      questions.add(question);
-//     chapter.setQuestions(questions);
 
-//                chapter.get().getQuestions().add(question);
      coursDocument.get().getChapterByChapterName(chapterName).setQuestions(questions);
      courseRepository.save(coursDocument.get());
-     // Save the updated document
  }
 
 
@@ -508,14 +362,6 @@ public class FileService {
         }
     }
 
-
-
-
-
-
-
-
-
     public ResponseEntity<Question> getQuestionByCourseAndChapterAndNumber(String courseName, String chapterName, int questionNumber) {
         FileClass file = getChapterFromCourse(chapterName, courseName);
 
@@ -549,9 +395,6 @@ public List<String> getAllChapters(){
     }
     return allChapters;
 }
-
-
-
 
     public void deleteQuestionFromChapter(String courseName, String chapterName, int questionNumber) {
 

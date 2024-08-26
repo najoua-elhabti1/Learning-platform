@@ -1,7 +1,7 @@
-package com.crackit.SpringSecurityJWT.user.repository;
+package com.crackit.SpringSecurityJWT.entities.repository;
 
-import com.crackit.SpringSecurityJWT.user.Role;
-import com.crackit.SpringSecurityJWT.user.User;
+import com.crackit.SpringSecurityJWT.entities.postgres.Role;
+import com.crackit.SpringSecurityJWT.entities.postgres.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

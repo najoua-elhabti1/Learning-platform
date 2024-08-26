@@ -1,6 +1,6 @@
 package com.crackit.SpringSecurityJWT.auth;
 
-import com.crackit.SpringSecurityJWT.user.Role;
+import com.crackit.SpringSecurityJWT.entities.postgres.Role;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
