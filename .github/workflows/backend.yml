@@ -18,9 +18,9 @@ jobs:
         ports:
           - 5432:5432
         env:
-          POSTGRES_DB: your_db_name
-          POSTGRES_USER: your_db_user
-          POSTGRES_PASSWORD: your_db_password
+          POSTGRES_DB: learningByDoing_db
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: 123456
         options: >-
           --health-cmd="pg_isready"
           --health-interval=10s
@@ -33,9 +33,9 @@ jobs:
           - 27017:27017
         options: >-
           --health-cmd="mongo --eval 'db.runCommand({ ping: 1 })'"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=5
+          --health-interval=20s
+          --health-timeout=10s
+          --health-retries=10
 
     steps:
       - name: Checkout code
@@ -57,6 +57,9 @@ jobs:
 
       - name: Install dependencies
         run: mvn install -DskipTests=true
+
+      - name: Wait for MongoDB to be ready
+        run: sleep 30s
 
       - name: Run tests
         env:
