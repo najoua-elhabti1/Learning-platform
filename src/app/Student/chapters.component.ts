@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
@@ -20,9 +21,14 @@ import { FooterComponent } from "../footer/footer.component";
       <h1>Learning by Doing</h1>
     </div>
     <div class="chapters-container">
-      <a *ngFor="let cours of courses$ | async" class="chapter-card" (click)="viewChapterDetails(cours.courseName)">
-        {{ cours.courseName }}
-      </a>
+    <a *ngFor="let cours of courses$ | async" 
+   class="chapter-card" 
+   (click)="viewChapterDetails(cours.courseName)" 
+   (keydown)="onKeydown($event, cours.courseName)" 
+   tabindex="0">
+  {{ cours.courseName }}
+</a>
+
     </div>
     <div *ngIf="errorMessage" class="error-message">
       {{ errorMessage }}
@@ -107,4 +113,10 @@ export class ChaptersComponent implements OnInit {
   viewChapterDetails(courseName: string): void {
     this.router.navigate(['student/chapter-detail', courseName]);
   }
+  onKeydown(event: KeyboardEvent, courseName: string): void {
+    if (event.key === 'Enter' || event.key === ' ') {
+      this.viewChapterDetails(courseName);
+    }
+  }
+  
 }

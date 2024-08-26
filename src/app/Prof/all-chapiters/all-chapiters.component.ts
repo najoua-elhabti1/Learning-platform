@@ -1,10 +1,12 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-inferrable-types */
 import { Component, inject, OnInit } from '@angular/core';
 import { HeaderComponent } from '../../header/header.component';
 import { ProfMenuComponent } from '../prof-menu/prof-menu.component';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ProfService } from '../../services/prof.service';
-import {CoursDocument, FileClass} from '../../models/course'; // Assurez-vous que ce modèle est correct
+import {CoursDocument} from '../../models/course'; // Assurez-vous que ce modèle est correct
 import { Router } from '@angular/router';
 import {data} from "autoprefixer";
 import { FooterComponent } from "../../footer/footer.component";

@@ -1,7 +1,7 @@
 <app-header></app-header>
 <app-prof-menu></app-prof-menu>
 
-<div class="flex flex-col mt-8 mb-8 px-4 lg:px-8" *ngIf="courses.length > 0">
+<div class="container flex flex-col mt-8 mb-8 px-4 lg:px-8" *ngIf="courses.length > 0">
   <h1 class="text-3xl font-bold text-gray-700 text-center">Liste des Chapitres</h1>
   <div class="py-2 mt-8 -my-2 overflow-x-auto">
     <div class="inline-block min-w-full align-middle">
@@ -67,12 +67,15 @@
   </div>
 </div>
 
-<div *ngIf="courses.length === 0" class="text-center">
+<div *ngIf="courses.length === 0" class="container text-center">
   <p>Aucun cours disponible.</p>
 </div>
 
 <app-footer></app-footer>
 <style>
+  .container{
+    min-height: 70vh;
+  }
   .toggle-checkbox:checked + .toggle-label {
     background-color: #4CAF50;
   }
