@@ -12,6 +12,31 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    services:
+      postgres:
+        image: postgres:latest
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_DB: your_db_name
+          POSTGRES_USER: your_db_user
+          POSTGRES_PASSWORD: your_db_password
+        options: >-
+          --health-cmd="pg_isready"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+      mongodb:
+        image: mongo:latest
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd="mongo --eval 'db.runCommand({ ping: 1 })'"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -19,7 +44,7 @@ jobs:
       - name: Set up JDK 21
         uses: actions/setup-java@v3
         with:
-          java-version: '21'  # Ensure this matches your JDK version
+          java-version: '21'
           distribution: 'temurin'
 
       - name: Cache Maven packages
@@ -34,6 +59,11 @@ jobs:
         run: mvn install -DskipTests=true
 
       - name: Run tests
+        env:
+          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/learningByDoing_db
+          SPRING_DATASOURCE_USERNAME: postgres
+          SPRING_DATASOURCE_PASSWORD: 123456
+          SPRING_DATA_MONGODB_URI: mongodb://localhost:27017/ppt_cours
         run: mvn test
 
       - name: Build project
