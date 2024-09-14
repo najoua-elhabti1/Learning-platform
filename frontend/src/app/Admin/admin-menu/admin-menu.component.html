@@ -1,0 +1,18 @@
+<nav class="bg-customYellow text-white w-full">
+    <div class="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
+        <div class="relative flex items-center justify-between h-16">
+            <div class="flex-1 flex items-center justify-center sm:items-stretch sm:justify-start">
+                <div class="flex space-x-4">
+                    <!-- <a href="#" class="px-3 py-2 text-sm font-medium">Accueil</a> -->
+                    <button class="text-customBlue hover:text-white focus:outline-none focus:text-grey-700 flex items-center" (click)="onLogout()">
+                        <p class="mr-2">Fermer la session</p>
+                      </button>
+                      <button class="text-customBlue hover:text-white focus:outline-none focus:text-grey flex items-center" (click)="navigateToModifyPwd()">
+                        <p class="mr-2">Changer le mot de passe</p>
+                      </button>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>

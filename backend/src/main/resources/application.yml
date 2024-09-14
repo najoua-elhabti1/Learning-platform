@@ -1,0 +1,47 @@
+spring:
+
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      database: ppt_cours
+      uri: mongodb://localhost:27017/ppt_cours
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: communicationplatform2@gmail.com
+    password: qrjkczmcxagfktbr
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+        transport:
+          protocol: smtp
+        debug: true
+  main:
+    allow-bean-definition-overriding: true
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/learningByDoing_db
+    driver-class-name: org.postgresql.Driver
+    username: postgres
+    password: 123456
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+  servlet:
+    multipart:
+      enabled: true
+
+
+database: postgresql
+database-platform: org.hibernate.dialect.PostgreSQLDialect
+

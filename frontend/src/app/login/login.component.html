@@ -1,0 +1,194 @@
+<app-header></app-header>
+<section class="wrapper">
+    <div class="container-fluid h-custom" >
+      <div class="row d-flex justify-content-center align-items-center h-100">
+        <div class="col-md-9 col-lg-6 col-xl-5">
+          <img src="../../assets/1.png"
+            class="img-fluid" alt="Sample image">
+        </div>
+        <div class="col-md-8 col-lg-6 col-xl-4 offset-xl-1 p-4 rounded shadow" >
+            <form>
+     
+                <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
+                    {{ errorMessage }}
+                </div>
+    
+                 <!-- Email -->
+                <div data-mdb-input-init class="form-outline mb-4">
+                    <input type="email" id="form3Example3" [(ngModel)]="loginObj.email" name="email" class="form-control form-control-lg"
+                           placeholder="Enter a valid email address" required />
+                    <label class="form-label" for="form3Example3">Email </label>
+                </div>
+        
+                <!-- Mot de passe  -->
+                <div data-mdb-input-init class="form-outline mb-3">
+                    <input type="password" id="form3Example4" [(ngModel)]="loginObj.password" name="password" class="form-control form-control-lg"
+                           placeholder="Enter password"  required />
+                    <label class="form-label" for="form3Example4">Mot de passe</label>
+                </div>
+        
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    
+                    <!-- <div class="form-check mb-0">
+                        <input class="form-check-input me-2" type="checkbox" value="" id="form2Example3" />
+                        <label class="form-check-label" for="form2Example3">
+                            Remember me
+                        </label>
+                    </div> -->
+                    <a (click)="navigateToResetPassword()" class="text-body" style="cursor: pointer;">Mot de passe oublié ?</a>
+                </div>
+        
+                <div class="text-center text-lg-start mt-4 pt-2">
+                    <button type="submit" class="btn btn-primary btn-lg" style="padding-left: 2.5rem; padding-right: 2.5rem;"
+                     (click)="onLogin()">Se connecter</button>
+                </div>
+            </form>
+        </div>
+        
+      </div>
+    </div>
+    <!-- <div
+      class="d-flex flex-column flex-md-row text-center text-md-start justify-content-between py-4 px-4 px-xl-5 bg-primary">
+       Copyright
+      <div class="text-white mb-3 mb-md-0">
+        Copyright © 2020. All rights reserved.
+      </div>
+       Copyright 
+  
+       Right 
+      <div>
+        <a href="#!" class="text-white me-4">
+          <i class="fab fa-facebook-f"></i>
+        </a>
+        <a href="#!" class="text-white me-4">
+          <i class="fab fa-twitter"></i>
+        </a>
+        <a href="#!" class="text-white me-4">
+          <i class="fab fa-google"></i>
+        </a>
+        <a href="#!" class="text-white">
+          <i class="fab fa-linkedin-in"></i>
+        </a>
+      </div>
+      Right 
+    </div>
+     -->
+  </section> 
+  <app-footer></app-footer>
+
+  <style>
+    .wrapper {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .form-outline {
+        position: relative;
+        margin-bottom: 1.5rem;
+      }
+    
+      .form-control {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border: 1px solid #ced4da;
+        border-radius: 0.25rem;
+        transition: border-color 0.3s ease;
+      }
+    
+      .form-label {
+        position: absolute;
+        top: 0.75rem;
+        left: 1rem;
+       
+        padding: 0 0.25rem;
+        color: #6c757d;
+        transition: all 0.3s ease;
+        pointer-events: none;
+      }
+    
+      .form-control:focus {
+        border-color: #80bdff;
+        outline: 0;
+        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+      }
+    
+      .form-control:focus + .form-label,
+      .form-control:not(:placeholder-shown) + .form-label {
+        top: -0.5rem;
+        left: 0.75rem;
+        font-size: 0.75rem;
+        color: #007bff;
+      }
+    .col-md-8.col-lg-6.col-xl-4.offset-xl-1 {
+        
+        padding: 2rem;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    /* Error message styling */
+    .alert-danger {
+        background-color: #f8d7da;
+        color: #721c24;
+        border-color: #f5c6cb;
+        border-radius: 5px;
+        margin-bottom: 1rem;
+        padding: 0.75rem 1.25rem;
+    }
+    
+    /* Form control styles */
+    .form-control {
+        background-color: #fff;
+        border: 1px solid #ced4da;
+        border-radius: 0.25rem;
+        padding: 0.5rem 1rem;
+        font-size: 1rem;
+        margin-bottom: 1rem;
+    }
+    .shadow-blue {
+        box-shadow: 0 4px 6px rgba(33, 33, 214, 0.1);
+      }
+    .form-control:focus {
+        border-color: #80bdff;
+        outline: 0;
+        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    }
+    
+    /* Label styles */
+    .form-label {
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+    }
+    
+    /* Checkbox styles */
+    .form-check-input {
+        margin-top: 0.3rem;
+    }
+    
+    /* Button styles */
+    .btn-primary {
+        background-color: #fdad02;
+        border-color: #104b9b;
+    }
+    
+    .btn-primary:hover {
+        background-color: #0056b3;
+        border-color: #004085;
+    }
+    .divider:after,
+.divider:before {
+content: "";
+flex: 1;
+height: 1px;
+background: #eee;
+}
+.h-custom {
+height: calc(100% - 73px);
+}
+@media (max-width: 450px) {
+.h-custom {
+height: 100%;
+}
+}
+  </style>

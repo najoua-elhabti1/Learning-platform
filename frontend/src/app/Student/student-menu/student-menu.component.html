@@ -1,0 +1,27 @@
+
+<div class="bg-customYellow">
+    <nav class="container mx-auto flex justify-between items-center py-4 h-16 relative">
+      <div class="relative">
+        <button class="text-gray-700 hover:text-gray-900 focus:outline-none focus:text-gray-900" (click)="showChapter()">
+          <span class="sr-only">Open question menu</span>
+          <p>Chapters Available</p>
+        </button>
+        
+      </div>
+
+     
+      <div class="flex items-center space-x-4">
+        
+        <div class="relative">
+          <button class="text-gray-700 hover:text-gray-900 focus:outline-none focus:text-gray-900" (click)="toggleUserMenu()">
+            <span class="sr-only">Open user menu</span>
+            <img class="h-8 w-8 rounded-full" src="../../../assets/2.png" alt="">
+          </button>
+          <div id="user-menu" class="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 hidden" role="menu">
+            <button (click)="navigateToChangePwd()" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Changer mot de passe</button>
+            <button (click)="onLogout()" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Déconnexion</button>
+          </div>
+        </div>
+      </div>
+    </nav>
+  </div>

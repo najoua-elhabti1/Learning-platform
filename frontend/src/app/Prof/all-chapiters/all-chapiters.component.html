@@ -1,0 +1,127 @@
+<app-header></app-header>
+<app-prof-menu></app-prof-menu>
+
+<div class="container flex flex-col mt-8 mb-8 px-4 lg:px-8" *ngIf="courses.length > 0">
+  <h1 class="text-3xl font-bold text-gray-700 text-center">Liste des Chapitres</h1>
+  <div class="py-2 mt-8 -my-2 overflow-x-auto">
+    <div class="inline-block min-w-full align-middle">
+      <div class="mx-auto overflow-hidden border-b border-gray-200 shadow sm:rounded-lg">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-100">
+          <tr>
+            <th class="px-6 py-3 text-xs font-medium text-gray-600 uppercase tracking-wider text-left border-b border-gray-200">Cours</th>
+            <th class="px-6 py-3 text-xs font-medium text-gray-600 uppercase tracking-wider text-left border-b border-gray-200">Chapitre</th>
+            <th class="px-6 py-3 text-xs font-medium text-gray-600 uppercase tracking-wider text-left border-b border-gray-200">Objectifs</th>
+            <th class="px-6 py-3 text-xs font-medium text-gray-600 uppercase tracking-wider text-left border-b border-gray-200">Plan</th>
+            <th class="px-6 py-3 text-xs font-medium text-gray-600 uppercase tracking-wider text-left border-b border-gray-200">Introduction</th>
+            <th class="px-6 py-3 text-xs font-medium text-gray-600 uppercase tracking-wider text-left border-b border-gray-200">Conclusion</th>
+            <th class="px-6 py-3 border-b border-gray-200 bg-gray-100"></th>
+          </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+          <ng-container *ngFor="let course of courses">
+            <ng-container *ngFor="let chapter of course.chapters">
+              <tr>
+                <td class="px-6 py-4 text-sm text-gray-600">{{ course.courseName }}</td>
+                <td class="px-6 py-4 text-sm text-gray-600">{{ chapter.chapter }}</td>
+                <td class="px-6 py-4 text-sm text-gray-600 whitespace-pre-wrap">{{ chapter.objectifs }}</td>
+                <td class="px-6 py-4 text-sm text-gray-600 whitespace-pre-wrap">{{ chapter.plan }}</td>
+                <td class="px-6 py-4 text-sm text-gray-600 whitespace-pre-wrap">{{ chapter.introduction }}</td>
+                <td class="px-6 py-4 text-sm text-gray-600 whitespace-pre-wrap">{{ chapter.conclusion }}</td>
+                <td class="px-6 py-4 text-sm text-center">
+                  <div class="flex items-center justify-center space-x-2">
+                    <!-- Toggle Switch -->
+                    <div class="relative inline-block w-14 align-middle select-none transition duration-200 ease-in">
+                      <input type="checkbox" id="toggle-{{course.courseName}}-{{chapter.chapter}}"
+                             [checked]="chapter.visible"
+                             (change)="makeVisibleToStudents(course.courseName, chapter.chapter, !chapter.visible)"
+                             class="toggle-checkbox hidden" />
+                      <label for="toggle-{{course.courseName}}-{{chapter.chapter}}"
+                             class="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer">
+                        <span class="toggle-text on">on</span>
+                        <span class="toggle-text off">off</span>
+                      </label>
+                    </div>
+                    
+                    <!-- Buttons -->
+                    <div class="flex flex-col space-y-2">
+                      <button (click)="update(course.courseName, chapter.chapter)"
+                              class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-3 rounded transition duration-300">
+                        Modifier
+                      </button>
+                      <button (click)="deleteChapter(course.courseName, chapter.chapter)"
+                              class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-3 rounded transition duration-300">
+                        Supprimer
+                      </button>
+                    </div>
+                  </div>
+                </td>
+                
+              </tr>
+            </ng-container>
+          </ng-container>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="courses.length === 0" class="container text-center">
+  <p>Aucun cours disponible.</p>
+</div>
+
+<app-footer></app-footer>
+<style>
+  .container{
+    min-height: 70vh;
+  }
+  .toggle-checkbox:checked + .toggle-label {
+    background-color: #4CAF50;
+  }
+
+  .toggle-label {
+    width: 56px; /* Adjusted width to fit "on" and "off" text */
+    height: 24px;
+    background-color: #ccc;
+    border-radius: 9999px;
+    position: relative;
+    transition: background-color 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 5px; /* Added padding for text spacing */
+    box-sizing: border-box; /* Ensures padding doesn't affect the size */
+  }
+
+  .toggle-label::before {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 20px;
+    height: 20px;
+    background-color: white;
+    border-radius: 9999px;
+    transition: transform 0.3s ease;
+    z-index: 1; /* Ensures the toggle handle is above the text */
+  }
+
+  .toggle-checkbox:checked + .toggle-label::before {
+    transform: translateX(32px); /* Adjusted for wider toggle */
+  }
+
+  .toggle-text {
+    font-size: 10px;
+    color: white;
+    z-index: 0; /* Text stays behind the toggle handle */
+  }
+
+  .toggle-text.on {
+    margin-left: 4px;
+  }
+
+  .toggle-text.off {
+    margin-right: 4px;
+  }
+</style>

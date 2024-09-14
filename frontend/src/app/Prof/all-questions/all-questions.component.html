@@ -1,0 +1,88 @@
+
+<app-header></app-header>
+<app-prof-menu></app-prof-menu>
+
+<div class="flex justify-between items-center mt-8 mb-4 px-4 lg:px-8">
+  <h1 class="text-3xl font-bold text-gray-700">Liste des Questions</h1>
+  <div class="flex space-x-4">
+    <!-- <button (click)="downloadQuestionsExcel()" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded shadow-md transition duration-300">Télécharger Excel</button> -->
+    <button (click)="deleteAllQuestions()" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded shadow-md transition duration-300">Delete All Questions</button>
+  </div>
+</div>
+
+<div class="container py-2 mt-8 -my-2 overflow-x-auto my-8 px-4">
+  <div class="inline-block min-w-full align-middle">
+    <div class="mx-auto overflow-hidden border-b border-gray-200 shadow sm:rounded-lg">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead>
+        <tr>
+          <th class="px-6 py-3 text-xs font-medium leading-4 tracking-wider text-left text-gray-600 uppercase border-b border-gray-200 bg-gray-100" style="width: 100px; word-wrap: break-word; overflow-wrap: break-word;">Num Question</th>
+          <th class="px-6 py-3 text-xs font-medium leading-4 tracking-wider text-left text-gray-600 uppercase border-b border-gray-200 bg-gray-100" style="width: 200px; word-wrap: break-word; overflow-wrap: break-word;">Question</th>
+          <th class="px-6 py-3 text-xs font-medium leading-4 tracking-wider text-left text-gray-600 uppercase border-b border-gray-200 bg-gray-100" style="width: 200px; word-wrap: break-word; overflow-wrap: break-word;">Response</th>
+          <th class="px-6 py-3 text-xs font-medium leading-4 tracking-wider text-left text-gray-600 uppercase border-b border-gray-200 bg-gray-100" style="width: 100px; word-wrap: break-word; overflow-wrap: break-word;">image</th>
+
+          <th class="px-6 py-3 text-xs font-medium leading-4 tracking-wider text-left text-gray-600 uppercase border-b border-gray-200 bg-gray-100" style="width: 100px; word-wrap: break-word; overflow-wrap: break-word;">Chapitre</th>
+          <th class="px-6 py-3 text-xs font-medium leading-4 tracking-wider text-left text-gray-600 uppercase border-b border-gray-200 bg-gray-100" style="width: 100px; word-wrap: break-word; overflow-wrap: break-word;">Cours</th>
+
+          <th class="px-6 py-3 border-b border-gray-200 bg-gray-100" style="width: 200px; word-wrap: break-word; overflow-wrap: break-word;"></th>
+        </tr>
+        </thead>
+        <tbody class="bg-white">
+        <tr *ngFor="let question of questions">
+          <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
+            <div class="flex items-center">
+              <div class="text-sm leading-5 text-gray-600">{{ question.numQuestion }}</div>
+            </div>
+          </td>
+          <td class="px-6 py-4 whitespace-normal border-b border-gray-200">
+            <div class="text-sm leading-5 text-gray-600" style="width: 200px; word-wrap: break-word; overflow-wrap: break-word;">
+              {{ question.question }}
+            </div>
+          </td>
+          <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
+            <div class="text-sm leading-5 text-gray-600" style="width: 200px; word-wrap: break-word; overflow-wrap: break-word;">
+              {{ question.response }}
+            </div>
+          </td>
+          <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
+            <div class="text-sm leading-5 text-gray-600" style="width: 200px; word-wrap: break-word; overflow-wrap: break-word;">
+              <img [src]="'data:image/jpeg;base64,' +question.imageContent" alt="">
+            </div>
+          </td>
+          <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
+            <div class="text-sm leading-5 text-gray-600" style="width: 100px; word-wrap: break-word; overflow-wrap: break-word;">
+              {{ question.chapter }}
+            </div>
+          </td>
+          <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
+            <div class="text-sm leading-5 text-gray-600" style="width: 100px; word-wrap: break-word; overflow-wrap: break-word;">
+              {{ question.course }}
+            </div>
+          </td>
+          <td class="px-6 py-4 text-sm font-medium leading-5 text-center whitespace-no-wrap border-b border-gray-200">
+            <button 
+              (click)="navigateToUpdateQuestion(question.course, question.chapter, question.numQuestion)" 
+              class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-3 rounded transition duration-300 my-2">
+              Modifier
+            </button>
+          
+            <button 
+              (click)="deleteQuestion(question.course, question.chapter, question.numQuestion)" 
+              class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-3 rounded transition duration-300 mx-2">
+              Supprimer
+            </button>
+          </td>
+          
+          
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<app-footer></app-footer>
+<style>
+  .container{
+    min-height: 70vh;
+  }
+</style>
