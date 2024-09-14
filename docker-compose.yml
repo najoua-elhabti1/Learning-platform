@@ -1,5 +1,4 @@
 
-
 services:
   postgres:
     image: postgres:latest
@@ -11,6 +10,7 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+
   mongo:
     image: mongo:latest
     container_name: mongo
@@ -19,37 +19,31 @@ services:
     volumes:
       - mongo_data:/data/db
 
-  spring-boot-app:
+  backend:
     build:
-      context: .
-      dockerfile: backend/Dockerfile
-    image: najouaelhabti/backend:latest
+      context: ./backend
+      dockerfile: Dockerfile
+    image: myapp/backend:latest
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/learningByDoing_db  # Corrected service name
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/learningByDoing_db
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: 123456
       SPRING_DATA_MONGODB_URI: mongodb://mongo:27017/ppt_cours
-
     ports:
       - "8080:8080"
     depends_on:
       - postgres
       - mongo
 
-  angular-app:
+  frontend:
     build:
-      context: .
-      dockerfile: frontend/Dockerfile
-    image: najouaelhabti/frontend:latest
-    container_name: angular-app
+      context: ./frontend
+      dockerfile: Dockerfile
+    image: myapp/frontend:latest
     ports:
       - "80:80"
-    networks:
-      - app-network
-
-networks:
-  app-network:
-    driver: bridge
+    depends_on:
+      - backend
 
 volumes:
   postgres_data:
