@@ -32,7 +32,8 @@ jobs:
 
       - name: Set executable permission for mvnw
         run: chmod +x backend/mvnw
-
+      - name: List files in backend directory
+        run: ls -la backend
       - name: Build backend JAR file
         run: ./backend/mvnw clean package -DskipTests=true
         working-directory: backend
