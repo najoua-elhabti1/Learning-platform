@@ -34,7 +34,7 @@ jobs:
         run: chmod +x backend/mvnw
 
       - name: Build backend JAR file
-        run: backend/mvnw clean package -DskipTests=true
+        run: ./backend/mvnw clean package -DskipTests=true
         working-directory: backend
 
       - name: Build backend Docker image
