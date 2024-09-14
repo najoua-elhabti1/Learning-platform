@@ -22,10 +22,10 @@ jobs:
           java-version: '17'
 
       - name: Set executable permission for mvnw
-        run: chmod +x mvnw
+        run: chmod +x backend/mvnw
 
       - name: Build backend JAR file
-        run: ./mvnw clean package -DskipTests=true  # Skip tests during the build
+        run: backend/mvnw clean package -DskipTests=true  # Skip tests during the build
 
       - name: Build backend Docker image
         run: docker build -t najouaelhabti/backend:latest -f backend/Dockerfile .
