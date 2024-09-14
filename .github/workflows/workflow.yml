@@ -40,7 +40,7 @@ jobs:
         working-directory: backend
 
       - name: Build backend Docker image
-        run: docker build -t najouaelhabti/backend:latest -f backend/Dockerfile .
+        run: docker build -t najouaelhabti/backend:latest -f backend/Dockerfile backend
 
       - name: Test backend Docker image
         run: |
