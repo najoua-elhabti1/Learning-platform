@@ -19,11 +19,8 @@ services:
     volumes:
       - mongo_data:/data/db
 
-  backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
-    image: myapp/backend:latest
+  spring-boot-app:
+    image: najouaelhabti/learningbydoing-backend:latest
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/learningByDoing_db
       SPRING_DATASOURCE_USERNAME: postgres
@@ -35,15 +32,17 @@ services:
       - postgres
       - mongo
 
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    image: myapp/frontend:latest
+  angular-app:
+    image: najouaelhabti/learningbydoing-frontend:latest
+    container_name: angular-app
     ports:
       - "80:80"
     depends_on:
-      - backend
+      - spring-boot-app
+
+networks:
+  app-network:
+    driver: bridge
 
 volumes:
   postgres_data:

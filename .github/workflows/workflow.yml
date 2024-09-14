@@ -23,16 +23,16 @@ jobs:
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
       - name: Build backend image
-        run: docker build -t najouaelhabti/backend:latest ./backend
+        run: docker build -t najouaelhabti/learningbydoing-backend:latest ./backend
 
       - name: Build frontend image
-        run: docker build -t najouaelhabti/frontend:latest ./frontend
+        run: docker build -t najouaelhabti/learningbydoing-frontend:latest ./frontend
 
       - name: Push backend image
-        run: docker push najouaelhabti/backend:latest
+        run: docker push najouaelhabti/learningbydoing-backend:latest
 
       - name: Push frontend image
-        run: docker push najouaelhabti/frontend:latest
+        run: docker push najouaelhabti/learningbydoing-frontend:latest
 
   deploy:
     runs-on: ubuntu-latest
