@@ -1,4 +1,4 @@
-FROM maven:3.8.6-openjdk-17 as builder
+FROM openjdk:17-alpine
 WORKDIR /app
 COPY . .
 RUN mvn package -DskipTests
