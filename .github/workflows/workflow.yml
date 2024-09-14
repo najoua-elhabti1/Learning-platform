@@ -25,19 +25,21 @@ jobs:
         run: chmod +x backend/mvnw
 
       - name: Build backend JAR file
-        run: backend/mvnw clean package -DskipTests=true  # Skip tests during the build
+        run: backend/mvnw clean package -DskipTests=true
+        working-directory: backend  # Ensure Maven runs in the directory with pom.xml
 
       - name: Build backend Docker image
         run: docker build -t najouaelhabti/backend:latest -f backend/Dockerfile .
 
       - name: Test backend Docker image
         run: |
-          docker run --rm najouaelhabti/backend:latest ./mvnw test  # Adjust the command if necessary
+          docker run --rm najouaelhabti/backend:latest ./mvnw test
         env:
           SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/learningByDoing_db
           SPRING_DATASOURCE_USERNAME: postgres
           SPRING_DATASOURCE_PASSWORD: 123456
           SPRING_DATA_MONGODB_URI: mongodb://mongo:27017/ppt_cours
+        working-directory: backend  # Ensure tests run in the directory with pom.xml
 
   build-and-test-frontend:
     runs-on: ubuntu-latest
@@ -55,7 +57,7 @@ jobs:
 
       - name: Test frontend Docker image
         run: |
-          docker run --rm najouaelhabti/frontend:latest npm test -- --watch=false  # Adjust the command if necessary
+          docker run --rm najouaelhabti/frontend:latest npm test -- --watch=false
 
   deploy:
     runs-on: ubuntu-latest
