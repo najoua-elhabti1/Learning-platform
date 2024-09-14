@@ -21,12 +21,21 @@ jobs:
           distribution: 'adopt'
           java-version: '17'
 
+      - name: Cache Maven dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
       - name: Set executable permission for mvnw
         run: chmod +x backend/mvnw
 
       - name: Build backend JAR file
         run: backend/mvnw clean package -DskipTests=true
-        working-directory: backend  # Ensure Maven runs in the directory with pom.xml
+        working-directory: backend
 
       - name: Build backend Docker image
         run: docker build -t najouaelhabti/backend:latest -f backend/Dockerfile .
@@ -39,7 +48,7 @@ jobs:
           SPRING_DATASOURCE_USERNAME: postgres
           SPRING_DATASOURCE_PASSWORD: 123456
           SPRING_DATA_MONGODB_URI: mongodb://mongo:27017/ppt_cours
-        working-directory: backend  # Ensure tests run in the directory with pom.xml
+        working-directory: backend
 
   build-and-test-frontend:
     runs-on: ubuntu-latest
@@ -51,6 +60,14 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '20.11.1'
+
+      - name: Cache Node.js modules
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('frontend/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
 
       - name: Build frontend Docker image
         run: docker build -t najouaelhabti/frontend:latest -f frontend/Dockerfile .
