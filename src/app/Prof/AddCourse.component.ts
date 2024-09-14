@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-inferrable-types */
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ProfService } from '../services/prof.service';
@@ -69,7 +70,8 @@ import { FooterComponent } from "../footer/footer.component";
 })
 export class CourseInputComponent {
   courseForm: FormGroup;
-
+  uploadStatus: string = '';
+  
   constructor(private fb: FormBuilder, private profService: ProfService) {
     this.courseForm = this.fb.group({
       courseName: ['', Validators.required],
@@ -84,6 +86,7 @@ export class CourseInputComponent {
       this.profService.createCourse(courseName, level).subscribe(
         (response) => {
           console.log('Cours ajouté avec succès:', response);
+          alert('Cours ajouté avec succès!');
           this.courseForm.reset();
         },
         (error) => {
