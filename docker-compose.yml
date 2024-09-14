@@ -20,7 +20,10 @@ services:
       - mongo_data:/data/db
 
   spring-boot-app:
-    build: .
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    image: najouaelhabti/backend:latest
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/learningByDoing_db  # Corrected service name
       SPRING_DATASOURCE_USERNAME: postgres
@@ -34,7 +37,10 @@ services:
       - mongo
 
   angular-app:
-    image: frontend-image
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    image: najouaelhabti/frontend:latest
     container_name: angular-app
     ports:
       - "80:80"
