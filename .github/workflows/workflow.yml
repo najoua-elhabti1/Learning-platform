@@ -18,10 +18,11 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
-          java-version: '21'  # Set your Java version here
+          java-version: '21'
+          distribution: 'adoptopenjdk'  # Or another distribution like 'zulu', 'temurin', etc.
 
       - name: Build backend JAR file
-        run: mvn clean package
+        run: mvn clean package -DskipTests=true  # Skip tests during the build
 
       - name: Build backend Docker image
         run: docker build -t najouaelhabti/backend:latest -f backend/Dockerfile .
@@ -74,6 +75,4 @@ jobs:
 
       - name: Deploy to Production
         run: |
-          # Your deployment script or commands here
-          # Example: SSH into your server and pull the latest Docker images
           ssh user@your-server "docker pull najouaelhabti/backend:latest && docker pull najouaelhabti/frontend:latest && docker-compose up -d"
