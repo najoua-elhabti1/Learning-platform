@@ -18,11 +18,14 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
-          java-version: '21'
-          distribution: 'adoptopenjdk'  # Or another distribution like 'zulu', 'temurin', etc.
+          distribution: 'adopt-openjdk'
+          java-version: '17'
+
+      - name: Set executable permission for mvnw
+        run: chmod +x mvnw
 
       - name: Build backend JAR file
-        run: mvn clean package -DskipTests=true  # Skip tests during the build
+        run: ./mvnw clean package -DskipTests=true  # Skip tests during the build
 
       - name: Build backend Docker image
         run: docker build -t najouaelhabti/backend:latest -f backend/Dockerfile .
@@ -73,6 +76,3 @@ jobs:
       - name: Push frontend Docker image
         run: docker push najouaelhabti/frontend:latest
 
-      - name: Deploy to Production
-        run: |
-          ssh user@your-server "docker pull najouaelhabti/backend:latest && docker pull najouaelhabti/frontend:latest && docker-compose up -d"
