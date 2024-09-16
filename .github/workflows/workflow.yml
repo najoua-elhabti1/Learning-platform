@@ -23,16 +23,16 @@ jobs:
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
       - name: Build backend image
-        run: docker build -t najouaelhabti/learningbydoing-backend:latest ./backend
+        run: docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/learningbydoing-backend:latest ./backend
 
       - name: Build frontend image
-        run: docker build -t najouaelhabti/learningbydoing-frontend:latest ./frontend
+        run: docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/learningbydoing-frontend:latest ./frontend
 
       - name: Push backend image
-        run: docker push najouaelhabti/learningbydoing-backend:latest
+        run: docker push ${{ secrets.DOCKER_HUB_USERNAME }}/learningbydoing-backend:latest
 
       - name: Push frontend image
-        run: docker push najouaelhabti/learningbydoing-frontend:latest
+        run: docker push ${{ secrets.DOCKER_HUB_USERNAME }}/learningbydoing-frontend:latest
 
   deploy:
     runs-on: ubuntu-latest
@@ -46,13 +46,19 @@ jobs:
 
       - name: Install Docker Compose
         run: |
-          DOCKER_COMPOSE_VERSION=2.20.2
-          sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+          DOCKER_COMPOSE_VERSION=v2.29.3
+          sudo curl -L "https://github.com/docker/compose/releases/download/v2.29.3/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
           sudo chmod +x /usr/local/bin/docker-compose
           # Debugging
           ls -la /usr/local/bin/docker-compose
           file /usr/local/bin/docker-compose
           docker-compose --version
+
+      - name: Pull Backend and Frontend images from Docker Hub
+        run: |
+            docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/learningbydoing-backend:latest
+            docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/learningbydoing-frontend:latest
+
 
       - name: Deploy services
         run: |
